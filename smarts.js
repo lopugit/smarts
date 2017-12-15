@@ -17,11 +17,11 @@ module.exports = function({objList, stringList}={}){
           // list[index] = option
         } else if(push && list) {
           list.push(option)
+          index = list.length-1
         }
-        resolve()
+        resolve(index)
       })
     },
-    
     setThings: function ({options, list=this.getsmart(objList), obj, key='_id', keymatchtype, push}={}) {
       return new Promise((resolve, reject)=>{
         if(options && list) {
