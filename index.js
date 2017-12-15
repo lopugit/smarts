@@ -1,15 +1,17 @@
+let node
+let vue
 if(node){
-    let smarts = require('./smarts')
+    var smarts = require('./smarts')
 } else if (vue){
-    let smartsJuice = require('./smarts')
-    let smarts = {
+    var smartsJuice = require('./smarts')
+    var smarts = {
         data() {
             return {}
         },
         methods: smartsJuice
     }
 } else {
-    let smarts = require('./smarts')
+    var smarts = require('./smarts')
 }
 
 module.exports = smarts
