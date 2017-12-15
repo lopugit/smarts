@@ -312,8 +312,9 @@ module.exports = function({objList, stringList}={}){
     },
     getsmart: function ({obj, property, defaultValue}={}) {
         if(!property){
-          obj = eval(property.split(".")[0])
-          property = property.split(".").slice(1, property.split(".").length)
+          property = obj.split(".")
+          obj = eval(property[0])
+          property = property.slice(1, property.length)
         }
         // If the property list is in dot notation, convert to array
         if (typeof property == "string") {
