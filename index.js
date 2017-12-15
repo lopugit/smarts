@@ -1,9 +1,15 @@
 if(node){
-    let smarts = require('./node-smarts')
+    let smarts = require('./smarts')
 } else if (vue){
-    let smarts = require('./vue-smarts')
+    let smartsJuice = require('./smarts')
+    let smarts = {
+        data() {
+            return {}
+        },
+        methods: smartsJuice
+    }
 } else {
-    let smarts = require('./node-smarts')
+    let smarts = require('./smarts')
 }
 
 module.exports = smarts
