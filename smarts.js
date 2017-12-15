@@ -1,5 +1,6 @@
-let smarts =  {
-    setThing: function ({option, list=this.thingMutable.things, obj=false, key='_id', keymatchtype, push, strings, targets}={}) {
+module.exports = function({objList, stringList}={}){
+  return {
+    setThing: function ({option, list=this.getsmart(eval(objList)), obj, key='_id', keymatchtype, push, strings, targets}={}) {
       return new Promise((resolve, reject)=>{
         let index = this.thingIndex({option, list, obj, key, keymatchtype, strings})
         if(index >= 0 && list){
@@ -17,7 +18,7 @@ let smarts =  {
         resolve()
       })
     },
-    setThings: function ({options, list=this.thingMutable.things, obj=false, key='_id', keymatchtype, push}={}) {
+    setThings: function ({options, list=this.getsmart(eval(objList)), obj, key='_id', keymatchtype, push}={}) {
       return new Promise((resolve, reject)=>{
         if(options && list) {
           for(let option of options){
@@ -27,7 +28,10 @@ let smarts =  {
         resolve()
       })
     },
-    optIn: function (option, list=this.optionsMutable, obj=false, key='_id', keymatchtype) {
+    optIn: function (option, list=this.getsmart(eval(stringList)), obj, key='_id', keymatchtype) {
+      if(typeof option === 'object'){
+        obj = true
+      }
       if (!obj && list && list.indexOf(option) >= 0) {
         return true
       } else if (obj && list) {
@@ -61,7 +65,10 @@ let smarts =  {
       }
       return false
     },
-    thingIn: function ({option, list, obj=false, key='_id', keymatchtype, strings, retIndex}={}) {
+    thingIn: function ({option, list, obj, key='_id', keymatchtype, strings, retIndex}={}) {
+      if(typeof option === 'object'){
+        obj = true
+      }
       if (!obj && list && list.indexOf(option) >= 0) {
         if(retIndex){
           return list.indexOf(option)
@@ -129,8 +136,11 @@ let smarts =  {
         return false
       }
     },
-    optsIn: function (options, list=this.optionsMutable, obj=false, key='_id', keymatchtype) {
+    optsIn: function (options, list=this.getsmart(eval(stringList)), obj, key='_id', keymatchtype) {
       for (let option of options) {
+        // if(typeof option === 'object'){
+        //   obj = true
+        // }
         if (!obj && list && list.indexOf(option) >= 0) {
           // return true
         } else if (obj && list) {
@@ -145,8 +155,11 @@ let smarts =  {
       }
       return true
     },
-    thingsIn: function ({options, list=this.optionsMutable, obj=false, key='_id', keymatchtype}={}) {
+    thingsIn: function ({options, list=this.getsmart(eval(stringList)), obj, key='_id', keymatchtype}={}) {
       for (let option of options) {
+        // if(typeof option === 'object'){
+        //   obj = true
+        // }
         if (!obj && list && list.indexOf(option) >= 0) {
           // return true
         } else if (obj && list) {
@@ -161,8 +174,11 @@ let smarts =  {
       }
       return true
     },
-    anyOptsIn: function (options, list=this.optionsMutable, obj=false, key='_id', keymatchtype) {
+    anyOptsIn: function (options, list=this.getsmart(eval(stringList)), obj, key='_id', keymatchtype) {
       for (let option of options) {
+        // if(typeof option === 'object'){
+        //   obj = true
+        // }
         if (!obj && list && list.indexOf(option) >= 0) {
           return true
         } else if (obj && list) {
@@ -175,8 +191,11 @@ let smarts =  {
       }
       return false
     },
-    anyThingsIn: function ({options, list=this.optionsMutable, obj=false, key='_id', keymatchtype}={}) {
+    anyThingsIn: function ({options, list=this.getsmart(eval(stringList)), obj, key='_id', keymatchtype}={}) {
       for (let option of options) {
+        // if(typeof option === 'object'){
+        //   obj = true
+        // }
         if (!obj && list && list.indexOf(option) >= 0) {
           return true
         } else if (obj && list) {
@@ -189,7 +208,10 @@ let smarts =  {
       }
       return false
     },
-    optIndex: function (option, list=this.optionsMutable, obj=false, key='_id', keymatchtype) {
+    optIndex: function (option, list=this.getsmart(eval(stringList)), obj, key='_id', keymatchtype) {
+      if(typeof option === 'object'){
+        obj = true
+      }
       if (obj && list && key) {
         for (var i=0; i < list.length; i++) {
           if(this.optIn(option, list, obj, key, keymatchtype)){
@@ -201,7 +223,10 @@ let smarts =  {
       }
       return -1
     },
-    thingIndex: function ({option, list, obj=false, key='_id', keymatchtype, strings}={}) {
+    thingIndex: function ({option, list, obj, key='_id', keymatchtype, strings}={}) {
+      if(typeof option === 'object'){
+        obj = true
+      }
       if (obj && list && key) {
         let index = this.thingIn({option, list, obj, key, keymatchtype, strings, retIndex: true})
         return index
@@ -210,61 +235,61 @@ let smarts =  {
       }
       return -1
     },
-    pushOpt: function (option, list=this.optionsMutable, obj=false, key='_id') {
+    pushOpt: function (option, list=this.getsmart(eval(stringList)), obj, key='_id') {
       if (typeof list == 'object' && !this.optIn(option, list, obj, key)) {
         list.push(option)
       }
     },
-    pushThing: function ({option, list=this.optionsMutable, obj=false, key='_id'}={}) {
+    pushThing: function ({option, list=this.getsmart(eval(stringList)), obj, key='_id'}={}) {
       if (typeof list == 'object' && !this.optIn(option, list, obj, key)) {
         list.push(option)
       }
     },
-    pushOpts: function (options, list=this.optionsMutable, obj=false, key='_id') {
+    pushOpts: function (options, list=this.getsmart(eval(stringList)), obj, key='_id') {
       for (let option of options) {
         this.pushOpt(option, list, obj, key)
       }
     },
-    pushThings: function ({options, list=this.optionsMutable, obj=false, key='_id'}={}) {
+    pushThings: function ({options, list=this.getsmart(eval(stringList)), obj, key='_id'}={}) {
       for (let option of options) {
         this.pushOpt(option, list, obj, key)
       }
     },
-    popOpt: function (option, list=this.optionsMutable, obj=false, key='_id') {
+    popOpt: function (option, list=this.getsmart(eval(stringList)), obj, key='_id') {
       if (typeof list == 'object' && this.optIn(option, list, obj, key)) {
         list.splice(this.optIndex(option, list, obj, key), 1)
       }
     },
-    popThing: function ({option, list=this.optionsMutable, obj=false, key='_id'}={}) {
+    popThing: function ({option, list=this.getsmart(eval(stringList)), obj, key='_id'}={}) {
       if (typeof list == 'object' && this.optIn(option, list, obj, key)) {
         list.splice(this.optIndex(option, list, obj, key), 1)
       }
     },
-    popOpts: function (options, list=this.optionsMutable, obj=false, key='_id') {
+    popOpts: function (options, list=this.getsmart(eval(stringList)), obj, key='_id') {
       for (let option of options) {
         this.popOpt(option, list, obj, key)
       }
     },
-    popThings: function ({options, list=this.optionsMutable, obj=false, key='_id'}={}) {
+    popThings: function ({options, list=this.getsmart(eval(stringList)), obj, key='_id'}={}) {
       for (let option of options) {
         this.popOpt(option, list, obj, key)
       }
     },
-    toggleOpt: function (option, list=this.optionsMutable, obj=false, key='_id') {
+    toggleOpt: function (option, list=this.getsmart(eval(stringList)), obj, key='_id') {
       if (this.optIn(option, list, obj, key)) {
         this.popOpt(option, list, obj, key)
       } else {
         this.pushOpt(option, list, obj, key)
       }
     },
-    toggleThing: function ({option, list=this.optionsMutable, obj=false, key='_id'}={}) {
+    toggleThing: function ({option, list=this.getsmart(eval(stringList)), obj, key='_id'}={}) {
       if (this.optIn(option, list, obj, key)) {
         this.popOpt(option, list, obj, key)
       } else {
         this.pushOpt(option, list, obj, key)
       }
     },
-    toggleOpts: function (options, list=this.optionsMutable, obj, key) {
+    toggleOpts: function (options, list=this.getsmart(eval(stringList)), obj, key) {
       for (let option in options) {
         if (this.optIn(option, list, obj, key)) {
           this.popOpt(option, list, obj, key)
@@ -273,7 +298,7 @@ let smarts =  {
         }
       }
     },
-    toggleThings: function ({options, list=this.optionsMutable, obj, key}={}) {
+    toggleThings: function ({options, list=this.getsmart(eval(stringList)), obj, key}={}) {
       for (let option in options) {
         if (this.optIn(option, list, obj, key)) {
           this.popOpt(option, list, obj, key)
@@ -285,7 +310,11 @@ let smarts =  {
     ratchetOpt: function(option, list, obj, key){
 
     },
-    getsmart: function (obj, property, defaultValue) {
+    getsmart: function ({obj, property, defaultValue}={}) {
+        if(!property){
+          obj = eval(property.split(".")[0])
+          property = property.split(".").slice(1, property.split(".").length)
+        }
         // If the property list is in dot notation, convert to array
         if (typeof property == "string") {
             property = property.split(".");
@@ -322,6 +351,5 @@ let smarts =  {
     safeparse: function (something) {
       return this.jsmart.parse(something || '')
     }
+  }
 }
-  
-module.exports = smarts

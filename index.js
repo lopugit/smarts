@@ -1,17 +1,16 @@
-let node
-let vue
-if(node){
-    var smarts = require('./smarts')
-} else if (vue){
-    var smartsJuice = require('./smarts')
-    var smarts = {
-        data() {
-            return {}
-        },
-        methods: smartsJuice
+module.exports = function({node, vue, objList, stringList}={}){
+    if(node){
+        var smarts = require('./smarts')({objList, stringList})
+    } else if (vue){
+        var smartsJuice = require('./smarts')({objList, stringList})
+        var smarts = {
+            data() {
+                return {}
+            },
+            methods: smartsJuice
+        }
+    } else {
+        var smarts = require('./smarts')({objList, stringList})
     }
-} else {
-    var smarts = require('./smarts')
+    return smarts
 }
-
-module.exports = smarts
