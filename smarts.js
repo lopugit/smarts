@@ -375,7 +375,7 @@ module.exports = function({objList, stringList}={}){
           // If the path array has no more elements, we've reached
           // the intended property and return its value
           obj = value
-          return
+          return obj
         } else if (obj === undefined || obj === null){
           // If we have reached an undefined/null property
           obj = {}
