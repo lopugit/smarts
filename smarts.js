@@ -36,7 +36,7 @@ module.exports = function({objList, stringList}={}){
       if(typeof option === 'object'){
         obj = true
       }
-      if (!obj && list && list.indexOf(option) >= 0) {
+      if (!obj && list && list.indexOf && list.indexOf(option) >= 0) {
         return true
       } else if (obj && list) {
         for (var i=0; i < list.length; i++) {
@@ -73,7 +73,7 @@ module.exports = function({objList, stringList}={}){
       if(typeof option === 'object'){
         obj = true
       }
-      if (!obj && list && list.indexOf(option) >= 0) {
+      if (!obj && list && list.indexOf && list.indexOf(option) >= 0) {
         if(retIndex){
           return list.indexOf(option)
         } else {
@@ -145,7 +145,7 @@ module.exports = function({objList, stringList}={}){
         // if(typeof option === 'object'){
         //   obj = true
         // }
-        if (!obj && list && list.indexOf(option) >= 0) {
+        if (!obj && list && list.indexOf && list.indexOf(option) >= 0) {
           // return true
         } else if (obj && list) {
           for (var i=0; i < list.length; i++) {
@@ -164,7 +164,7 @@ module.exports = function({objList, stringList}={}){
         // if(typeof option === 'object'){
         //   obj = true
         // }
-        if (!obj && list && list.indexOf(option) >= 0) {
+        if (!obj && list && list.indexOf && list.indexOf(option) >= 0) {
           // return true
         } else if (obj && list) {
           for (var i=0; i < list.length; i++) {
@@ -183,7 +183,7 @@ module.exports = function({objList, stringList}={}){
         // if(typeof option === 'object'){
         //   obj = true
         // }
-        if (!obj && list && list.indexOf(option) >= 0) {
+        if (!obj && list && list.indexOf && list.indexOf(option) >= 0) {
           return true
         } else if (obj && list) {
           for (var i=0; i < list.length; i++) {
@@ -200,7 +200,7 @@ module.exports = function({objList, stringList}={}){
         // if(typeof option === 'object'){
         //   obj = true
         // }
-        if (!obj && list && list.indexOf(option) >= 0) {
+        if (!obj && list && list.indexOf && list.indexOf(option) >= 0) {
           return true
         } else if (obj && list) {
           for (var i=0; i < list.length; i++) {
@@ -312,15 +312,8 @@ module.exports = function({objList, stringList}={}){
       }
     },
     ratchetOpt: function(option, list, obj, key){
-
     },
     getsmart: function (obj, property, defaultValue) {
-        // console.log('obj')
-        // console.log(obj)
-        // console.log('property')
-        // console.log(property)
-        // console.log('defaultValue')
-        // console.log(defaultValue)
 
       if(!property && typeof obj == 'string'){
         property = obj.split(".")
@@ -338,7 +331,7 @@ module.exports = function({objList, stringList}={}){
           // If we have reached an undefined/null property
           // then stop executing and return the default value.
           // If no default was provided it will be undefined.
-          if (!propsArray || obj === undefined || obj === null) {
+          if (!propsArray || !obj) {
               return defaultValue;
           }
 
@@ -349,10 +342,10 @@ module.exports = function({objList, stringList}={}){
           }
 
           // Prepare our found property and path array for recursion
-          var foundSoFar = obj[propsArray[0]];
+          var nextObj = obj[propsArray[0]];
           var remainingProps = propsArray.slice(1);
 
-          return deepGetByArray(foundSoFar, remainingProps, defaultValue);
+          return deepGetByArray(nextObj, remainingProps, defaultValue);
       };
 
       return deepGetByArray(obj, property, defaultValue);
@@ -371,11 +364,11 @@ module.exports = function({objList, stringList}={}){
       // In order to avoid constantly checking the type of the property
       // we separate the real logic out into an inner function.
       var deepGetByArray = function (obj, propsArray, value) {
-        if (!propsArray || propsArray.length === 0) {
-          // If the path array has no more elements, we've reached
-          // the intended property and return its value
-          obj = value
-          return obj
+        if (propsArray.length === 1) {
+          // If the path array has only 1 more element, we've reached
+          // the intended property and set its value
+          obj[propsArray[0]] = value
+          return obj[propsArray[0]]
         } else if (obj === undefined || obj === null){
           // If we have reached an undefined/null property
           obj = {}
