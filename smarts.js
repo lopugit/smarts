@@ -1,4 +1,4 @@
-module.exports = function({objList, stringList}={}){
+module.exports = function({objList, stringList, reactiveSetter}={}){
   return {
     setThing: function ({option, list=this.getsmart(objList), obj, key='_id', keymatchtype, push, strings, targets}={}) {
       return new Promise((resolve, reject)=>{
@@ -364,23 +364,32 @@ module.exports = function({objList, stringList}={}){
       // In order to avoid constantly checking the type of the property
       // we separate the real logic out into an inner function.
       var deepGetByArray = function (obj, propsArray, value) {
-        if (propsArray.length === 1) {
+        
+        if (propsArray.length == 1) {
           // If the path array has only 1 more element, we've reached
           // the intended property and set its value
-          obj[propsArray[0]] = value
+          if(reactiveSetter == 'vue'){
+            this.$set(obj, propsArray[0], value)
+          } else {
+            obj[propsArray[0]] = value
+          }
           return obj[propsArray[0]]
-        } else if (obj === undefined || obj === null){
-          // If we have reached an undefined/null property
-          obj = {}
         }
-
-
-          // Prepare our found property and path array for recursion
-          var foundSoFar = obj[propsArray[0]];
-          var remainingProps = propsArray.slice(1);
-
-          return deepGetByArray(foundSoFar, remainingProps, value);
-      };
+        
+        // Prepare our found property and path array for recursion
+        var foundSoFar = obj[propsArray[0]]
+        var remainingProps = propsArray.slice(1)
+        if (foundSoFar == undefined || foundSoFar == null){
+          // If we have reached an undefined/null property
+          if(reactiveSetter == 'vue'){
+            this.$set(obj, propsArray[0], {})
+          } else {
+            obj = {}
+          }
+        }
+        
+        return deepGetByArray(foundSoFar, remainingProps, value)
+      }
 
       return deepGetByArray(obj, property, value)
     },
