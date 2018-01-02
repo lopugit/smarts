@@ -1,8 +1,8 @@
 {
   "name": "smarts",
-  "version": "1.0.63",
+  "version": "1.0.64",
   "description": "a smart library for doing smart things",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node build/build.js"
