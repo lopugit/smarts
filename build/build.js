@@ -8,5 +8,5 @@ if (!fs.existsSync('dist')) {
   fs.mkdirSync('dist')
 }
 
-fs.createReadStream('index.js').pipe(fs.createWriteStream('dist/index.js'))
-fs.createReadStream('smarts.js').pipe(fs.createWriteStream('dist/smarts.js'))
+fs.createReadStream('src/index.js').pipe(fs.createWriteStream('dist/index.js'))
+fs.createReadStream('src/smarts.js').pipe(fs.createWriteStream('dist/smarts.js'))
