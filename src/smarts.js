@@ -249,8 +249,8 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
       }
     },
     popThing({option, list=this.getsmart(stringList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype}={}) {
-      if (typeof list == 'object' && this.thingIn({option, list, obj, keys})) {
-        list.splice(this.thingIndex({option, list, obj, keys}), 1)
+      if (typeof list == 'object' && this.thingIn({option, list, obj, keys, keymatchtype})) {
+        list.splice(this.thingIndex({option, list, obj, keys, keymatchtype}), 1)
       }
     },
     popOpts(options, list=this.getsmart(stringList), obj, keys=['uuid', '_id', 'id'], keymatchtype) {

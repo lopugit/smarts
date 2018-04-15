@@ -1,11 +1,13 @@
 {
   "name": "smarts",
-  "version": "1.0.69",
+  "version": "1.0.7",
   "description": "a smart library for doing smart things",
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "prepare": "npm run build",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
