@@ -1,0 +1,24 @@
+{
+  "name": "smarts",
+  "version": "1.0.69",
+  "description": "a smart library for doing smart things",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node build/build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lopugit/smarts.git"
+  },
+  "keywords": [
+    "helpers",
+    "automation"
+  ],
+  "author": "lopu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lopugit/smarts/issues"
+  },
+  "homepage": "https://github.com/lopugit/smarts#readme"
+}
