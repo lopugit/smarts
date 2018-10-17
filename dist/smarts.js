@@ -570,10 +570,17 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
         }
       })
 		},
-		
     domval(thing){
       return this.getsmart(thing, 'properties.description', '')
-    }
+		},
+		getThing({option, list=this.getsmart(objList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, strings}={}){
+			var index = this.thingIn({...arguments[0], retIndex: true})
+			if(index >= 0){
+				return list[index]
+			} else {
+				return undefined
+			}
+		}
   }
 }
 
