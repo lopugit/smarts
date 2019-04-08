@@ -1,15 +1,15 @@
 {
   "name": "smarts",
-  "version": "1.0.73",
+  "version": "1.0.76",
   "description": "a smart library for doing smart things",
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node build/build.js",
-		"prepare": "npm run build",
-		"commit" : "git add . ; git commit -m 'ready'",
-		"push" : "npm run commit ; git push origin dev",
-		"pull" : "git pull origin dev"
+    "build": "babel src -d dist",
+    "commit": "git add . ; git commit -m 'ready'",
+    "push": "npm run commit ; git push origin dev",
+    "pull": "git pull origin dev",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -24,5 +24,10 @@
   "bugs": {
     "url": "https://github.com/lopugit/smarts/issues"
   },
-  "homepage": "https://github.com/lopugit/smarts#readme"
+  "homepage": "https://github.com/lopugit/smarts#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0"
+  }
 }

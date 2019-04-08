@@ -1,5 +1,12 @@
 module.exports = function({objList, stringList, reactiveSetter, vue}={}){
   return {
+	popThing({option, list=this.getsmart(stringList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, defaultValue=undefined}={}) {
+		if (typeof list == 'object' && this.thingIn({option, list, obj, keys, keymatchtype})) {
+			return list[this.thingIndex({option, list, obj, keys, keymatchtype})]
+		} else {
+			return defaultValue
+		}
+	},
     setThing({option, list=this.getsmart(objList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, push, strings, targets}={}) {
       return new Promise((resolve, reject)=>{
         let index = this.thingIndex({option, list, obj, keys, keymatchtype, strings})
@@ -572,15 +579,15 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
 		},
     domval(thing){
       return this.getsmart(thing, 'properties.description', '')
-		},
-		getThing({option, list=this.getsmart(objList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, strings}={}){
-			var index = this.thingIn({...arguments[0], retIndex: true})
-			if(index >= 0){
-				return list[index]
-			} else {
-				return undefined
-			}
+	},
+	getThing({option, list=this.getsmart(objList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, strings, defaultValue=undefined}={}){
+		var index = this.thingIn({...arguments[0], retIndex: true})
+		if(index >= 0){
+			return list[index]
+		} else {
+			return defaultValue
 		}
+	}
   }
 }
 
