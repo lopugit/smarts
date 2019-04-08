@@ -1,6 +1,6 @@
 {
   "name": "smarts",
-  "version": "1.0.76",
+  "version": "1.0.77",
   "description": "a smart library for doing smart things",
   "main": "dist/index.js",
   "scripts": {
@@ -8,8 +8,8 @@
     "build": "babel src -d dist",
     "commit": "git add . ; git commit -m 'ready'",
     "push": "npm run commit ; git push origin dev",
-	"pull": "git pull origin dev",
-	"everything": "npm run push ; npm version patch ; npm publish ; npm run push",
+    "pull": "git pull origin dev",
+    "everything": "npm run push ; npm version patch ; npm publish ; npm run push",
     "prepublish": "npm run build"
   },
   "repository": {
