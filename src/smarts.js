@@ -1,12 +1,12 @@
 module.exports = function({objList, stringList, reactiveSetter, vue}={}){
   return {
-	popThing({option, list=this.getsmart(stringList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, defaultValue=undefined}={}) {
-		if (typeof list == 'object' && this.thingIn({option, list, obj, keys, keymatchtype})) {
-			return list[this.thingIndex({option, list, obj, keys, keymatchtype})]
-		} else {
-			return defaultValue
-		}
-	},
+  popThing({option, list=this.getsmart(stringList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, defaultValue=undefined}={}) {
+    if (typeof list == 'object' && this.thingIn({option, list, obj, keys, keymatchtype})) {
+      return list[this.thingIndex({option, list, obj, keys, keymatchtype})]
+    } else {
+      return defaultValue
+    }
+  },
     setThing({option, list=this.getsmart(objList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, push, strings, targets}={}) {
       return new Promise((resolve, reject)=>{
         let index = this.thingIndex({option, list, obj, keys, keymatchtype, strings})
@@ -297,16 +297,17 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
           this.pushOpt(option, list, obj, keys, keymatchtype)
         }
       }
-    },
+  },
+  // no use right now
     ratchetOpt(option, list, obj, keys=['uuid', '_id', 'id'], keymatchtype){
-		},
-		// find(obj, property, equals){
-		// 	if(this.getsmart(obj, 'constructor', undefined) == Array){
-		// 		for(var i=0; i<obj.length; i++){
-		// 			find(obj[i], )
-		// 		}
-		// 	}
-		// },
+    // find(obj, property, equals){
+    // 	if(this.getsmart(obj, 'constructor', undefined) == Array){
+    // 		for(var i=0; i<obj.length; i++){
+    // 			find(obj[i], )
+    // 		}
+    // 	}
+    // },
+  },
     getsmart(obj, property, defaultValue, context) {
 
       if(!property && obj && typeof obj == 'string'){
@@ -338,7 +339,7 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
           return {
             value: defaultValue,
             undefined: true,
-						err: 'properties path @property argument was not passed properly'
+            err: 'properties path @property argument was not passed properly'
           }
         } else {
           return defaultValue
@@ -399,14 +400,14 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
           property = property.split(".");
       } else if(this.getsmart(property, 'constructor', false) !== Array){
         if(context){
-					return {
-						value: value,
-						undefined: true,
-						err: 'properties path @property argument was not passed properly'
-					}
-				} else {
-					return value
-				}
+          return {
+            value: value,
+            undefined: true,
+            err: 'properties path @property argument was not passed properly'
+          }
+        } else {
+          return value
+        }
       }
 
       // switch contexts
@@ -418,19 +419,19 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
         // If the path array has only 1 more element, we've reached
         // the intended property and set its value
         if (propsArray.length == 1) {
-          if(that.getsmart(vue, 'reactiveSetter', false) && that.$set){
+          if(that.getsmart(vue, 'reactiveSetter', false) && (that.$set || vue.$set)){
             that.$set(obj, propsArray[0], value)
           } else {
             obj[propsArray[0]] = value
-					}
-					if(context){
-						return {
-							value: obj[propsArray[0]],
-							undefined: false
-						}
-					} else {
-						return obj[propsArray[0]]
-					}
+          }
+          if(context){
+            return {
+              value: obj[propsArray[0]],
+              undefined: false
+            }
+          } else {
+            return obj[propsArray[0]]
+          }
         }
         // Prepare our path array for recursion
         var remainingProps = propsArray.slice(1)
@@ -448,20 +449,20 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
       if(property){
         return deepGetByArray(obj, property, value)
       } else {
-				if(that.getsmart(vue, 'reactiveSetter', false) && that.$set){
-					that.$set(obj, undefined, value)
-				} else {
-					obj = value
-				}
-				if(context){
-					return {
-						value: obj,
-						undefined: false,
-						err: 'there were no properties passed'
-					}
-				} else {
-					return obj
-				}
+        if(that.getsmart(vue, 'reactiveSetter', false) && that.$set){
+          that.$set(obj, undefined, value)
+        } else {
+          obj = value
+        }
+        if(context){
+          return {
+            value: obj,
+            undefined: false,
+            err: 'there were no properties passed'
+          }
+        } else {
+          return obj
+        }
       }
     },
     gosmart(obj, property, value, context){
@@ -476,7 +477,6 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
       } else {
         return this.getsmart(get, 'value', get)
       }        
-
     },
     getsmartval(obj, property, defaultValue){
       // get the value of a property path based off its type
@@ -576,18 +576,18 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
 
         }
       })
-		},
+    },
     domval(thing){
       return this.getsmart(thing, 'properties.description', '')
-	},
-	getThing({option, list=this.getsmart(objList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, strings, defaultValue=undefined}={}){
-		var index = this.thingIn({...arguments[0], retIndex: true})
-		if(index >= 0){
-			return list[index]
-		} else {
-			return defaultValue
-		}
-	}
+  },
+  getThing({option, list=this.getsmart(objList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, strings, defaultValue=undefined}={}){
+    var index = this.thingIn({...arguments[0], retIndex: true})
+    if(index >= 0){
+      return list[index]
+    } else {
+      return defaultValue
+    }
+  }
   }
 }
 
