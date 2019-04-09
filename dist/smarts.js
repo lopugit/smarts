@@ -27,7 +27,9 @@ module.exports = function () {
           keys = _ref2$keys === void 0 ? ['uuid', '_id', 'id'] : _ref2$keys,
           keymatchtype = _ref2.keymatchtype,
           _ref2$defaultValue = _ref2.defaultValue,
-          defaultValue = _ref2$defaultValue === void 0 ? undefined : _ref2$defaultValue;
+          defaultValue = _ref2$defaultValue === void 0 ? undefined : _ref2$defaultValue,
+          _ref2$vue = _ref2.vue,
+          vue = _ref2$vue === void 0 ? vue : _ref2$vue;
 
       if (_typeof(list) == 'object' && this.thingIn({
         option: option,
@@ -61,7 +63,9 @@ module.exports = function () {
           keymatchtype = _ref3.keymatchtype,
           push = _ref3.push,
           strings = _ref3.strings,
-          targets = _ref3.targets;
+          targets = _ref3.targets,
+          _ref3$vue = _ref3.vue,
+          vue = _ref3$vue === void 0 ? vue : _ref3$vue;
 
       return new Promise(function (resolve, reject) {
         var index = _this.thingIndex({
@@ -113,7 +117,9 @@ module.exports = function () {
           _ref4$keys = _ref4.keys,
           keys = _ref4$keys === void 0 ? ['uuid', '_id', 'id'] : _ref4$keys,
           keymatchtype = _ref4.keymatchtype,
-          push = _ref4.push;
+          push = _ref4.push,
+          _ref4$vue = _ref4.vue,
+          vue = _ref4$vue === void 0 ? vue : _ref4$vue;
 
       return new Promise(function (resolve, reject) {
         if (options && list) {
@@ -202,7 +208,9 @@ module.exports = function () {
           keys = _ref5$keys === void 0 ? ['uuid', '_id', 'id'] : _ref5$keys,
           keymatchtype = _ref5.keymatchtype,
           strings = _ref5.strings,
-          retIndex = _ref5.retIndex;
+          retIndex = _ref5.retIndex,
+          _ref5$vue = _ref5.vue,
+          vue = _ref5$vue === void 0 ? vue : _ref5$vue;
 
       if (_typeof(option) === 'object') {
         obj = true;
@@ -312,7 +320,9 @@ module.exports = function () {
           obj = _ref6.obj,
           _ref6$keys = _ref6.keys,
           keys = _ref6$keys === void 0 ? ['uuid', '_id', 'id'] : _ref6$keys,
-          keymatchtype = _ref6.keymatchtype;
+          keymatchtype = _ref6.keymatchtype,
+          _ref6$vue = _ref6.vue,
+          vue = _ref6$vue === void 0 ? vue : _ref6$vue;
 
       var _iteratorNormalCompletion3 = true;
       var _didIteratorError3 = false;
@@ -404,7 +414,9 @@ module.exports = function () {
           obj = _ref7.obj,
           _ref7$keys = _ref7.keys,
           keys = _ref7$keys === void 0 ? ['uuid', '_id', 'id'] : _ref7$keys,
-          keymatchtype = _ref7.keymatchtype;
+          keymatchtype = _ref7.keymatchtype,
+          _ref7$vue = _ref7.vue,
+          vue = _ref7$vue === void 0 ? vue : _ref7$vue;
 
       var _iteratorNormalCompletion5 = true;
       var _didIteratorError5 = false;
@@ -474,7 +486,9 @@ module.exports = function () {
           _ref8$keys = _ref8.keys,
           keys = _ref8$keys === void 0 ? ['uuid', '_id', 'id'] : _ref8$keys,
           keymatchtype = _ref8.keymatchtype,
-          strings = _ref8.strings;
+          strings = _ref8.strings,
+          _ref8$vue = _ref8.vue,
+          vue = _ref8$vue === void 0 ? vue : _ref8$vue;
 
       if (_typeof(option) === 'object') {
         obj = true;
@@ -515,7 +529,9 @@ module.exports = function () {
           obj = _ref9.obj,
           _ref9$keys = _ref9.keys,
           keys = _ref9$keys === void 0 ? ['uuid', '_id', 'id'] : _ref9$keys,
-          keymatchtype = _ref9.keymatchtype;
+          keymatchtype = _ref9.keymatchtype,
+          _ref9$vue = _ref9.vue,
+          vue = _ref9$vue === void 0 ? vue : _ref9$vue;
 
       if (_typeof(list) == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
         list.push(option);
@@ -558,7 +574,9 @@ module.exports = function () {
           obj = _ref10.obj,
           _ref10$keys = _ref10.keys,
           keys = _ref10$keys === void 0 ? ['uuid', '_id', 'id'] : _ref10$keys,
-          keymatchtype = _ref10.keymatchtype;
+          keymatchtype = _ref10.keymatchtype,
+          _ref10$vue = _ref10.vue,
+          vue = _ref10$vue === void 0 ? vue : _ref10$vue;
 
       var _iteratorNormalCompletion7 = true;
       var _didIteratorError7 = false;
@@ -603,7 +621,9 @@ module.exports = function () {
         obj = _ref11$obj === void 0 ? true : _ref11$obj,
         _ref11$keys = _ref11.keys,
         keys = _ref11$keys === void 0 ? ['uuid', '_id', 'id'] : _ref11$keys,
-        keymatchtype = _ref11.keymatchtype;
+        keymatchtype = _ref11.keymatchtype,
+        _ref11$vue = _ref11.vue,
+        vue = _ref11$vue === void 0 ? vue : _ref11$vue;
 
     if (_typeof(list) == 'object' && this.thingIn({
       option: option,
@@ -657,7 +677,9 @@ module.exports = function () {
         obj = _ref12$obj === void 0 ? true : _ref12$obj,
         _ref12$keys = _ref12.keys,
         keys = _ref12$keys === void 0 ? ['uuid', '_id', 'id'] : _ref12$keys,
-        keymatchtype = _ref12.keymatchtype;
+        keymatchtype = _ref12.keymatchtype,
+        _ref12$vue = _ref12.vue,
+        vue = _ref12$vue === void 0 ? vue : _ref12$vue;
 
     var _iteratorNormalCompletion9 = true;
     var _didIteratorError9 = false;
@@ -702,7 +724,9 @@ module.exports = function () {
         obj = _ref13$obj === void 0 ? true : _ref13$obj,
         _ref13$keys = _ref13.keys,
         keys = _ref13$keys === void 0 ? ['uuid', '_id', 'id'] : _ref13$keys,
-        keymatchtype = _ref13.keymatchtype;
+        keymatchtype = _ref13.keymatchtype,
+        _ref13$vue = _ref13.vue,
+        vue = _ref13$vue === void 0 ? vue : _ref13$vue;
 
     if (this.optIn(option, list, obj, keys, keymatchtype)) {
       this.popOpt(option, list, obj, keys, keymatchtype);
@@ -727,7 +751,9 @@ module.exports = function () {
         obj = _ref14$obj === void 0 ? true : _ref14$obj,
         _ref14$keys = _ref14.keys,
         keys = _ref14$keys === void 0 ? ['uuid', '_id', 'id'] : _ref14$keys,
-        keymatchtype = _ref14.keymatchtype;
+        keymatchtype = _ref14.keymatchtype,
+        _ref14$vue = _ref14.vue,
+        vue = _ref14$vue === void 0 ? vue : _ref14$vue;
 
     for (var option in options) {
       if (this.optIn(option, list, obj, keys, keymatchtype)) {
@@ -1041,7 +1067,9 @@ module.exports = function () {
         keymatchtype = _ref15.keymatchtype,
         strings = _ref15.strings,
         _ref15$defaultValue = _ref15.defaultValue,
-        defaultValue = _ref15$defaultValue === void 0 ? undefined : _ref15$defaultValue;
+        defaultValue = _ref15$defaultValue === void 0 ? undefined : _ref15$defaultValue,
+        _ref15$vue = _ref15.vue,
+        vue = _ref15$vue === void 0 ? vue : _ref15$vue;
 
     var index = this.thingIn(_objectSpread({}, arguments[0], {
       retIndex: true
