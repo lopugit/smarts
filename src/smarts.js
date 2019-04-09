@@ -1,13 +1,13 @@
 module.exports = function({objList, stringList, reactiveSetter, vue}={}){
   return {
-  popThing({option, list=this.getsmart(stringList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, defaultValue=undefined}={}) {
+  popThing({option, list=this.getsmart(stringList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, defaultValue=undefined, vue=vue}={}) {
     if (typeof list == 'object' && this.thingIn({option, list, obj, keys, keymatchtype})) {
       return list[this.thingIndex({option, list, obj, keys, keymatchtype})]
     } else {
       return defaultValue
     }
   },
-    setThing({option, list=this.getsmart(objList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, push, strings, targets}={}) {
+    setThing({option, list=this.getsmart(objList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, push, strings, targets, vue=vue}={}) {
       return new Promise((resolve, reject)=>{
         let index = this.thingIndex({option, list, obj, keys, keymatchtype, strings})
         if(obj="debug"){
@@ -35,7 +35,7 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
         resolve(index)
       })
     },
-    setThings({options, list=this.getsmart(objList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, push}={}) {
+    setThings({options, list=this.getsmart(objList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, push, vue=vue}={}) {
       return new Promise((resolve, reject)=>{
         if(options && list) {
           for(let option of options){
@@ -76,7 +76,7 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
       }
       return false
     },
-    thingIn({option, list=this.getsmart(objList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, strings, retIndex}={}) {
+    thingIn({option, list=this.getsmart(objList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, strings, retIndex, vue=vue}={}) {
       if(typeof option === 'object'){
         obj = true
       }
@@ -150,7 +150,7 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
       }
       return true
     },
-    thingsIn({options, list=this.getsmart(stringList), obj, keys=['uuid', '_id', 'id'], keymatchtype}={}) {
+    thingsIn({options, list=this.getsmart(stringList), obj, keys=['uuid', '_id', 'id'], keymatchtype, vue=vue}={}) {
       for (let option of options) {
         // if(typeof option === 'object'){
         //   obj = true
@@ -186,7 +186,7 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
       }
       return false
     },
-    anyThingsIn({options, list=this.getsmart(stringList), obj, keys=['uuid', '_id', 'id'], keymatchtype}={}) {
+    anyThingsIn({options, list=this.getsmart(stringList), obj, keys=['uuid', '_id', 'id'], keymatchtype, vue=vue}={}) {
       for (let option of options) {
         // if(typeof option === 'object'){
         //   obj = true
@@ -218,7 +218,7 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
       }
       return -1
     },
-    thingIndex({option, list, obj, keys=['uuid', '_id', 'id'], keymatchtype, strings}={}) {
+    thingIndex({option, list, obj, keys=['uuid', '_id', 'id'], keymatchtype, strings, vue=vue}={}) {
       if(typeof option === 'object'){
         obj = true
       }
@@ -235,7 +235,7 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
         list.push(option)
       }
     },
-    pushThing({option, list=this.getsmart(stringList), obj, keys=['uuid', '_id', 'id'], keymatchtype}={}) {
+    pushThing({option, list=this.getsmart(stringList), obj, keys=['uuid', '_id', 'id'], keymatchtype, vue=vue}={}) {
       if (typeof list == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
         list.push(option)
       }
@@ -245,7 +245,7 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
         this.pushOpt(option, list, obj, keys, keymatchtype)
       }
     },
-    pushThings({options, list=this.getsmart(stringList), obj, keys=['uuid', '_id', 'id'], keymatchtype}={}) {
+    pushThings({options, list=this.getsmart(stringList), obj, keys=['uuid', '_id', 'id'], keymatchtype, vue=vue}={}) {
       for (let option of options) {
         this.pushOpt(option, list, obj, keys, keymatchtype)
       }
@@ -255,7 +255,7 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
         list.splice(this.optIndex(option, list, obj, keys, keymatchtype), 1)
       }
     },
-    popThing({option, list=this.getsmart(stringList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype}={}) {
+    popThing({option, list=this.getsmart(stringList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, vue=vue}={}) {
       if (typeof list == 'object' && this.thingIn({option, list, obj, keys, keymatchtype})) {
         list.splice(this.thingIndex({option, list, obj, keys, keymatchtype}), 1)
       }
@@ -265,7 +265,7 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
         this.popOpt(option, list, obj, keys, keymatchtype)
       }
     },
-    popThings({options, list=this.getsmart(stringList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype}={}) {
+    popThings({options, list=this.getsmart(stringList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, vue=vue}={}) {
       for (let option of options) {
         this.popOpt(option, list, obj, keys, keymatchtype)
       }
@@ -277,7 +277,7 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
         this.pushOpt(option, list, obj, keys, keymatchtype)
       }
     },
-    toggleThing({option, list=this.getsmart(stringList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype}={}) {
+    toggleThing({option, list=this.getsmart(stringList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, vue=vue}={}) {
       if (this.optIn(option, list, obj, keys, keymatchtype)) {
         this.popOpt(option, list, obj, keys, keymatchtype)
       } else {
@@ -289,7 +289,7 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
         this.toggleOpt(option, list, obj, keys, keymatchtype)
       }
     },
-    toggleThings({options, list=this.getsmart(stringList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype}={}) {
+    toggleThings({options, list=this.getsmart(stringList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, vue=vue}={}) {
       for (let option in options) {
         if (this.optIn(option, list, obj, keys, keymatchtype)) {
           this.popOpt(option, list, obj, keys, keymatchtype)
@@ -580,7 +580,7 @@ module.exports = function({objList, stringList, reactiveSetter, vue}={}){
     domval(thing){
       return this.getsmart(thing, 'properties.description', '')
   },
-  getThing({option, list=this.getsmart(objList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, strings, defaultValue=undefined}={}){
+  getThing({option, list=this.getsmart(objList), obj=true, keys=['uuid', '_id', 'id'], keymatchtype, strings, defaultValue=undefined, vue=vue}={}){
     var index = this.thingIn({...arguments[0], retIndex: true})
     if(index >= 0){
       return list[index]
