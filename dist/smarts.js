@@ -77,7 +77,7 @@ module.exports = function () {
           strings: strings
         });
 
-        if (obj = "debug") {
+        if (obj == "debug") {
           console.log('index');
           console.log(index);
           console.log('list');
