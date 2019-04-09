@@ -860,7 +860,7 @@ module.exports = function () {
       // If the path array has only 1 more element, we've reached
       // the intended property and set its value
       if (propsArray.length == 1) {
-        if (that.getsmart(vue, 'reactiveSetter', false) && (that.$set || vue.$set)) {
+        if (that.getsmart(vue, 'reactiveSetter', false) && (that.$set || that.getsmart(vue, '$set', false))) {
           that.$set(obj, propsArray[0], value);
         } else {
           obj[propsArray[0]] = value;
