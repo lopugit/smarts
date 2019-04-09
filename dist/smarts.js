@@ -736,7 +736,14 @@ module.exports = function () {
         this.pushOpt(option, list, obj, keys, keymatchtype);
       }
     }
-  }), _defineProperty(_ref16, "ratchetOpt", function ratchetOpt(option, list, obj) {
+  }), _defineProperty(_ref16, "ratchetOpt", function ratchetOpt(option, list, obj) {// find(obj, property, equals){
+    // 	if(this.getsmart(obj, 'constructor', undefined) == Array){
+    // 		for(var i=0; i<obj.length; i++){
+    // 			find(obj[i], )
+    // 		}
+    // 	}
+    // },
+
     var keys = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['uuid', '_id', 'id'];
     var keymatchtype = arguments.length > 4 ? arguments[4] : undefined;
   }), _defineProperty(_ref16, "getsmart", function getsmart(obj, property, defaultValue, context) {
@@ -853,7 +860,7 @@ module.exports = function () {
       // If the path array has only 1 more element, we've reached
       // the intended property and set its value
       if (propsArray.length == 1) {
-        if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
+        if (that.getsmart(vue, 'reactiveSetter', false) && (that.$set || vue.$set)) {
           that.$set(obj, propsArray[0], value);
         } else {
           obj[propsArray[0]] = value;
