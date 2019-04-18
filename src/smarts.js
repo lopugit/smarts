@@ -644,15 +644,7 @@ module.exports = function ({
 					}
 				},
 				set(value){
-					var get = this.getsmart(obj, property, value, true)
-					if (get.undefined) {
-						get = this.setsmart(obj, property, get.value, context)
-					}
-					if (context) {
-						return get
-					} else {
-						return this.getsmart(get, 'value', get)
-					}
+					this.setsmart(obj, property, value)
 				}
 			}
     },
