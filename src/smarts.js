@@ -632,7 +632,7 @@ module.exports = function ({
 			// stands for v-model get or set smart
       // return value from property path, either gotten or smartly set
 			return {
-				get(){
+				get: ()=>{
 					var get = this.getsmart(obj, property, value, true)
 					if (get.undefined) {
 						get = this.setsmart(obj, property, get.value, context)
@@ -643,8 +643,8 @@ module.exports = function ({
 						return this.getsmart(get, 'value', get)
 					}
 				},
-				set(value){
-					this.setsmart(obj, property, value)
+				set: (val)=>{
+					this.setsmart(obj, property, val)
 				}
 			}
     },
