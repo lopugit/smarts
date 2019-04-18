@@ -951,24 +951,26 @@ module.exports = function () {
       return this.getsmart(get, 'value', get);
     }
   }), _defineProperty(_ref16, "vgosmart", function vgosmart(obj, property, value, context) {
+    var _this3 = this;
+
     // stands for v-model get or set smart
     // return value from property path, either gotten or smartly set
     return {
       get: function get() {
-        var get = this.getsmart(obj, property, value, true);
+        var get = _this3.getsmart(obj, property, value, true);
 
         if (get.undefined) {
-          get = this.setsmart(obj, property, get.value, context);
+          get = _this3.setsmart(obj, property, get.value, context);
         }
 
         if (context) {
           return get;
         } else {
-          return this.getsmart(get, 'value', get);
+          return _this3.getsmart(get, 'value', get);
         }
       },
-      set: function set(value) {
-        this.setsmart(obj, property, value);
+      set: function set(val) {
+        _this3.setsmart(obj, property, val);
       }
     };
   }), _defineProperty(_ref16, "getsmartval", function getsmartval(obj, property, defaultValue) {
@@ -991,7 +993,7 @@ module.exports = function () {
   }), _defineProperty(_ref16, "safeparse", function safeparse(something) {
     return this.jsmart.parse(something || '');
   }), _defineProperty(_ref16, "mapsmart", function mapsmart(list) {
-    var _this3 = this;
+    var _this4 = this;
 
     var keyProperty = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'title';
     var returnExistant = arguments.length > 2 ? arguments[2] : undefined;
@@ -1001,7 +1003,7 @@ module.exports = function () {
         reject();
       } else if (list) {
         if (list.length == 0) {
-          if (returnExistant && _this3.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
+          if (returnExistant && _this4.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
             resolve(true);
           } else if (returnExistant) {
             resolve(false);
@@ -1011,8 +1013,8 @@ module.exports = function () {
         }
 
         if (!list.mapped || typeof list.mapped === 'boolean') {
-          if (_this3.getsmart(vue, 'reactiveSetter', false) && _this3.$set) {
-            _this3.$set(list, 'mapped', {});
+          if (_this4.getsmart(vue, 'reactiveSetter', false) && _this4.$set) {
+            _this4.$set(list, 'mapped', {});
           } else {
             list['mapped'] = {};
           }
@@ -1020,14 +1022,14 @@ module.exports = function () {
 
         for (var i = 0; i < list.length; i++) {
           if (typeof list[i] !== 'string') {
-            if (_this3.getsmart(vue, 'reactiveSetter', false) && _this3.$set) {
-              _this3.$set(list.mapped, list[i][keyProperty], list[i]);
+            if (_this4.getsmart(vue, 'reactiveSetter', false) && _this4.$set) {
+              _this4.$set(list.mapped, list[i][keyProperty], list[i]);
             } else {
               list['mapped'][list[i][keyProperty]] = list[i];
             }
 
             if (i == list.length - 1) {
-              if (returnExistant && _this3.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
+              if (returnExistant && _this4.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
                 resolve(true);
               } else if (returnExistant) {
                 resolve(false);
@@ -1060,7 +1062,7 @@ module.exports = function () {
           //   } 
           // } 
           else if (i == list.length - 1) {
-              if (returnExistant && _this3.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
+              if (returnExistant && _this4.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
                 resolve(true);
               } else if (returnExistant) {
                 resolve(false);
