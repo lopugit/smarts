@@ -968,17 +968,7 @@ module.exports = function () {
         }
       },
       set: function set(value) {
-        var get = this.getsmart(obj, property, value, true);
-
-        if (get.undefined) {
-          get = this.setsmart(obj, property, get.value, context);
-        }
-
-        if (context) {
-          return get;
-        } else {
-          return this.getsmart(get, 'value', get);
-        }
+        this.setsmart(obj, property, value);
       }
     };
   }), _defineProperty(_ref16, "getsmartval", function getsmartval(obj, property, defaultValue) {
