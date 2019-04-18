@@ -630,7 +630,6 @@ module.exports = function ({
     },
     vgosmart(obj, property, value, context) {
 			// stands for v-model get or set smart
-			var ret
       // return value from property path, either gotten or smartly set
 			return {
 				get(){

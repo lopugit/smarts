@@ -951,27 +951,34 @@ module.exports = function () {
       return this.getsmart(get, 'value', get);
     }
   }), _defineProperty(_ref16, "vgosmart", function vgosmart(obj, property, value, context) {
-    // stands for get or set smart
-    var ret;
-    var get = this.getsmart(obj, property, value, true);
-
-    if (get.undefined) {
-      get = this.setsmart(obj, property, get.value, context);
-    } // return value from property path, either gotten or smartly set
-
-
-    if (context) {
-      ret = get;
-    } else {
-      ret = this.getsmart(get, 'value', get);
-    }
-
+    // stands for v-model get or set smart
+    // return value from property path, either gotten or smartly set
     return {
       get: function get() {
-        return ret;
+        var get = this.getsmart(obj, property, value, true);
+
+        if (get.undefined) {
+          get = this.setsmart(obj, property, get.value, context);
+        }
+
+        if (context) {
+          return get;
+        } else {
+          return this.getsmart(get, 'value', get);
+        }
       },
       set: function set(value) {
-        return this.setsmart(obj, property, value, context);
+        var get = this.getsmart(obj, property, value, true);
+
+        if (get.undefined) {
+          get = this.setsmart(obj, property, get.value, context);
+        }
+
+        if (context) {
+          return get;
+        } else {
+          return this.getsmart(get, 'value', get);
+        }
       }
     };
   }), _defineProperty(_ref16, "getsmartval", function getsmartval(obj, property, defaultValue) {
