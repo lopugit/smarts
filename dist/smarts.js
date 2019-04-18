@@ -818,7 +818,7 @@ module.exports = function () {
       // If we have reached an undefined/null property
       // then stop executing and return the default value.
       // If no default was provided it will be undefined.
-      if (!propsArray || !obj && !(obj == 0 || obj == '')) {
+      if (!propsArray || typeof obj == 'undefined') {
         if (context) {
           return {
             value: defaultValue,
@@ -950,6 +950,30 @@ module.exports = function () {
     } else {
       return this.getsmart(get, 'value', get);
     }
+  }), _defineProperty(_ref16, "vgosmart", function vgosmart(obj, property, value, context) {
+    // stands for get or set smart
+    var ret;
+    var get = this.getsmart(obj, property, value, true);
+
+    if (get.undefined) {
+      get = this.setsmart(obj, property, get.value, context);
+    } // return value from property path, either gotten or smartly set
+
+
+    if (context) {
+      ret = get;
+    } else {
+      ret = this.getsmart(get, 'value', get);
+    }
+
+    return {
+      get: function get() {
+        return ret;
+      },
+      set: function set(value) {
+        return this.setsmart(obj, property, value, context);
+      }
+    };
   }), _defineProperty(_ref16, "getsmartval", function getsmartval(obj, property, defaultValue) {
     // get the value of a property path based off its type
     var target = this.getsmart(obj, property, defaultValue);
