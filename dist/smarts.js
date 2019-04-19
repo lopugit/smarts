@@ -888,6 +888,10 @@ module.exports = function () {
       if (propsArray.length == 1) {
         if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
           that.$set(obj, propsArray[0], value);
+
+          if (typeof that.getsmart(window, '$store.commit', undefined) == 'function') {
+            window.$store.commit('thing');
+          }
         } else {
           obj[propsArray[0]] = value;
         }
