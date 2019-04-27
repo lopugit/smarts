@@ -592,13 +592,11 @@ module.exports = function ({
         if (typeof obj[propsArray[0]] !== 'object') {
           // If we have reached an undefined/null property
           if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
-						if(typeof obj == undefined || typeof obj == 'string') that.$set(obj, '', {})
 						that.$set(obj, propsArray[0], {})
 						if(typeof that.getsmart(window, '$store.commit', undefined) == 'function'){
 							window.$store.commit('thing')
 						}
           } else {
-						if(typeof obj == undefined || typeof obj == 'string') obj = {}
             obj[propsArray[0]] = {}
           }
         }
