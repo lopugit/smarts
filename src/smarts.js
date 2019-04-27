@@ -502,7 +502,7 @@ module.exports = function ({
         // If we have reached an undefined/null property
         // then stop executing and return the default value.
         // If no default was provided it will be undefined.
-        if (!propsArray || (typeof obj == 'undefined')) {
+        if (!propsArray || (typeof obj == 'undefined') || obj == null) {
           if (context) {
             return {
               value: defaultValue,
