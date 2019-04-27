@@ -570,13 +570,11 @@ module.exports = function ({
         // the intended property and set its value
         if (propsArray.length == 1) {
           if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
-						if(typeof obj == undefined || typeof obj == 'string') that.$set(obj, undefined, {})
 						that.$set(obj, propsArray[0], value)
 						if(typeof that.getsmart(window, '$store.commit', undefined) == 'function'){
 							window.$store.commit('thing')
 						}
           } else {
-						if(typeof obj == undefined || typeof obj == 'string') obj = {}
             obj[propsArray[0]] = value
           }
           if (context) {
@@ -589,11 +587,12 @@ module.exports = function ({
           }
         }
         // Prepare our path array for recursion
-        var remainingProps = propsArray.slice(1)
-        if (obj[propsArray[0]] == undefined) {
+				var remainingProps = propsArray.slice(1)
+				// check if next prop is 
+        if (typeof obj[propsArray[0]] !== 'object') {
           // If we have reached an undefined/null property
           if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
-						if(typeof obj == undefined || typeof obj == 'string') that.$set(obj, undefined, {})
+						if(typeof obj == undefined || typeof obj == 'string') that.$set(obj, '', {})
 						that.$set(obj, propsArray[0], {})
 						if(typeof that.getsmart(window, '$store.commit', undefined) == 'function'){
 							window.$store.commit('thing')
@@ -603,7 +602,6 @@ module.exports = function ({
             obj[propsArray[0]] = {}
           }
         }
-
         return deepGetByArray(obj[propsArray[0]], remainingProps, value)
       }
       if (property) {
