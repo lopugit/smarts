@@ -887,12 +887,14 @@ module.exports = function () {
       // the intended property and set its value
       if (propsArray.length == 1) {
         if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
+          if (_typeof(obj) == undefined || typeof obj == 'string') obj = {};
           that.$set(obj, propsArray[0], value);
 
           if (typeof that.getsmart(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('thing');
           }
         } else {
+          if (_typeof(obj) == undefined || typeof obj == 'string') obj = {};
           obj[propsArray[0]] = value;
         }
 
@@ -912,8 +914,14 @@ module.exports = function () {
       if (obj[propsArray[0]] == undefined) {
         // If we have reached an undefined/null property
         if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
+          if (_typeof(obj) == undefined || typeof obj == 'string') obj = {};
           that.$set(obj, propsArray[0], {});
+
+          if (typeof that.getsmart(window, '$store.commit', undefined) == 'function') {
+            window.$store.commit('thing');
+          }
         } else {
+          if (_typeof(obj) == undefined || typeof obj == 'string') obj = {};
           obj[propsArray[0]] = {};
         }
       }
@@ -926,6 +934,10 @@ module.exports = function () {
     } else {
       if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
         that.$set(obj, undefined, value);
+
+        if (typeof that.getsmart(window, '$store.commit', undefined) == 'function') {
+          window.$store.commit('thing');
+        }
       } else {
         obj = value;
       }
