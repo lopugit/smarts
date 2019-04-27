@@ -818,7 +818,7 @@ module.exports = function () {
       // If we have reached an undefined/null property
       // then stop executing and return the default value.
       // If no default was provided it will be undefined.
-      if (!propsArray || typeof obj == 'undefined') {
+      if (!propsArray || typeof obj == 'undefined' || obj == null) {
         if (context) {
           return {
             value: defaultValue,
@@ -912,7 +912,6 @@ module.exports = function () {
       if (_typeof(obj[propsArray[0]]) !== 'object') {
         // If we have reached an undefined/null property
         if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
-          if (_typeof(obj) == undefined || typeof obj == 'string') that.$set(obj, '', {});
           that.$set(obj, propsArray[0], {});
 
           if (typeof that.getsmart(window, '$store.commit', undefined) == 'function') {
