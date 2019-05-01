@@ -50,8 +50,6 @@ module.exports = function () {
       }
     },
     setThing: function setThing() {
-      var _this = this;
-
       var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
           option = _ref3.option,
           _ref3$list = _ref3.list,
@@ -67,47 +65,43 @@ module.exports = function () {
           _ref3$vue = _ref3.vue,
           vue = _ref3$vue === void 0 ? vue : _ref3$vue;
 
-      return new Promise(function (resolve, reject) {
-        var index = _this.thingIndex({
-          option: option,
-          list: list,
-          obj: obj,
-          keys: keys,
-          keymatchtype: keymatchtype,
-          strings: strings
-        });
-
-        if (obj == "debug") {
-          console.log('index');
-          console.log(index);
-          console.log('list');
-          console.log(list);
-        }
-
-        if (index >= 0 && list) {
-          if (targets) {
-            for (var i = 0; i < targets.length; i++) {
-              var value = _this.getsmart(option, targets[i], undefined);
-
-              if (value) {
-                _this.setsmart(list[index], targets[i], value);
-              }
-            }
-          } else {
-            list.splice(index, 1, option);
-          } // list[index] = option
-
-        } else if (push && list) {
-          list.push(option);
-          index = list.length - 1;
-        }
-
-        resolve(index);
+      var index = this.thingIndex({
+        option: option,
+        list: list,
+        obj: obj,
+        keys: keys,
+        keymatchtype: keymatchtype,
+        strings: strings
       });
+
+      if (obj == "debug") {
+        console.log('index');
+        console.log(index);
+        console.log('list');
+        console.log(list);
+      }
+
+      if (index >= 0 && list) {
+        if (targets) {
+          for (var i = 0; i < targets.length; i++) {
+            var value = this.getsmart(option, targets[i], undefined);
+
+            if (value) {
+              this.setsmart(list[index], targets[i], value);
+            }
+          }
+        } else {
+          list.splice(index, 1, option);
+        } // list[index] = option
+
+      } else if (push && list) {
+        list.push(option);
+        index = list.length - 1;
+      }
+
+      return index;
     },
     setThings: function setThings() {
-      var _this2 = this;
-
       var _ref4 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
           options = _ref4.options,
           _ref4$list = _ref4.list,
@@ -121,43 +115,40 @@ module.exports = function () {
           _ref4$vue = _ref4.vue,
           vue = _ref4$vue === void 0 ? vue : _ref4$vue;
 
-      return new Promise(function (resolve, reject) {
-        if (options && list) {
-          var _iteratorNormalCompletion = true;
-          var _didIteratorError = false;
-          var _iteratorError = undefined;
+      if (options && list) {
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
 
+        try {
+          for (var _iterator = options[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var option = _step.value;
+            this.setThing({
+              option: option,
+              list: list,
+              obj: obj,
+              keys: keys,
+              keymatchtype: keymatchtype,
+              push: push
+            });
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
           try {
-            for (var _iterator = options[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-              var option = _step.value;
-
-              _this2.setThing({
-                option: option,
-                list: list,
-                obj: obj,
-                keys: keys,
-                keymatchtype: keymatchtype,
-                push: push
-              });
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
             }
-          } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
           } finally {
-            try {
-              if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-                _iterator["return"]();
-              }
-            } finally {
-              if (_didIteratorError) {
-                throw _iteratorError;
-              }
+            if (_didIteratorError) {
+              throw _iteratorError;
             }
           }
         }
+      }
 
-        resolve();
-      });
+      return list;
     },
     optIn: function optIn(option) {
       var list = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.getsmart(stringList);
@@ -963,26 +954,26 @@ module.exports = function () {
       return this.getsmart(get, 'value', get);
     }
   }), _defineProperty(_ref16, "vgosmart", function vgosmart(obj, property, value, context) {
-    var _this3 = this;
+    var _this = this;
 
     // stands for v-model get or set smart
     // return value from property path, either gotten or smartly set
     return {
       get: function get() {
-        var get = _this3.getsmart(obj, property, value, true);
+        var get = _this.getsmart(obj, property, value, true);
 
         if (get.undefined) {
-          get = _this3.setsmart(obj, property, get.value, context);
+          get = _this.setsmart(obj, property, get.value, context);
         }
 
         if (context) {
           return get;
         } else {
-          return _this3.getsmart(get, 'value', get);
+          return _this.getsmart(get, 'value', get);
         }
       },
       set: function set(val) {
-        _this3.setsmart(obj, property, val);
+        _this.setsmart(obj, property, val);
       }
     };
   }), _defineProperty(_ref16, "getsmartval", function getsmartval(obj, property, defaultValue) {
@@ -1005,7 +996,7 @@ module.exports = function () {
   }), _defineProperty(_ref16, "safeparse", function safeparse(something) {
     return this.jsmart.parse(something || '');
   }), _defineProperty(_ref16, "mapsmart", function mapsmart(list) {
-    var _this4 = this;
+    var _this2 = this;
 
     var keyProperty = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'title';
     var returnExistant = arguments.length > 2 ? arguments[2] : undefined;
@@ -1015,7 +1006,7 @@ module.exports = function () {
         reject();
       } else if (list) {
         if (list.length == 0) {
-          if (returnExistant && _this4.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
+          if (returnExistant && _this2.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
             resolve(true);
           } else if (returnExistant) {
             resolve(false);
@@ -1025,8 +1016,8 @@ module.exports = function () {
         }
 
         if (!list.mapped || typeof list.mapped === 'boolean') {
-          if (_this4.getsmart(vue, 'reactiveSetter', false) && _this4.$set) {
-            _this4.$set(list, 'mapped', {});
+          if (_this2.getsmart(vue, 'reactiveSetter', false) && _this2.$set) {
+            _this2.$set(list, 'mapped', {});
           } else {
             list['mapped'] = {};
           }
@@ -1034,14 +1025,14 @@ module.exports = function () {
 
         for (var i = 0; i < list.length; i++) {
           if (typeof list[i] !== 'string') {
-            if (_this4.getsmart(vue, 'reactiveSetter', false) && _this4.$set) {
-              _this4.$set(list.mapped, list[i][keyProperty], list[i]);
+            if (_this2.getsmart(vue, 'reactiveSetter', false) && _this2.$set) {
+              _this2.$set(list.mapped, list[i][keyProperty], list[i]);
             } else {
               list['mapped'][list[i][keyProperty]] = list[i];
             }
 
             if (i == list.length - 1) {
-              if (returnExistant && _this4.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
+              if (returnExistant && _this2.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
                 resolve(true);
               } else if (returnExistant) {
                 resolve(false);
@@ -1074,7 +1065,7 @@ module.exports = function () {
           //   } 
           // } 
           else if (i == list.length - 1) {
-              if (returnExistant && _this4.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
+              if (returnExistant && _this2.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
                 resolve(true);
               } else if (returnExistant) {
                 resolve(false);
