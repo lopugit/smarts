@@ -43,39 +43,37 @@ module.exports = function ({
       targets,
       vue = vue
     } = {}) {
-      return new Promise((resolve, reject) => {
-        let index = this.thingIndex({
-          option,
-          list,
-          obj,
-          keys,
-          keymatchtype,
-          strings
-        })
-        if (obj == "debug") {
-          console.log('index')
-          console.log(index)
-          console.log('list')
-          console.log(list)
-        }
-        if (index >= 0 && list) {
-          if (targets) {
-            for (var i = 0; i < targets.length; i++) {
-              let value = this.getsmart(option, targets[i], undefined)
-              if (value) {
-                this.setsmart(list[index], targets[i], value)
-              }
-            }
-          } else {
-            list.splice(index, 1, option)
-          }
-          // list[index] = option
-        } else if (push && list) {
-          list.push(option)
-          index = list.length - 1
-        }
-        resolve(index)
-      })
+			let index = this.thingIndex({
+				option,
+				list,
+				obj,
+				keys,
+				keymatchtype,
+				strings
+			})
+			if (obj == "debug") {
+				console.log('index')
+				console.log(index)
+				console.log('list')
+				console.log(list)
+			}
+			if (index >= 0 && list) {
+				if (targets) {
+					for (var i = 0; i < targets.length; i++) {
+						let value = this.getsmart(option, targets[i], undefined)
+						if (value) {
+							this.setsmart(list[index], targets[i], value)
+						}
+					}
+				} else {
+					list.splice(index, 1, option)
+				}
+				// list[index] = option
+			} else if (push && list) {
+				list.push(option)
+				index = list.length - 1
+			}
+			return index
     },
     setThings({
       options,
@@ -86,21 +84,19 @@ module.exports = function ({
       push,
       vue = vue
     } = {}) {
-      return new Promise((resolve, reject) => {
-        if (options && list) {
-          for (let option of options) {
-            this.setThing({
-              option,
-              list,
-              obj,
-              keys,
-              keymatchtype,
-              push
-            })
-          }
-        }
-        resolve()
-      })
+			if (options && list) {
+				for (let option of options) {
+					this.setThing({
+						option,
+						list,
+						obj,
+						keys,
+						keymatchtype,
+						push
+					})
+				}
+			}
+			return list
     },
     optIn(option, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
       if (typeof option === 'object') {
