@@ -71,8 +71,11 @@ module.exports = function ({
 				// list[index] = option
 			} else if (push && list) {
 				if (this.getsmart(vue, 'reactiveSetter', false) && this.$set) {
-					list.splice(list, list.length, option)
-				} else {
+					list.splice(list.length, 0, option)
+					if(typeof that.getsmart(window, '$store.commit', undefined) == 'function'){
+						window.$store.commit('thing')
+					}
+			} else {
 					list.push(option)
 				}
 				index = list.length - 1
@@ -329,8 +332,11 @@ module.exports = function ({
     pushOpt(option, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
       if (typeof list == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
 				if (this.getsmart(vue, 'reactiveSetter', false) && this.$set) {
-					list.splice(list, list.length, option)
-				} else {
+					list.splice(list.length, 0, option)
+					if(typeof that.getsmart(window, '$store.commit', undefined) == 'function'){
+						window.$store.commit('thing')
+					}
+			} else {
 					list.push(option)
 				}
       }
@@ -345,8 +351,11 @@ module.exports = function ({
     } = {}) {
       if (typeof list == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
 				if (this.getsmart(vue, 'reactiveSetter', false) && this.$set) {
-					list.splice(list, list.length, option)
-				} else {
+					list.splice(list.length, 0, option)
+					if(typeof that.getsmart(window, '$store.commit', undefined) == 'function'){
+						window.$store.commit('thing')
+					}
+			} else {
 					list.push(option)
 				}
       }
