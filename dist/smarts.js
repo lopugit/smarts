@@ -638,6 +638,12 @@ module.exports = function () {
 
       if (_typeof(list) == 'object' && this.optIn(option, list, obj, keys, keymatchtype)) {
         list.splice(this.optIndex(option, list, obj, keys, keymatchtype), 1);
+
+        if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+          if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
+            window.$store.commit('thing');
+          }
+        }
       }
     }
   }, _defineProperty(_ref16, "popThing", function popThing() {
@@ -667,6 +673,12 @@ module.exports = function () {
         keys: keys,
         keymatchtype: keymatchtype
       }), 1);
+
+      if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+        if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
+          window.$store.commit('thing');
+        }
+      }
     }
   }), _defineProperty(_ref16, "popOpts", function popOpts(options) {
     var list = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.getsmart(stringList);
