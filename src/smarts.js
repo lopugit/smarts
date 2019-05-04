@@ -73,6 +73,11 @@ module.exports = function ({
 					}
 				} else {
 					list.splice(index, 1, option)
+					if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+						if(typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
+							window.$store.commit('thing')
+						}
+					}
 				}
 				// list[index] = option
 			} else if (push && list) {
@@ -81,7 +86,7 @@ module.exports = function ({
 					if(typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
 						window.$store.commit('thing')
 					}
-			} else {
+				} else {
 					list.push(option)
 				}
 				index = list.length - 1
