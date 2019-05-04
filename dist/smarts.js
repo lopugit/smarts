@@ -15,6 +15,12 @@ module.exports = function () {
       reactiveSetter = _ref.reactiveSetter,
       vue = _ref.vue;
 
+  var local = {
+    objList: objList,
+    stringList: stringList,
+    reactiveSetter: reactiveSetter,
+    vue: vue
+  };
   return _ref16 = {
     popThing: function popThing() {
       var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -95,7 +101,7 @@ module.exports = function () {
         } // list[index] = option
 
       } else if (push && list) {
-        if (this.getsmart(vue, 'reactiveSetter', false) && this.$set) {
+        if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
           list.splice(list.length, 0, option);
 
           if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
@@ -518,7 +524,7 @@ module.exports = function () {
       var keymatchtype = arguments.length > 4 ? arguments[4] : undefined;
 
       if (_typeof(list) == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
-        if (this.getsmart(vue, 'reactiveSetter', false) && this.$set) {
+        if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
           list.splice(list.length, 0, option);
 
           if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
@@ -542,7 +548,7 @@ module.exports = function () {
           vue = _ref9$vue === void 0 ? vue : _ref9$vue;
 
       if (_typeof(list) == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
-        if (this.getsmart(vue, 'reactiveSetter', false) && this.$set) {
+        if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
           list.splice(list.length, 0, option);
 
           if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
@@ -1041,7 +1047,7 @@ module.exports = function () {
         }
 
         if (!list.mapped || typeof list.mapped === 'boolean') {
-          if (_this2.getsmart(vue, 'reactiveSetter', false) && _this2.$set) {
+          if (_this2.getsmart(local.vue, 'reactiveSetter', false) && _this2.$set) {
             _this2.$set(list, 'mapped', {});
           } else {
             list['mapped'] = {};
@@ -1050,7 +1056,7 @@ module.exports = function () {
 
         for (var i = 0; i < list.length; i++) {
           if (typeof list[i] !== 'string') {
-            if (_this2.getsmart(vue, 'reactiveSetter', false) && _this2.$set) {
+            if (_this2.getsmart(local.vue, 'reactiveSetter', false) && _this2.$set) {
               _this2.$set(list.mapped, list[i][keyProperty], list[i]);
             } else {
               list['mapped'][list[i][keyProperty]] = list[i];
