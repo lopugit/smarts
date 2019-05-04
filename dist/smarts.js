@@ -98,7 +98,7 @@ module.exports = function () {
         if (this.getsmart(vue, 'reactiveSetter', false) && this.$set) {
           list.splice(list.length, 0, option);
 
-          if (typeof that.getsmart(window, '$store.commit', undefined) == 'function') {
+          if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('thing');
           }
         } else {
@@ -521,7 +521,7 @@ module.exports = function () {
         if (this.getsmart(vue, 'reactiveSetter', false) && this.$set) {
           list.splice(list.length, 0, option);
 
-          if (typeof that.getsmart(window, '$store.commit', undefined) == 'function') {
+          if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('thing');
           }
         } else {
@@ -545,7 +545,7 @@ module.exports = function () {
         if (this.getsmart(vue, 'reactiveSetter', false) && this.$set) {
           list.splice(list.length, 0, option);
 
-          if (typeof that.getsmart(window, '$store.commit', undefined) == 'function') {
+          if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('thing');
           }
         } else {
