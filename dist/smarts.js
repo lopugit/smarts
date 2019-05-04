@@ -95,7 +95,7 @@ module.exports = function () {
         } // list[index] = option
 
       } else if (push && list) {
-        if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
+        if (this.getsmart(vue, 'reactiveSetter', false) && this.$set) {
           list.splice(list, list.length, option);
         } else {
           list.push(option);
@@ -514,7 +514,7 @@ module.exports = function () {
       var keymatchtype = arguments.length > 4 ? arguments[4] : undefined;
 
       if (_typeof(list) == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
-        if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
+        if (this.getsmart(vue, 'reactiveSetter', false) && this.$set) {
           list.splice(list, list.length, option);
         } else {
           list.push(option);
@@ -534,7 +534,7 @@ module.exports = function () {
           vue = _ref9$vue === void 0 ? vue : _ref9$vue;
 
       if (_typeof(list) == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
-        if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
+        if (this.getsmart(vue, 'reactiveSetter', false) && this.$set) {
           list.splice(list, list.length, option);
         } else {
           list.push(option);
