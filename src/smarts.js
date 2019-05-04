@@ -366,7 +366,7 @@ module.exports = function ({
 					if(typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
 						window.$store.commit('thing')
 					}
-			} else {
+				} else {
 					list.push(option)
 				}
       }
@@ -390,8 +390,13 @@ module.exports = function ({
     },
     popOpt(option, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
       if (typeof list == 'object' && this.optIn(option, list, obj, keys, keymatchtype)) {
-        list.splice(this.optIndex(option, list, obj, keys, keymatchtype), 1)
-      }
+				list.splice(this.optIndex(option, list, obj, keys, keymatchtype), 1)
+				if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+					if(typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
+						window.$store.commit('thing')
+					}
+				}      
+			}
     },
     popThing({
       option,
@@ -414,7 +419,12 @@ module.exports = function ({
           obj,
           keys,
           keymatchtype
-        }), 1)
+				}), 1)
+				if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+					if(typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
+						window.$store.commit('thing')
+					}
+				} 
       }
     },
     popOpts(options, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
