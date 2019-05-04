@@ -70,7 +70,7 @@ module.exports = function ({
 				}
 				// list[index] = option
 			} else if (push && list) {
-				if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
+				if (this.getsmart(vue, 'reactiveSetter', false) && this.$set) {
 					list.splice(list, list.length, option)
 				} else {
 					list.push(option)
@@ -328,7 +328,7 @@ module.exports = function ({
     },
     pushOpt(option, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
       if (typeof list == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
-				if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
+				if (this.getsmart(vue, 'reactiveSetter', false) && this.$set) {
 					list.splice(list, list.length, option)
 				} else {
 					list.push(option)
@@ -344,7 +344,7 @@ module.exports = function ({
       vue = vue
     } = {}) {
       if (typeof list == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
-				if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
+				if (this.getsmart(vue, 'reactiveSetter', false) && this.$set) {
 					list.splice(list, list.length, option)
 				} else {
 					list.push(option)
