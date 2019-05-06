@@ -715,7 +715,13 @@ module.exports = function () {
       try {
         for (var _iterator7 = options[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
           var option = _step7.value;
-          this.pushThing(option, list, obj, keys, keymatchtype);
+          this.pushThing({
+            option: option,
+            list: list,
+            obj: obj,
+            keys: keys,
+            keymatchtype: keymatchtype
+          });
         }
       } catch (err) {
         _didIteratorError7 = true;
