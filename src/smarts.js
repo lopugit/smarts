@@ -407,7 +407,7 @@ module.exports = ({
       keymatchtype,
       vue = vue
     } = {}) {
-      if (typeof list == 'object' && !this.thingIn(option, list, obj, keys, keymatchtype)) {
+      if (typeof list == 'object' && !this.thingIn({option, list, obj, keys, keymatchtype})) {
 				if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
 					list.splice(list.length, 0, option)
 					if(typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
