@@ -1,5 +1,5 @@
 module.exports = {
   presets: [
-    '@quasar/babel-preset-app'
+    'es2015'
   ]
 }
