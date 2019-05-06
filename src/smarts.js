@@ -173,17 +173,17 @@ module.exports = ({
         for (var i = 0; i < list.length; i++) {
           for (var indKey = 0; indKey < keys.length; indKey++) {
             if (keymatchtype == 'broad') {
-              if (list[i] && this.getsmart(list[i], keys[indKey], undefined) == this.getsmart(option, keys[indKey], undefined) && this.getsmart(list[i], keys[indKey], undefined) !== undefined) {
+              if (list[i] && this.getsmart(list[i], keys[indKey], undefined) == this.getsmart(option, keys[indKey], undefined) && (this.getsmart(list[i], keys[indKey], undefined) !== undefined)) {
                 return true
-              } else if (list[i] && typeof list[i] == 'string' && list[i] == this.getsmart(option, keys[indKey], undefined) && this.getsmart(option, keys[indKey], undefined) !== undefined) {
+              } else if (list[i] && typeof list[i] == 'string' && (list[i] == this.getsmart(option, keys[indKey], undefined)) && (this.getsmart(option, keys[indKey], undefined) !== undefined)) {
                 return true
               }
             } else {
-              if (list[i] && this.getsmart(list[i], keys[indKey], undefined) == this.getsmart(option, keys[indKey], undefined) && this.getsmart(list[i], keys[indKey], undefined) !== undefined) {
+              if (list[i] && (this.getsmart(list[i], keys[indKey], undefined) == this.getsmart(option, keys[indKey], undefined)) && (this.getsmart(list[i], keys[indKey], undefined) !== undefined)) {
                 if (indKey == keys.length - 1) {
                   return true
                 }
-              } else if (list[i] && typeof list[i] == 'string' && list[i] == this.getsmart(option, keys[indKey], undefined) && this.getsmart(option, keys[indKey], undefined) !== undefined) {
+              } else if (list[i] && typeof list[i] == 'string' && (list[i] == this.getsmart(option, keys[indKey], undefined)) && (this.getsmart(option, keys[indKey], undefined) !== undefined)) {
                 if (indKey == keys.length - 1) {
                   return true
                 }
@@ -394,7 +394,7 @@ module.exports = ({
 					if(typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
 						window.$store.commit('thing')
 					}
-			} else {
+				} else {
 					list.push(option)
 				}
       }
@@ -407,7 +407,7 @@ module.exports = ({
       keymatchtype,
       vue = vue
     } = {}) {
-      if (typeof list == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
+      if (typeof list == 'object' && !this.thingIn(option, list, obj, keys, keymatchtype)) {
 				if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
 					list.splice(list.length, 0, option)
 					if(typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
@@ -432,7 +432,7 @@ module.exports = ({
       vue = vue
     } = {}) {
       for (let option of options) {
-        this.pushOpt(option, list, obj, keys, keymatchtype)
+        this.pushThing(option, list, obj, keys, keymatchtype)
       }
     },
     popOpt(option, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
