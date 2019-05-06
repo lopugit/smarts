@@ -37,7 +37,13 @@ module.exports = ({
 					) 
 				) 
 			){
-				return eval("("+val+")")
+				let ret = val
+				try {
+					ret = eval("("+val+")")
+				} catch(err){
+					
+				}
+				return ret
 			}
 			return val
 		},	
