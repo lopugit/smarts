@@ -70,7 +70,7 @@ module.exports = function () {
     },
     parseFunc: function parseFunc(key, val) {
       if (typeof val === 'string' && val[val.length - 1] == '}' && (val.slice(0, 8) === 'function' || val.slice(0, 2) === '()' || val.slice(0, 5) === 'async')) {
-        return eval("(".concat(val, ")"));
+        return eval("(" + val + ")");
       }
 
       return val;
