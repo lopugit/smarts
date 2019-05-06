@@ -18,7 +18,7 @@ module.exports = function ({
 		parse: f.parse,
 		stringifyFunc: function stringifyFunc(key, val){
 			if (
-				typeof val === 'function' && 
+				val instanceof Function && 
 				typeof val.toString === 'function'
 			){
 				return val.toString()
