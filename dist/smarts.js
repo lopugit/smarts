@@ -28,7 +28,7 @@ module.exports = function () {
     string: f.stringify,
     parse: f.parse,
     stringifyFunc: function stringifyFunc(key, val) {
-      if (typeof val === 'function' && typeof val.toString === 'function') {
+      if (val instanceof Function && typeof val.toString === 'function') {
         return val.toString();
       }
 
