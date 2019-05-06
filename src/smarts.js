@@ -46,7 +46,7 @@ module.exports = ({
 		},
 		mod: async (args, mod)=>{
 			await mod(args)
-			return obj
+			return args
 		},
     popThing({
       option,
