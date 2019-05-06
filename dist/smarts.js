@@ -24,6 +24,9 @@ module.exports = function () {
     vue: vue
   };
   return _ref16 = {
+    stringify: f.stringify,
+    string: f.stringify,
+    parse: f.parse,
     stringifyFunc: function stringifyFunc(key, val) {
       if (typeof val === 'function' && typeof val.toString === 'function') {
         return val.toString();
