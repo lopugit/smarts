@@ -1,3 +1,5 @@
+let f = require('flatted')
+
 module.exports = function ({
   objList,
   stringList,
@@ -11,6 +13,34 @@ module.exports = function ({
 		vue
 	}
   return {
+		stringifyFunc: function stringifyFunc(key, val){
+			if (
+				typeof val === 'function' && 
+				typeof val.toString === 'function'
+			){
+				return val.toString()
+			}
+			return val
+		},
+		parseFunc: function(key, val){
+			if (
+				typeof val === 'string' && 
+				( 
+					val[val.length-1] == '}' && 
+					( 
+						val.slice(0,8) === 'function' || 
+						val.slice(0,2) === '()' || 
+						val.slice(0,5) === 'async'
+					) 
+				) 
+			){
+				return eval(`(${val})`)
+			}
+			return val
+		},	
+		dupe(obj){
+			return f.parse(f.stringify(obj, this.stringifyFunc), this.parseFunc)
+		},
     popThing({
       option,
       list = this.getsmart(stringList),
@@ -817,7 +847,7 @@ module.exports = function ({
         return defaultValue
       }
     },
-		equals(obj1, obj2){
+		equal(obj1, obj2){
 			if((obj1 && obj2) && (typeof obj1 == 'object') && (typeof obj2 == 'object')){
 				//Loop through properties in object 1
 				for (var p in obj1) {
@@ -827,7 +857,7 @@ module.exports = function ({
 					switch (typeof (obj1[p])) {
 						//Deep compare objects
 						case 'object':
-							if (!this.equals(obj1[p], obj2[p])) return false;
+							if (!this.equal(obj1[p], obj2[p])) return false;
 							break;
 						//Compare function code
 						case 'function':
