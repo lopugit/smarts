@@ -90,7 +90,7 @@ module.exports = function () {
                 return _mod(args);
 
               case 2:
-                return _context.abrupt("return", obj);
+                return _context.abrupt("return", args);
 
               case 3:
               case "end":
