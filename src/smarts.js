@@ -41,7 +41,7 @@ module.exports = function ({
 			}
 			return val
 		},	
-		dupe(obj){
+		dupe: function(obj){
 			return f.parse(f.stringify(obj, this.stringifyFunc), this.parseFunc)
 		},
     popThing({
