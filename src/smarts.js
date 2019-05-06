@@ -21,7 +21,7 @@ module.exports = function ({
 				val instanceof Function && 
 				typeof val.toString === 'function'
 			){
-				return val.toString()
+				return "thing"+val.toString()
 			}
 			return val
 		},
@@ -31,13 +31,20 @@ module.exports = function ({
 				( 
 					val[val.length-1] == '}' && 
 					( 
+						val.slice(0,5) === 'thing' || 
 						val.slice(0,8) === 'function' || 
 						val.slice(0,2) === '()' || 
 						val.slice(0,5) === 'async'
 					) 
 				) 
 			){
-				return eval(`(${val})`)
+				if(						
+					val.slice(0,5) === 'thing'
+				){
+					return eval(`(${val.slice(5,val.length)})`)
+				} else {
+					return eval(`(${val})`)
+				}
 			}
 			return val
 		},	
