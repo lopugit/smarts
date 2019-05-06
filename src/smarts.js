@@ -41,7 +41,7 @@ module.exports = ({
 				try {
 					ret = eval("("+val+")")
 				} catch(err){
-					
+
 				}
 				return ret
 			}
@@ -51,7 +51,11 @@ module.exports = ({
 			return f.parse(f.stringify(obj, this.stringifyFunc), this.parseFunc)
 		},
 		mod: async (args, mod)=>{
-			await mod(args)
+			if(mod instanceof Promise){
+				await mod(args)
+			} else {
+				mod(args)
+			}
 			return args
 		},
     popThing({
