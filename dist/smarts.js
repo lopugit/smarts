@@ -6,6 +6,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+var f = require('flatted');
+
 module.exports = function () {
   var _ref16;
 
@@ -22,6 +24,23 @@ module.exports = function () {
     vue: vue
   };
   return _ref16 = {
+    stringifyFunc: function stringifyFunc(key, val) {
+      if (typeof val === 'function' && typeof val.toString === 'function') {
+        return val.toString();
+      }
+
+      return val;
+    },
+    parseFunc: function parseFunc(key, val) {
+      if (typeof val === 'string' && val[val.length - 1] == '}' && (val.slice(0, 8) === 'function' || val.slice(0, 2) === '()' || val.slice(0, 5) === 'async')) {
+        return eval("(".concat(val, ")"));
+      }
+
+      return val;
+    },
+    dupe: function dupe(obj) {
+      return f.parse(f.stringify(obj, this.stringifyFunc), this.parseFunc);
+    },
     popThing: function popThing() {
       var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
           option = _ref2.option,
@@ -1155,7 +1174,7 @@ module.exports = function () {
     } else {
       return defaultValue;
     }
-  }), _defineProperty(_ref16, "equals", function equals(obj1, obj2) {
+  }), _defineProperty(_ref16, "equal", function equal(obj1, obj2) {
     if (obj1 && obj2 && _typeof(obj1) == 'object' && _typeof(obj2) == 'object') {
       //Loop through properties in object 1
       for (var p in obj1) {
@@ -1165,7 +1184,7 @@ module.exports = function () {
         switch (_typeof(obj1[p])) {
           //Deep compare objects
           case 'object':
-            if (!this.equals(obj1[p], obj2[p])) return false;
+            if (!this.equal(obj1[p], obj2[p])) return false;
             break;
           //Compare function code
 
