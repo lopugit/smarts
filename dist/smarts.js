@@ -655,7 +655,7 @@ module.exports = function () {
           _ref9$vue = _ref9.vue,
           vue = _ref9$vue === void 0 ? vue : _ref9$vue;
 
-      if (_typeof(list) == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
+      if (_typeof(list) == 'object' && !this.thingIn(option, list, obj, keys, keymatchtype)) {
         if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
           list.splice(list.length, 0, option);
 
@@ -715,7 +715,7 @@ module.exports = function () {
       try {
         for (var _iterator7 = options[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
           var option = _step7.value;
-          this.pushOpt(option, list, obj, keys, keymatchtype);
+          this.pushThing(option, list, obj, keys, keymatchtype);
         }
       } catch (err) {
         _didIteratorError7 = true;
