@@ -8,8 +8,6 @@ require("core-js/modules/es6.object.keys");
 
 require("core-js/modules/es6.object.define-property");
 
-require("core-js/modules/es6.promise");
-
 require("core-js/modules/es6.regexp.split");
 
 require("core-js/modules/es6.array.index-of");
@@ -21,6 +19,8 @@ require("core-js/modules/es6.symbol");
 require("core-js/modules/web.dom.iterable");
 
 require("core-js/modules/es6.array.iterator");
+
+require("core-js/modules/es6.promise");
 
 require("regenerator-runtime/runtime");
 
@@ -92,13 +92,25 @@ module.exports = function () {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.next = 2;
+                if (!(_mod instanceof Promise)) {
+                  _context.next = 5;
+                  break;
+                }
+
+                _context.next = 3;
                 return _mod(args);
 
-              case 2:
+              case 3:
+                _context.next = 6;
+                break;
+
+              case 5:
+                _mod(args);
+
+              case 6:
                 return _context.abrupt("return", args);
 
-              case 3:
+              case 7:
               case "end":
                 return _context.stop();
             }
