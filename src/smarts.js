@@ -21,7 +21,7 @@ module.exports = function ({
 				val instanceof Function && 
 				typeof val.toString === 'function'
 			){
-				return "thing"+val.toString()
+				return val.toString()
 			}
 			return val
 		},
