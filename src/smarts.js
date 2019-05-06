@@ -432,7 +432,7 @@ module.exports = ({
       vue = vue
     } = {}) {
       for (let option of options) {
-        this.pushThing(option, list, obj, keys, keymatchtype)
+        this.pushThing({option, list, obj, keys, keymatchtype})
       }
     },
     popOpt(option, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
