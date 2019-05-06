@@ -13,6 +13,9 @@ module.exports = function ({
 		vue
 	}
   return {
+		stringify: f.stringify,
+		string: f.stringify,
+		parse: f.parse,
 		stringifyFunc: function stringifyFunc(key, val){
 			if (
 				typeof val === 'function' && 
