@@ -37,7 +37,7 @@ module.exports = ({
 					) 
 				) 
 			){
-				return eval(`(${val})`)
+				return eval("("+val+")")
 			}
 			return val
 		},	
