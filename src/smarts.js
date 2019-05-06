@@ -1,11 +1,11 @@
 let f = require('flatted')
 
-module.exports = function ({
+module.exports = ({
   objList,
   stringList,
   reactiveSetter,
   vue
-} = {}) {
+} = {}) => {
 	let local = {
 		objList,
 		stringList,
@@ -43,6 +43,10 @@ module.exports = function ({
 		},	
 		dupe: function(obj){
 			return f.parse(f.stringify(obj, this.stringifyFunc), this.parseFunc)
+		},
+		mod: async (obj, mod)=>{
+			await mod(obj)
+			return obj
 		},
     popThing({
       option,
