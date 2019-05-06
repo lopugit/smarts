@@ -35,12 +35,8 @@ module.exports = function () {
       return val;
     },
     parseFunc: function parseFunc(key, val) {
-      if (typeof val === 'string' && val[val.length - 1] == '}' && (val.slice(0, 5) === 'thing' || val.slice(0, 8) === 'function' || val.slice(0, 2) === '()' || val.slice(0, 5) === 'async')) {
-        if (val.slice(0, 5) === 'thing') {
-          return eval("(".concat(val.slice(5, val.length), ")"));
-        } else {
-          return eval("(".concat(val, ")"));
-        }
+      if (typeof val === 'string' && val[val.length - 1] == '}' && (val.slice(0, 8) === 'function' || val.slice(0, 2) === '()' || val.slice(0, 5) === 'async')) {
+        return eval("(".concat(val, ")"));
       }
 
       return val;
