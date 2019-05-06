@@ -44,8 +44,8 @@ module.exports = ({
 		dupe: function(obj){
 			return f.parse(f.stringify(obj, this.stringifyFunc), this.parseFunc)
 		},
-		mod: async (obj, mod)=>{
-			await mod(obj)
+		mod: async (args, mod)=>{
+			await mod(args)
 			return obj
 		},
     popThing({
