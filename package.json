@@ -32,5 +32,8 @@
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-es2015": "^7.0.0-beta.53",
     "flatted": "^2.0.0"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.4.4"
   }
 }
