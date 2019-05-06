@@ -51,13 +51,13 @@ module.exports = function () {
     mod: function () {
       var _mod2 = _asyncToGenerator(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee(obj, _mod) {
+      regeneratorRuntime.mark(function _callee(args, _mod) {
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return _mod(obj);
+                return _mod(args);
 
               case 2:
                 return _context.abrupt("return", obj);
