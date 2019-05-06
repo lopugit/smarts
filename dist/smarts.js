@@ -655,7 +655,13 @@ module.exports = function () {
           _ref9$vue = _ref9.vue,
           vue = _ref9$vue === void 0 ? vue : _ref9$vue;
 
-      if (_typeof(list) == 'object' && !this.thingIn(option, list, obj, keys, keymatchtype)) {
+      if (_typeof(list) == 'object' && !this.thingIn({
+        option: option,
+        list: list,
+        obj: obj,
+        keys: keys,
+        keymatchtype: keymatchtype
+      })) {
         if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
           list.splice(list.length, 0, option);
 
