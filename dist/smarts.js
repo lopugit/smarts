@@ -93,7 +93,7 @@ module.exports = function () {
             switch (_context.prev = _context.next) {
               case 0:
                 if (!(_mod instanceof Promise)) {
-                  _context.next = 5;
+                  _context.next = 9;
                   break;
                 }
 
@@ -101,16 +101,25 @@ module.exports = function () {
                 return _mod(args);
 
               case 3:
-                _context.next = 6;
-                break;
+                _context.t0 = _context.sent;
 
-              case 5:
-                _mod(args);
+                if (_context.t0) {
+                  _context.next = 6;
+                  break;
+                }
+
+                _context.t0 = args;
 
               case 6:
+                return _context.abrupt("return", _context.t0);
+
+              case 9:
+                return _context.abrupt("return", _mod(args) || args);
+
+              case 10:
                 return _context.abrupt("return", args);
 
-              case 7:
+              case 11:
               case "end":
                 return _context.stop();
             }
