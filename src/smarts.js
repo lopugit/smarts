@@ -52,9 +52,9 @@ module.exports = ({
 		},
 		mod: async (args, mod)=>{
 			if(mod instanceof Promise){
-				await mod(args)
+				return await mod(args) || args
 			} else {
-				mod(args)
+				return mod(args) || args
 			}
 			return args
 		},
