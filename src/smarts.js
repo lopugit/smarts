@@ -16,7 +16,7 @@ module.exports = ({
 		stringify: f.stringify,
 		string: f.stringify,
 		parse: f.parse,
-		stringifyFunc: function stringifyFunc(key, val){
+		stringifyFunc: (key, val)=>{
 			if (
 				val instanceof Function && 
 				typeof val.toString === 'function'
@@ -25,7 +25,7 @@ module.exports = ({
 			}
 			return val
 		},
-		parseFunc: function(key, val){
+		parseFunc: (key, val)=>{
 			if (
 				typeof val === 'string' && 
 				( 
