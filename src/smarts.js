@@ -50,13 +50,8 @@ module.exports = ({
 		dupe: function(obj){
 			return f.parse(f.stringify(obj, this.stringifyFunc), this.parseFunc)
 		},
-		mod: async (args, mod)=>{
-			if(mod instanceof Promise){
-				return await mod(args) || args
-			} else {
-				return mod(args) || args
-			}
-			return args
+		mod: (args, mod)=>{
+			return mod(args) || args
 		},
     popThing({
       option,
