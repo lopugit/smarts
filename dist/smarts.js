@@ -8,6 +8,8 @@ require("core-js/modules/es6.object.keys");
 
 require("core-js/modules/es6.object.define-property");
 
+require("core-js/modules/es6.promise");
+
 require("core-js/modules/es6.regexp.split");
 
 require("core-js/modules/es6.array.index-of");
@@ -20,10 +22,6 @@ require("core-js/modules/web.dom.iterable");
 
 require("core-js/modules/es6.array.iterator");
 
-require("core-js/modules/es6.promise");
-
-require("regenerator-runtime/runtime");
-
 require("core-js/modules/es6.regexp.to-string");
 
 require("core-js/modules/es6.date.to-string");
@@ -35,10 +33,6 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 var f = require('flatted');
 
@@ -84,55 +78,9 @@ module.exports = function () {
     dupe: function dupe(obj) {
       return f.parse(f.stringify(obj, this.stringifyFunc), this.parseFunc);
     },
-    mod: function () {
-      var _mod2 = _asyncToGenerator(
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee(args, _mod) {
-        return regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                if (!(_mod instanceof Promise)) {
-                  _context.next = 9;
-                  break;
-                }
-
-                _context.next = 3;
-                return _mod(args);
-
-              case 3:
-                _context.t0 = _context.sent;
-
-                if (_context.t0) {
-                  _context.next = 6;
-                  break;
-                }
-
-                _context.t0 = args;
-
-              case 6:
-                return _context.abrupt("return", _context.t0);
-
-              case 9:
-                return _context.abrupt("return", _mod(args) || args);
-
-              case 10:
-                return _context.abrupt("return", args);
-
-              case 11:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee);
-      }));
-
-      function mod(_x, _x2) {
-        return _mod2.apply(this, arguments);
-      }
-
-      return mod;
-    }(),
+    mod: function mod(args, _mod) {
+      return _mod(args) || args;
+    },
     popThing: function popThing() {
       var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
           option = _ref2.option,
