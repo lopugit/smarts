@@ -109,7 +109,7 @@ module.exports = ({
 				console.log(list)
 			}
 			if (index >= 0 && list) {
-				if (targets) {
+				if (targets && targets.length && typeof targets.length == 'number') {
 					for (var i = 0; i < targets.length; i++) {
 						let value = this.getsmart(option, targets[i], undefined)
 						if (value) {
@@ -148,7 +148,7 @@ module.exports = ({
 			async,
       vue = vue
     } = {}) {
-			if (options && list) {
+			if (options && options instanceof Array && list) {
 				for (let option of options) {
 					if(async){
 						new Promise((resolve, reject)=>{
@@ -181,8 +181,9 @@ module.exports = ({
       }
       if (!obj && list && list.indexOf && list.indexOf(option) >= 0) {
         return true
-      } else if (obj && list) {
+      } else if (obj && list && typeof list.length == 'number') {
         for (var i = 0; i < list.length; i++) {
+					if(!(keys && typeof keys.length == 'number')) return
           for (var indKey = 0; indKey < keys.length; indKey++) {
             if (keymatchtype == 'broad') {
               if (list[i] && this.getsmart(list[i], keys[indKey], undefined) == this.getsmart(option, keys[indKey], undefined) && (this.getsmart(list[i], keys[indKey], undefined) !== undefined)) {
@@ -225,8 +226,9 @@ module.exports = ({
         } else {
           return true
         }
-      } else if (obj && list) {
+      } else if (obj && list && typeof list.length == 'number') {
         for (var i = 0; i < list.length; i++) {
+					if(!(keys && typeof keys.length == 'number')) return
           for (var indKey = 0; indKey < keys.length; indKey++) {
             if (keymatchtype == 'broad') {
               if (list[i] && this.getsmart(list[i], keys[indKey], undefined) == this.getsmart(option, keys[indKey], undefined) && this.getsmart(list[i], keys[indKey], undefined) !== undefined) {
@@ -271,6 +273,7 @@ module.exports = ({
       }
     },
     optsIn(options, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+			if(!(options instanceof Array)) return true
       for (let option of options) {
         // if(typeof option === 'object'){
         //   obj = true
@@ -297,13 +300,14 @@ module.exports = ({
       keymatchtype,
       vue = vue
     } = {}) {
+			if(!(options instanceof Array)) return true
       for (let option of options) {
         // if(typeof option === 'object'){
         //   obj = true
         // }
         if (!obj && list && list.indexOf && list.indexOf(option) >= 0) {
           // return true
-        } else if (obj && list) {
+        } else if (obj && list && typeof list.length == 'number') {
           for (var i = 0; i < list.length; i++) {
             if (!this.optIn(option, list[i], obj, keys, keymatchtype)) {
               return false
@@ -316,13 +320,14 @@ module.exports = ({
       return true
     },
     anyOptsIn(options, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+			if(!(options instanceof Array)) return false
       for (let option of options) {
         // if(typeof option === 'object'){
         //   obj = true
         // }
         if (!obj && list && list.indexOf && list.indexOf(option) >= 0) {
           return true
-        } else if (obj && list) {
+        } else if (obj && list && typeof list.length == 'number') {
           for (var i = 0; i < list.length; i++) {
             if (this.optIn(option, list[i], obj, keys, keymatchtype)) {
               return true
@@ -340,13 +345,14 @@ module.exports = ({
       keymatchtype,
       vue = vue
     } = {}) {
+			if(!(options instanceof Array)) return false
       for (let option of options) {
         // if(typeof option === 'object'){
         //   obj = true
         // }
         if (!obj && list && list.indexOf && list.indexOf(option) >= 0) {
           return true
-        } else if (obj && list) {
+        } else if (obj && list && typeof list.length == 'number') {
           for (var i = 0; i < list.length; i++) {
             if (this.optIn(option, list[i], obj, keys, keymatchtype)) {
               return true
@@ -360,7 +366,7 @@ module.exports = ({
       if (typeof option === 'object') {
         obj = true
       }
-      if (obj && list && keys) {
+      if (obj && list && keys && typeof list.length == 'number') {
         for (var i = 0; i < list.length; i++) {
           if (this.optIn(option, list, obj, keys, keymatchtype)) {
             return i
@@ -431,6 +437,7 @@ module.exports = ({
       }
     },
     pushOpts(options, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+			if(!(options instanceof Array)) return
       for (let option of options) {
         this.pushOpt(option, list, obj, keys, keymatchtype)
       }
@@ -443,6 +450,7 @@ module.exports = ({
       keymatchtype,
       vue = vue
     } = {}) {
+			if(!(options instanceof Array)) return
       for (let option of options) {
         this.pushThing({option, list, obj, keys, keymatchtype})
       }
@@ -487,6 +495,7 @@ module.exports = ({
       }
     },
     popOpts(options, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+			if(!(options instanceof Array)) return
       for (let option of options) {
         this.popOpt(option, list, obj, keys, keymatchtype)
       }
@@ -499,6 +508,7 @@ module.exports = ({
       keymatchtype,
       vue = vue
     } = {}) {
+			if(!(options instanceof Array)) return
       for (let option of options) {
         this.popOpt(option, list, obj, keys, keymatchtype)
       }
@@ -525,6 +535,7 @@ module.exports = ({
       }
     },
     toggleOpts(options, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+			if(!(options instanceof Array)) return
       for (let option in options) {
         this.toggleOpt(option, list, obj, keys, keymatchtype)
       }
@@ -537,6 +548,7 @@ module.exports = ({
       keymatchtype,
       vue = vue
     } = {}) {
+			if(!(options instanceof Array)) return
       for (let option in options) {
         if (this.optIn(option, list, obj, keys, keymatchtype)) {
           this.popOpt(option, list, obj, keys, keymatchtype)
@@ -779,7 +791,7 @@ module.exports = ({
       return new Promise((resolve, reject) => {
         if (!keyProperty) {
           reject()
-        } else if (list) {
+        } else if (list && typeof list.length == 'number') {
           if (list.length == 0) {
             if ((returnExistant && this.getsmart(list, 'mapped.' + returnExistant, false)) || !returnExistant) {
               resolve(true)
@@ -795,7 +807,7 @@ module.exports = ({
             } else {
               list['mapped'] = {}
             }
-          }
+					}
           for (var i = 0; i < list.length; i++) {
             if (typeof list[i] !== 'string') {
               if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set && list.mapped) {
