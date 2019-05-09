@@ -16,7 +16,7 @@ module.exports = ({
 		stringify: f.stringify,
 		string: f.stringify,
 		parse: f.parse,
-		stringifyFunc: (key, val)=>{
+		stringifyFunc(key, val){
 			if (
 				val instanceof Function && 
 				typeof val.toString === 'function'
@@ -25,7 +25,7 @@ module.exports = ({
 			}
 			return val
 		},
-		parseFunc: (key, val)=>{
+		parseFunc(key, val){
 			if (
 				typeof val === 'string' && 
 				( 
@@ -47,10 +47,10 @@ module.exports = ({
 			}
 			return val
 		},	
-		dupe: (obj)=>{
+		dupe(obj){
 			return f.parse(f.stringify(obj, this.stringifyFunc), this.parseFunc)
 		},
-		mod: (args, mod)=>{
+		mod(args, mod){
 			return mod(args) || args
 		},
     popThing({
@@ -649,7 +649,7 @@ module.exports = ({
         // If the path array has only 1 more element, we've reached
         // the intended property and set its value
         if (propsArray.length == 1) {
-          if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
+          if (that.getsmart(vue, 'reactiveSetter', false) && that.$set && obj) {
 						that.$set(obj, propsArray[0], value)
 						if(typeof that.getsmart(window, '$store.commit', undefined) == 'function'){
 							window.$store.commit('thing')
@@ -671,7 +671,7 @@ module.exports = ({
 				// check if next prop is 
         if (typeof obj[propsArray[0]] !== 'object') {
           // If we have reached an undefined/null property
-          if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
+          if (that.getsmart(vue, 'reactiveSetter', false) && that.$set && obj) {
 						that.$set(obj, propsArray[0], {})
 						if(typeof that.getsmart(window, '$store.commit', undefined) == 'function'){
 							window.$store.commit('thing')
@@ -685,7 +685,7 @@ module.exports = ({
       if (property) {
         return deepGetByArray(obj, property, value)
       } else {
-        if (that.getsmart(vue, 'reactiveSetter', false) && that.$set) {
+        if (that.getsmart(vue, 'reactiveSetter', false) && that.$set && obj) {
 					that.$set(obj, undefined, value)
 					if(typeof that.getsmart(window, '$store.commit', undefined) == 'function'){
 						window.$store.commit('thing')
@@ -772,7 +772,7 @@ module.exports = ({
             }
           }
           if (!list.mapped || typeof list.mapped === 'boolean') {
-            if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+            if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set && list) {
               this.$set(list, 'mapped', {})
             } else {
               list['mapped'] = {}
@@ -780,7 +780,7 @@ module.exports = ({
           }
           for (var i = 0; i < list.length; i++) {
             if (typeof list[i] !== 'string') {
-              if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+              if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set && list.mapped) {
                 this.$set(list.mapped, list[i][keyProperty], list[i])
               } else {
                 list['mapped'][list[i][keyProperty]] = list[i]
