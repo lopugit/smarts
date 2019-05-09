@@ -639,7 +639,8 @@ module.exports = ({
           return value
         }
       }
-
+			// if no obj make obj
+			if(!obj) obj = {}
       // switch contexts
       var that = this
       // In order to avoid constantly checking the type of the property
@@ -679,8 +680,8 @@ module.exports = ({
           } else {
             obj[propsArray[0]] = {}
           }
-        }
-        return deepGetByArray(obj[propsArray[0]], remainingProps, value)
+				}
+				return deepGetByArray(obj[propsArray[0]], remainingProps, value)
       }
       if (property) {
         return deepGetByArray(obj, property, value)
