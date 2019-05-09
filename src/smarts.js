@@ -13,9 +13,13 @@ module.exports = ({
 		vue
 	}
   return {
-		stringify: f.stringify,
-		string: f.stringify,
-		parse: f.parse,
+		stringify(obj, supplemental){
+			return f.stringify(obj, supplemental || this.stringifyFunc)
+		},
+		string: this.stringify,
+		parse(string, supplemental){
+			return f.parse(string, supplemental || this.parseFunc)
+		},
 		stringifyFunc(key, val){
 			if (
 				val instanceof Function && 
@@ -48,7 +52,7 @@ module.exports = ({
 			return val
 		},	
 		dupe(obj){
-			return f.parse(f.stringify(obj, this.stringifyFunc), this.parseFunc)
+			return f.parse(f.stringify(obj))
 		},
 		mod(args, mod){
 			return mod(args) || args
