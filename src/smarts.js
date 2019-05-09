@@ -16,7 +16,6 @@ module.exports = ({
 		stringify(obj, supplemental){
 			return f.stringify(obj, supplemental || this.stringifyFunc)
 		},
-		string: this.stringify,
 		parse(string, supplemental){
 			return f.parse(string, supplemental || this.parseFunc)
 		},
