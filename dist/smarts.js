@@ -28,6 +28,8 @@ require("core-js/modules/es6.date.to-string");
 
 require("core-js/modules/es6.object.to-string");
 
+var _this = void 0;
+
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -52,9 +54,13 @@ module.exports = function () {
     vue: vue
   };
   return _ref16 = {
-    stringify: f.stringify,
-    string: f.stringify,
-    parse: f.parse,
+    stringify: function stringify(obj, supplemental) {
+      return f.stringify(obj, supplemental || this.stringifyFunc);
+    },
+    string: _this.stringify,
+    parse: function parse(string, supplemental) {
+      return f.parse(string, supplemental || this.parseFunc);
+    },
     stringifyFunc: function stringifyFunc(key, val) {
       if (val instanceof Function && typeof val.toString === 'function') {
         return val.toString();
@@ -76,7 +82,7 @@ module.exports = function () {
       return val;
     },
     dupe: function dupe(obj) {
-      return f.parse(f.stringify(obj, this.stringifyFunc), this.parseFunc);
+      return f.parse(f.stringify(obj));
     },
     mod: function mod(args, _mod) {
       return _mod(args) || args;
@@ -1076,26 +1082,26 @@ module.exports = function () {
       return this.getsmart(get, 'value', get);
     }
   }), _defineProperty(_ref16, "vgosmart", function vgosmart(obj, property, value, context) {
-    var _this = this;
+    var _this2 = this;
 
     // stands for v-model get or set smart
     // return value from property path, either gotten or smartly set
     return {
       get: function get() {
-        var get = _this.getsmart(obj, property, value, true);
+        var get = _this2.getsmart(obj, property, value, true);
 
         if (get.undefined) {
-          get = _this.setsmart(obj, property, get.value, context);
+          get = _this2.setsmart(obj, property, get.value, context);
         }
 
         if (context) {
           return get;
         } else {
-          return _this.getsmart(get, 'value', get);
+          return _this2.getsmart(get, 'value', get);
         }
       },
       set: function set(val) {
-        _this.setsmart(obj, property, val);
+        _this2.setsmart(obj, property, val);
       }
     };
   }), _defineProperty(_ref16, "getsmartval", function getsmartval(obj, property, defaultValue) {
@@ -1118,7 +1124,7 @@ module.exports = function () {
   }), _defineProperty(_ref16, "safeparse", function safeparse(something) {
     return this.jsmart.parse(something || '');
   }), _defineProperty(_ref16, "mapsmart", function mapsmart(list) {
-    var _this2 = this;
+    var _this3 = this;
 
     var keyProperty = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'title';
     var returnExistant = arguments.length > 2 ? arguments[2] : undefined;
@@ -1128,7 +1134,7 @@ module.exports = function () {
         reject();
       } else if (list) {
         if (list.length == 0) {
-          if (returnExistant && _this2.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
+          if (returnExistant && _this3.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
             resolve(true);
           } else if (returnExistant) {
             resolve(false);
@@ -1138,8 +1144,8 @@ module.exports = function () {
         }
 
         if (!list.mapped || typeof list.mapped === 'boolean') {
-          if (_this2.getsmart(local.vue, 'reactiveSetter', false) && _this2.$set && list) {
-            _this2.$set(list, 'mapped', {});
+          if (_this3.getsmart(local.vue, 'reactiveSetter', false) && _this3.$set && list) {
+            _this3.$set(list, 'mapped', {});
           } else {
             list['mapped'] = {};
           }
@@ -1147,14 +1153,14 @@ module.exports = function () {
 
         for (var i = 0; i < list.length; i++) {
           if (typeof list[i] !== 'string') {
-            if (_this2.getsmart(local.vue, 'reactiveSetter', false) && _this2.$set && list.mapped) {
-              _this2.$set(list.mapped, list[i][keyProperty], list[i]);
+            if (_this3.getsmart(local.vue, 'reactiveSetter', false) && _this3.$set && list.mapped) {
+              _this3.$set(list.mapped, list[i][keyProperty], list[i]);
             } else {
               list['mapped'][list[i][keyProperty]] = list[i];
             }
 
             if (i == list.length - 1) {
-              if (returnExistant && _this2.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
+              if (returnExistant && _this3.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
                 resolve(true);
               } else if (returnExistant) {
                 resolve(false);
@@ -1187,7 +1193,7 @@ module.exports = function () {
           //   } 
           // } 
           else if (i == list.length - 1) {
-              if (returnExistant && _this2.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
+              if (returnExistant && _this3.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
                 resolve(true);
               } else if (returnExistant) {
                 resolve(false);
