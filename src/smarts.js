@@ -144,19 +144,33 @@ module.exports = ({
       obj = true,
       keys = ['uuid', '_id', 'id'],
       keymatchtype,
-      push,
+			push,
+			async,
       vue = vue
     } = {}) {
 			if (options && list) {
 				for (let option of options) {
-					this.setThing({
-						option,
-						list,
-						obj,
-						keys,
-						keymatchtype,
-						push
-					})
+					if(async){
+						new Promise((resolve, reject)=>{
+							this.setThing({
+								option,
+								list,
+								obj,
+								keys,
+								keymatchtype,
+								push
+							})
+						})
+					} else {
+						this.setThing({
+							option,
+							list,
+							obj,
+							keys,
+							keymatchtype,
+							push
+						})
+					}
 				}
 			}
 			return list
