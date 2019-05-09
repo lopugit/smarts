@@ -47,7 +47,7 @@ module.exports = ({
 			}
 			return val
 		},	
-		dupe: function(obj){
+		dupe: (obj)=>{
 			return f.parse(f.stringify(obj, this.stringifyFunc), this.parseFunc)
 		},
 		mod: (args, mod)=>{
