@@ -987,8 +987,10 @@ module.exports = function () {
       } else {
         return value;
       }
-    } // switch contexts
+    } // if no obj make obj
 
+
+    if (!obj) obj = {}; // switch contexts
 
     var that = this; // In order to avoid constantly checking the type of the property
     // we separate the real logic out into an inner function.
