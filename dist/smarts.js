@@ -150,7 +150,7 @@ module.exports = function () {
       }
 
       if (index >= 0 && list) {
-        if (targets) {
+        if (targets && targets.length && typeof targets.length == 'number') {
           for (var i = 0; i < targets.length; i++) {
             var value = this.getsmart(option, targets[i], undefined);
 
@@ -201,7 +201,7 @@ module.exports = function () {
           _ref4$vue = _ref4.vue,
           vue = _ref4$vue === void 0 ? vue : _ref4$vue;
 
-      if (options && list) {
+      if (options && options instanceof Array && list) {
         var _iteratorNormalCompletion = true;
         var _didIteratorError = false;
         var _iteratorError = undefined;
@@ -266,8 +266,10 @@ module.exports = function () {
 
       if (!obj && list && list.indexOf && list.indexOf(option) >= 0) {
         return true;
-      } else if (obj && list) {
+      } else if (obj && list && typeof list.length == 'number') {
         for (var i = 0; i < list.length; i++) {
+          if (!(keys && typeof keys.length == 'number')) return;
+
           for (var indKey = 0; indKey < keys.length; indKey++) {
             if (keymatchtype == 'broad') {
               if (list[i] && this.getsmart(list[i], keys[indKey], undefined) == this.getsmart(option, keys[indKey], undefined) && this.getsmart(list[i], keys[indKey], undefined) !== undefined) {
@@ -317,8 +319,10 @@ module.exports = function () {
         } else {
           return true;
         }
-      } else if (obj && list) {
+      } else if (obj && list && typeof list.length == 'number') {
         for (var i = 0; i < list.length; i++) {
+          if (!(keys && typeof keys.length == 'number')) return;
+
           for (var indKey = 0; indKey < keys.length; indKey++) {
             if (keymatchtype == 'broad') {
               if (list[i] && this.getsmart(list[i], keys[indKey], undefined) == this.getsmart(option, keys[indKey], undefined) && this.getsmart(list[i], keys[indKey], undefined) !== undefined) {
@@ -368,6 +372,7 @@ module.exports = function () {
       var obj = arguments.length > 2 ? arguments[2] : undefined;
       var keys = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['uuid', '_id', 'id'];
       var keymatchtype = arguments.length > 4 ? arguments[4] : undefined;
+      if (!(options instanceof Array)) return true;
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
       var _iteratorError2 = undefined;
@@ -419,6 +424,7 @@ module.exports = function () {
           _ref6$vue = _ref6.vue,
           vue = _ref6$vue === void 0 ? vue : _ref6$vue;
 
+      if (!(options instanceof Array)) return true;
       var _iteratorNormalCompletion3 = true;
       var _didIteratorError3 = false;
       var _iteratorError3 = undefined;
@@ -431,7 +437,7 @@ module.exports = function () {
           //   obj = true
           // }
           if (!obj && list && list.indexOf && list.indexOf(option) >= 0) {// return true
-          } else if (obj && list) {
+          } else if (obj && list && typeof list.length == 'number') {
             for (var i = 0; i < list.length; i++) {
               if (!this.optIn(option, list[i], obj, keys, keymatchtype)) {
                 return false;
@@ -463,6 +469,7 @@ module.exports = function () {
       var obj = arguments.length > 2 ? arguments[2] : undefined;
       var keys = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['uuid', '_id', 'id'];
       var keymatchtype = arguments.length > 4 ? arguments[4] : undefined;
+      if (!(options instanceof Array)) return false;
       var _iteratorNormalCompletion4 = true;
       var _didIteratorError4 = false;
       var _iteratorError4 = undefined;
@@ -476,7 +483,7 @@ module.exports = function () {
           // }
           if (!obj && list && list.indexOf && list.indexOf(option) >= 0) {
             return true;
-          } else if (obj && list) {
+          } else if (obj && list && typeof list.length == 'number') {
             for (var i = 0; i < list.length; i++) {
               if (this.optIn(option, list[i], obj, keys, keymatchtype)) {
                 return true;
@@ -513,6 +520,7 @@ module.exports = function () {
           _ref7$vue = _ref7.vue,
           vue = _ref7$vue === void 0 ? vue : _ref7$vue;
 
+      if (!(options instanceof Array)) return false;
       var _iteratorNormalCompletion5 = true;
       var _didIteratorError5 = false;
       var _iteratorError5 = undefined;
@@ -526,7 +534,7 @@ module.exports = function () {
           // }
           if (!obj && list && list.indexOf && list.indexOf(option) >= 0) {
             return true;
-          } else if (obj && list) {
+          } else if (obj && list && typeof list.length == 'number') {
             for (var i = 0; i < list.length; i++) {
               if (this.optIn(option, list[i], obj, keys, keymatchtype)) {
                 return true;
@@ -561,7 +569,7 @@ module.exports = function () {
         obj = true;
       }
 
-      if (obj && list && keys) {
+      if (obj && list && keys && typeof list.length == 'number') {
         for (var i = 0; i < list.length; i++) {
           if (this.optIn(option, list, obj, keys, keymatchtype)) {
             return i;
@@ -659,6 +667,7 @@ module.exports = function () {
       var obj = arguments.length > 2 ? arguments[2] : undefined;
       var keys = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['uuid', '_id', 'id'];
       var keymatchtype = arguments.length > 4 ? arguments[4] : undefined;
+      if (!(options instanceof Array)) return;
       var _iteratorNormalCompletion6 = true;
       var _didIteratorError6 = false;
       var _iteratorError6 = undefined;
@@ -695,6 +704,7 @@ module.exports = function () {
           _ref10$vue = _ref10.vue,
           vue = _ref10$vue === void 0 ? vue : _ref10$vue;
 
+      if (!(options instanceof Array)) return;
       var _iteratorNormalCompletion7 = true;
       var _didIteratorError7 = false;
       var _iteratorError7 = undefined;
@@ -780,6 +790,7 @@ module.exports = function () {
     var obj = arguments.length > 2 ? arguments[2] : undefined;
     var keys = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['uuid', '_id', 'id'];
     var keymatchtype = arguments.length > 4 ? arguments[4] : undefined;
+    if (!(options instanceof Array)) return;
     var _iteratorNormalCompletion8 = true;
     var _didIteratorError8 = false;
     var _iteratorError8 = undefined;
@@ -816,6 +827,7 @@ module.exports = function () {
         _ref12$vue = _ref12.vue,
         vue = _ref12$vue === void 0 ? vue : _ref12$vue;
 
+    if (!(options instanceof Array)) return;
     var _iteratorNormalCompletion9 = true;
     var _didIteratorError9 = false;
     var _iteratorError9 = undefined;
@@ -873,6 +885,7 @@ module.exports = function () {
     var obj = arguments.length > 2 ? arguments[2] : undefined;
     var keys = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['uuid', '_id', 'id'];
     var keymatchtype = arguments.length > 4 ? arguments[4] : undefined;
+    if (!(options instanceof Array)) return;
 
     for (var option in options) {
       this.toggleOpt(option, list, obj, keys, keymatchtype);
@@ -889,6 +902,8 @@ module.exports = function () {
         keymatchtype = _ref14.keymatchtype,
         _ref14$vue = _ref14.vue,
         vue = _ref14$vue === void 0 ? vue : _ref14$vue;
+
+    if (!(options instanceof Array)) return;
 
     for (var option in options) {
       if (this.optIn(option, list, obj, keys, keymatchtype)) {
@@ -1150,7 +1165,7 @@ module.exports = function () {
     return new Promise(function (resolve, reject) {
       if (!keyProperty) {
         reject();
-      } else if (list) {
+      } else if (list && typeof list.length == 'number') {
         if (list.length == 0) {
           if (returnExistant && _this3.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
             resolve(true);
