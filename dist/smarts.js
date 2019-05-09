@@ -8,11 +8,11 @@ require("core-js/modules/es6.object.keys");
 
 require("core-js/modules/es6.object.define-property");
 
-require("core-js/modules/es6.promise");
-
 require("core-js/modules/es6.regexp.split");
 
 require("core-js/modules/es6.array.index-of");
+
+require("core-js/modules/es6.promise");
 
 require("core-js/modules/es7.symbol.async-iterator");
 
@@ -185,6 +185,8 @@ module.exports = function () {
       return index;
     },
     setThings: function setThings() {
+      var _this = this;
+
       var _ref4 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
           options = _ref4.options,
           _ref4$list = _ref4.list,
@@ -195,6 +197,7 @@ module.exports = function () {
           keys = _ref4$keys === void 0 ? ['uuid', '_id', 'id'] : _ref4$keys,
           keymatchtype = _ref4.keymatchtype,
           push = _ref4.push,
+          async = _ref4.async,
           _ref4$vue = _ref4.vue,
           vue = _ref4$vue === void 0 ? vue : _ref4$vue;
 
@@ -204,16 +207,34 @@ module.exports = function () {
         var _iteratorError = undefined;
 
         try {
-          for (var _iterator = options[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var _loop = function _loop() {
             var option = _step.value;
-            this.setThing({
-              option: option,
-              list: list,
-              obj: obj,
-              keys: keys,
-              keymatchtype: keymatchtype,
-              push: push
-            });
+
+            if (async) {
+              new Promise(function (resolve, reject) {
+                _this.setThing({
+                  option: option,
+                  list: list,
+                  obj: obj,
+                  keys: keys,
+                  keymatchtype: keymatchtype,
+                  push: push
+                });
+              });
+            } else {
+              _this.setThing({
+                option: option,
+                list: list,
+                obj: obj,
+                keys: keys,
+                keymatchtype: keymatchtype,
+                push: push
+              });
+            }
+          };
+
+          for (var _iterator = options[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            _loop();
           }
         } catch (err) {
           _didIteratorError = true;
@@ -1079,26 +1100,26 @@ module.exports = function () {
       return this.getsmart(get, 'value', get);
     }
   }), _defineProperty(_ref16, "vgosmart", function vgosmart(obj, property, value, context) {
-    var _this = this;
+    var _this2 = this;
 
     // stands for v-model get or set smart
     // return value from property path, either gotten or smartly set
     return {
       get: function get() {
-        var get = _this.getsmart(obj, property, value, true);
+        var get = _this2.getsmart(obj, property, value, true);
 
         if (get.undefined) {
-          get = _this.setsmart(obj, property, get.value, context);
+          get = _this2.setsmart(obj, property, get.value, context);
         }
 
         if (context) {
           return get;
         } else {
-          return _this.getsmart(get, 'value', get);
+          return _this2.getsmart(get, 'value', get);
         }
       },
       set: function set(val) {
-        _this.setsmart(obj, property, val);
+        _this2.setsmart(obj, property, val);
       }
     };
   }), _defineProperty(_ref16, "getsmartval", function getsmartval(obj, property, defaultValue) {
@@ -1121,7 +1142,7 @@ module.exports = function () {
   }), _defineProperty(_ref16, "safeparse", function safeparse(something) {
     return this.jsmart.parse(something || '');
   }), _defineProperty(_ref16, "mapsmart", function mapsmart(list) {
-    var _this2 = this;
+    var _this3 = this;
 
     var keyProperty = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'title';
     var returnExistant = arguments.length > 2 ? arguments[2] : undefined;
@@ -1131,7 +1152,7 @@ module.exports = function () {
         reject();
       } else if (list) {
         if (list.length == 0) {
-          if (returnExistant && _this2.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
+          if (returnExistant && _this3.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
             resolve(true);
           } else if (returnExistant) {
             resolve(false);
@@ -1141,8 +1162,8 @@ module.exports = function () {
         }
 
         if (!list.mapped || typeof list.mapped === 'boolean') {
-          if (_this2.getsmart(local.vue, 'reactiveSetter', false) && _this2.$set && list) {
-            _this2.$set(list, 'mapped', {});
+          if (_this3.getsmart(local.vue, 'reactiveSetter', false) && _this3.$set && list) {
+            _this3.$set(list, 'mapped', {});
           } else {
             list['mapped'] = {};
           }
@@ -1150,14 +1171,14 @@ module.exports = function () {
 
         for (var i = 0; i < list.length; i++) {
           if (typeof list[i] !== 'string') {
-            if (_this2.getsmart(local.vue, 'reactiveSetter', false) && _this2.$set && list.mapped) {
-              _this2.$set(list.mapped, list[i][keyProperty], list[i]);
+            if (_this3.getsmart(local.vue, 'reactiveSetter', false) && _this3.$set && list.mapped) {
+              _this3.$set(list.mapped, list[i][keyProperty], list[i]);
             } else {
               list['mapped'][list[i][keyProperty]] = list[i];
             }
 
             if (i == list.length - 1) {
-              if (returnExistant && _this2.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
+              if (returnExistant && _this3.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
                 resolve(true);
               } else if (returnExistant) {
                 resolve(false);
@@ -1190,7 +1211,7 @@ module.exports = function () {
           //   } 
           // } 
           else if (i == list.length - 1) {
-              if (returnExistant && _this2.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
+              if (returnExistant && _this3.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
                 resolve(true);
               } else if (returnExistant) {
                 resolve(false);
