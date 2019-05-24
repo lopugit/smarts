@@ -1,6 +1,6 @@
 {
   "name": "smarts",
-  "version": "1.0.134",
+  "version": "1.0.135",
   "description": "a smart library for doing smart things",
   "main": "dist/index.js",
   "scripts": {
@@ -33,7 +33,7 @@
     "@babel/preset-es2015": "^7.0.0-beta.53"
   },
   "dependencies": {
-		"flatted": "^2.0.0",
+    "flatted": "^2.0.0",
     "@babel/polyfill": "^7.4.4"
   }
 }
