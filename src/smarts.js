@@ -122,11 +122,13 @@ module.exports = ({
 						if(typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
 							window.$store.commit('thing')
 						}
+					} else if (this.getsmart(local.vue, 'store', false) && typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
+						window.$store.commit('thing')
 					}
 				}
 				// list[index] = option
 			} else if (push && list) {
-				if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+				if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
 					list.splice(list.length, 0, option)
 					if(typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
 						window.$store.commit('thing')
@@ -407,7 +409,7 @@ module.exports = ({
     },
     pushOpt(option, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
       if (typeof list == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
-				if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+				if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
 					list.splice(list.length, 0, option)
 					if(typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
 						window.$store.commit('thing')
@@ -426,7 +428,7 @@ module.exports = ({
       vue = vue
     } = {}) {
       if (typeof list == 'object' && !this.thingIn({option, list, obj, keys, keymatchtype})) {
-				if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+				if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
 					list.splice(list.length, 0, option)
 					if(typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
 						window.$store.commit('thing')
@@ -458,7 +460,7 @@ module.exports = ({
     popOpt(option, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
       if (typeof list == 'object' && this.optIn(option, list, obj, keys, keymatchtype)) {
 				list.splice(this.optIndex(option, list, obj, keys, keymatchtype), 1)
-				if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+				if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
 					if(typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
 						window.$store.commit('thing')
 					}
@@ -487,7 +489,7 @@ module.exports = ({
           keys,
           keymatchtype
 				}), 1)
-				if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+				if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
 					if(typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
 						window.$store.commit('thing')
 					}
@@ -684,8 +686,11 @@ module.exports = ({
 						if(typeof that.getsmart(window, '$store.commit', undefined) == 'function'){
 							window.$store.commit('thing')
 						}
-          } else {
-            obj[propsArray[0]] = value
+					} else {
+						obj[propsArray[0]] = value
+						if(that.getsmart(vue, 'store', false) && typeof that.getsmart(window, '$store.commit', undefined) == 'function'){ 
+							window.$store.commit('thing')
+						}
           }
           if (context) {
             return {
@@ -707,7 +712,10 @@ module.exports = ({
 							window.$store.commit('thing')
 						}
           } else {
-            obj[propsArray[0]] = {}
+						obj[propsArray[0]] = {}
+						if(that.getsmart(vue, 'store', false) && typeof that.getsmart(window, '$store.commit', undefined) == 'function'){ 
+							window.$store.commit('thing')
+						}
           }
 				}
 				return deepGetByArray(obj[propsArray[0]], remainingProps, value)
@@ -721,7 +729,10 @@ module.exports = ({
 						window.$store.commit('thing')
 					}
         } else {
-          obj = value
+					obj = value
+					if(that.getsmart(vue, 'store', false) && typeof that.getsmart(window, '$store.commit', undefined) == 'function'){ 
+						window.$store.commit('thing')
+					}
         }
         if (context) {
           return {
