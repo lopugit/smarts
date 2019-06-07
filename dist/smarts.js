@@ -165,11 +165,13 @@ module.exports = function () {
             if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
               window.$store.commit('thing');
             }
+          } else if (this.getsmart(local.vue, 'store', false) && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
+            window.$store.commit('thing');
           }
         } // list[index] = option
 
       } else if (push && list) {
-        if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+        if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
           list.splice(list.length, 0, option);
 
           if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
@@ -621,7 +623,7 @@ module.exports = function () {
       var keymatchtype = arguments.length > 4 ? arguments[4] : undefined;
 
       if (_typeof(list) == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
-        if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+        if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
           list.splice(list.length, 0, option);
 
           if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
@@ -651,7 +653,7 @@ module.exports = function () {
         keys: keys,
         keymatchtype: keymatchtype
       })) {
-        if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+        if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
           list.splice(list.length, 0, option);
 
           if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
@@ -744,7 +746,7 @@ module.exports = function () {
       if (_typeof(list) == 'object' && this.optIn(option, list, obj, keys, keymatchtype)) {
         list.splice(this.optIndex(option, list, obj, keys, keymatchtype), 1);
 
-        if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+        if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
           if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('thing');
           }
@@ -779,7 +781,7 @@ module.exports = function () {
         keymatchtype: keymatchtype
       }), 1);
 
-      if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+      if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
         if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
           window.$store.commit('thing');
         }
@@ -1046,6 +1048,10 @@ module.exports = function () {
           }
         } else {
           obj[propsArray[0]] = value;
+
+          if (that.getsmart(vue, 'store', false) && typeof that.getsmart(window, '$store.commit', undefined) == 'function') {
+            window.$store.commit('thing');
+          }
         }
 
         if (context) {
@@ -1071,6 +1077,10 @@ module.exports = function () {
           }
         } else {
           obj[propsArray[0]] = {};
+
+          if (that.getsmart(vue, 'store', false) && typeof that.getsmart(window, '$store.commit', undefined) == 'function') {
+            window.$store.commit('thing');
+          }
         }
       }
 
@@ -1088,6 +1098,10 @@ module.exports = function () {
         }
       } else {
         obj = value;
+
+        if (that.getsmart(vue, 'store', false) && typeof that.getsmart(window, '$store.commit', undefined) == 'function') {
+          window.$store.commit('thing');
+        }
       }
 
       if (context) {
