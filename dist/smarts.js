@@ -162,10 +162,10 @@ module.exports = function () {
           list.splice(index, 1, option);
 
           if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
-            if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
+            if (!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
               window.$store.commit('thing');
             }
-          } else if (this.getsmart(local.vue, 'store', false) && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
+          } else if (this.getsmart(local.vue, 'store', false) && !localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('thing');
           }
         } // list[index] = option
@@ -174,7 +174,7 @@ module.exports = function () {
         if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
           list.splice(list.length, 0, option);
 
-          if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
+          if (!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('thing');
           }
         } else {
@@ -626,7 +626,7 @@ module.exports = function () {
         if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
           list.splice(list.length, 0, option);
 
-          if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
+          if (!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('thing');
           }
         } else {
@@ -656,7 +656,7 @@ module.exports = function () {
         if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
           list.splice(list.length, 0, option);
 
-          if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
+          if (!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('thing');
           }
         } else {
@@ -747,7 +747,7 @@ module.exports = function () {
         list.splice(this.optIndex(option, list, obj, keys, keymatchtype), 1);
 
         if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
-          if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
+          if (!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('thing');
           }
         }
@@ -782,7 +782,7 @@ module.exports = function () {
       }), 1);
 
       if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
-        if (typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
+        if (!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
           window.$store.commit('thing');
         }
       }
