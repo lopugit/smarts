@@ -1,5 +1,5 @@
 let f = require('flatted')
-
+let merge = require('deepmerge')
 module.exports = ({
   objList,
   stringList,
@@ -52,6 +52,12 @@ module.exports = ({
 		},	
 		dupe(obj){
 			return f.parse(f.stringify(obj))
+		},
+		merge(obj1, obj2, opts){
+			return merge(obj1, obj2, opts || {
+				arrayMerge: function (store, saved) { return saved },
+				clone: false,
+			})
 		},
 		mod(args, mod){
 			return mod(args) || args
