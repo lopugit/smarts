@@ -36,6 +36,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 var f = require('flatted');
 
+var _merge = require('deepmerge');
+
 module.exports = function () {
   var _ref16;
 
@@ -80,6 +82,14 @@ module.exports = function () {
     },
     dupe: function dupe(obj) {
       return f.parse(f.stringify(obj));
+    },
+    merge: function merge(obj1, obj2, opts) {
+      return _merge(obj1, obj2, opts || {
+        arrayMerge: function arrayMerge(store, saved) {
+          return saved;
+        },
+        clone: false
+      });
     },
     mod: function mod(args, _mod) {
       return _mod(args) || args;
