@@ -18,9 +18,9 @@ require("core-js/modules/web.dom.iterable");
 
 require("core-js/modules/es6.array.iterator");
 
-require("core-js/modules/es6.regexp.split");
-
 require("core-js/modules/es6.regexp.match");
+
+require("core-js/modules/es6.regexp.split");
 
 require("core-js/modules/es6.array.index-of");
 
@@ -86,7 +86,7 @@ module.exports = function () {
             var ret = val;
 
             try {
-              ret = eval("(" + val.splice('Function ')[1] + ")");
+              ret = eval("(" + val.split('Function ')[1] + ")");
             } catch (err) {}
 
             return ret;
