@@ -8,10 +8,6 @@ require("core-js/modules/es6.object.keys");
 
 require("core-js/modules/es6.object.define-property");
 
-require("core-js/modules/es6.regexp.split");
-
-require("core-js/modules/es6.array.index-of");
-
 require("core-js/modules/es6.promise");
 
 require("core-js/modules/es7.symbol.async-iterator");
@@ -21,6 +17,14 @@ require("core-js/modules/es6.symbol");
 require("core-js/modules/web.dom.iterable");
 
 require("core-js/modules/es6.array.iterator");
+
+require("core-js/modules/es6.regexp.split");
+
+require("core-js/modules/es6.regexp.match");
+
+require("core-js/modules/es6.array.index-of");
+
+require("core-js/modules/es6.regexp.constructor");
 
 require("core-js/modules/es6.regexp.to-string");
 
@@ -62,20 +66,40 @@ module.exports = function () {
     },
     stringifyFunc: function stringifyFunc(key, val) {
       if (val instanceof Function && typeof val.toString === 'function') {
-        return val.toString();
+        return "Function " + val.toString();
+      } else if (val instanceof RegExp && typeof val.toString === 'function') {
+        return "RegExp " + val.toString();
       }
 
       return val;
     },
     parseFunc: function parseFunc(key, val) {
-      if (typeof val === 'string' && val[val.length - 1] == '}' && (val.slice(0, 8) === 'function' || val.slice(0, 2) === '()' || val.slice(0, 5) === 'async')) {
-        var ret = val;
+      if (typeof val === 'string') {
+        if (val.indexOf('Function ') == 0 // ||
+        // val[val.length-1] == '}' && 
+        // ( 
+        // 	val.slice(0,8) === 'function' || 
+        // 	val.slice(0,2) === '()' || 
+        // 	val.slice(0,5) === 'async'
+        // ) 
+        ) {
+            var ret = val;
 
-        try {
-          ret = eval("(" + val + ")");
-        } catch (err) {}
+            try {
+              ret = eval("(" + val.splice('Function ')[1] + ")");
+            } catch (err) {}
 
-        return ret;
+            return ret;
+          } else if (val.indexOf('RegExp ') == 0) {
+          var _ret = val;
+
+          try {
+            var regex = val.split('RegExp ')[1].match(/\/(.*)\/(.*)?/);
+            _ret = new RegExp(regex[1], regex[2] || "");
+          } catch (err) {}
+
+          return _ret;
+        }
       }
 
       return val;
