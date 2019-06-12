@@ -24,29 +24,48 @@ module.exports = ({
 				val instanceof Function && 
 				typeof val.toString === 'function'
 			){
-				return val.toString()
+				return "Function " + val.toString()
+			} else if (
+				val instanceof RegExp &&
+				typeof val.toString === 'function'
+			) {
+				return "RegExp " + val.toString()
 			}
 			return val
 		},
 		parseFunc(key, val){
 			if (
-				typeof val === 'string' && 
-				( 
-					val[val.length-1] == '}' && 
-					( 
-						val.slice(0,8) === 'function' || 
-						val.slice(0,2) === '()' || 
-						val.slice(0,5) === 'async'
-					) 
-				) 
+				typeof val === 'string'
 			){
-				let ret = val
-				try {
-					ret = eval("("+val+")")
-				} catch(err){
+				if(
+					val.indexOf('Function ') == 0 
+					// ||
+					// val[val.length-1] == '}' && 
+					// ( 
+					// 	val.slice(0,8) === 'function' || 
+					// 	val.slice(0,2) === '()' || 
+					// 	val.slice(0,5) === 'async'
+					// ) 
+				) {
+					let ret = val
+					try {
+						ret = eval("("+val.splice('Function ')[1]+")")
+					} catch(err){
+	
+					}
+					return ret
+				} else if (
+					val.indexOf('RegExp ') == 0
+				) {
+					let ret = val
+					try {
+						var regex = val.split('RegExp ')[1].match(/\/(.*)\/(.*)?/);
+						ret = new RegExp(regex[1], regex[2] || "")
+					} catch(err){
 
+					}
+					return ret
 				}
-				return ret
 			}
 			return val
 		},	
