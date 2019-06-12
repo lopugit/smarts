@@ -9,6 +9,12 @@
 			"request": "launch",
 			"name": "Test Regex",
 			"program": "${workspaceFolder}/tests/regexp.js"
-		}
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Test Functions",
+			"program": "${workspaceFolder}/tests/function.js"
+		},
 	]
 }

@@ -1,15 +1,19 @@
 let smarts = require('../src/index.js')()
 
-let regex = {
-	regex: new RegExp(/woo/, 'gi')
+let func = {
+	func: function(){ console.log('woot woot') }
 }
 
-console.log('regex ', regex)
+console.log('func ', func)
 
-let sregex = smarts.stringify(regex)
+let sfunc = smarts.stringify(func)
 
-console.log('sregex ', sregex)
+console.log('sfunc ', sfunc)
 
-let pregex = smarts.parse(sregex)
+let pfunc = smarts.parse(sfunc)
 
-console.log('pregex ', pregex)
+console.log('pfunc ', pfunc)
+
+console.log(typeof pfunc.func == 'function')
+
+console.log(typeof pfunc.func == 'function' && pfunc.func())

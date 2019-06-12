@@ -49,7 +49,7 @@ module.exports = ({
 				) {
 					let ret = val
 					try {
-						ret = eval("("+val.splice('Function ')[1]+")")
+						ret = eval("("+val.split('Function ')[1]+")")
 					} catch(err){
 	
 					}
