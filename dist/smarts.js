@@ -312,7 +312,7 @@ module.exports = function () {
       }
 
       if (!obj && list && list.indexOf && list.indexOf(option) >= 0) {
-        return index ? list.indexOf(option) >= 0 : true;
+        return index ? list.indexOf(option) : true;
       } else if (obj && list && typeof list.length == 'number') {
         for (var i = 0; i < list.length; i++) {
           if (!(keys && typeof keys.length == 'number')) return;
