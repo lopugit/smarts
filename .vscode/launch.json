@@ -16,5 +16,11 @@
 			"name": "Test Functions",
 			"program": "${workspaceFolder}/tests/function.js"
 		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Test reviver",
+			"program": "${workspaceFolder}/tests/reviver.js"
+		},
 	]
 }
