@@ -114,7 +114,7 @@ module.exports = function () {
         arrayMerge: function arrayMerge(store, saved) {
           return saved;
         },
-        clone: false
+        clone: true
       }));
     },
     mod: function mod(args, _mod) {
