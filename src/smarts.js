@@ -77,7 +77,7 @@ module.exports = ({
 				obj1, 
 				merge(obj1, obj2, opts || {
 					arrayMerge: function (store, saved) { return saved },
-					clone: false,
+					clone: true,
 				})
 			)
 		},
