@@ -72,7 +72,7 @@ module.exports = ({
 		dupe(obj){
 			return f.parse(f.stringify(obj))
 		},
-		schema(obj1, obj2, opts){
+		create(obj1, obj2, opts){
 			return Object.assign(
 				obj1, 
 				merge(obj2, obj1, opts || {
