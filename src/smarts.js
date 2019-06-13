@@ -214,37 +214,37 @@ module.exports = ({
 			}
 			return list
     },
-    optIn(option, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+    optIn(option, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype, index) {
       if (typeof option === 'object') {
         obj = true
       }
       if (!obj && list && list.indexOf && list.indexOf(option) >= 0) {
-        return true
+        return index ? list.indexOf(option) >= 0 : true
       } else if (obj && list && typeof list.length == 'number') {
         for (var i = 0; i < list.length; i++) {
 					if(!(keys && typeof keys.length == 'number')) return
           for (var indKey = 0; indKey < keys.length; indKey++) {
             if (keymatchtype == 'broad') {
               if (list[i] && this.getsmart(list[i], keys[indKey], undefined) == this.getsmart(option, keys[indKey], undefined) && (this.getsmart(list[i], keys[indKey], undefined) !== undefined)) {
-                return true
+                return index ? i : true
               } else if (list[i] && typeof list[i] == 'string' && (list[i] == this.getsmart(option, keys[indKey], undefined)) && (this.getsmart(option, keys[indKey], undefined) !== undefined)) {
-                return true
+                return index ? i : true
               }
             } else {
               if (list[i] && (this.getsmart(list[i], keys[indKey], undefined) == this.getsmart(option, keys[indKey], undefined)) && (this.getsmart(list[i], keys[indKey], undefined) !== undefined)) {
                 if (indKey == keys.length - 1) {
-                  return true
+                  return index ? i : true
                 }
               } else if (list[i] && typeof list[i] == 'string' && (list[i] == this.getsmart(option, keys[indKey], undefined)) && (this.getsmart(option, keys[indKey], undefined) !== undefined)) {
                 if (indKey == keys.length - 1) {
-                  return true
+                  return index ? i : true
                 }
               }
             }
           }
         }
       }
-      return false
+      return index ? -1 : false
     },
     thingIn({
       option,
@@ -444,7 +444,7 @@ module.exports = ({
       }
       return -1
     },
-    pushOpt(option, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+    pushOpt(option, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype, index) {
       if (typeof list == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
 				if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
 					list.splice(list.length, 0, option)
@@ -454,7 +454,8 @@ module.exports = ({
 				} else {
 					list.push(option)
 				}
-      }
+			}
+			return index ? this.optIn(option, list, obj, keys, keymatchtype, index) : this.optIn(option, list, obj, keys, keymatchtype, index)
     },
     pushThing({
       option,
