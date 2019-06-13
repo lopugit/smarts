@@ -305,13 +305,14 @@ module.exports = function () {
       var obj = arguments.length > 2 ? arguments[2] : undefined;
       var keys = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['uuid', '_id', 'id'];
       var keymatchtype = arguments.length > 4 ? arguments[4] : undefined;
+      var index = arguments.length > 5 ? arguments[5] : undefined;
 
       if (_typeof(option) === 'object') {
         obj = true;
       }
 
       if (!obj && list && list.indexOf && list.indexOf(option) >= 0) {
-        return true;
+        return index ? list.indexOf(option) >= 0 : true;
       } else if (obj && list && typeof list.length == 'number') {
         for (var i = 0; i < list.length; i++) {
           if (!(keys && typeof keys.length == 'number')) return;
@@ -319,18 +320,18 @@ module.exports = function () {
           for (var indKey = 0; indKey < keys.length; indKey++) {
             if (keymatchtype == 'broad') {
               if (list[i] && this.getsmart(list[i], keys[indKey], undefined) == this.getsmart(option, keys[indKey], undefined) && this.getsmart(list[i], keys[indKey], undefined) !== undefined) {
-                return true;
+                return index ? i : true;
               } else if (list[i] && typeof list[i] == 'string' && list[i] == this.getsmart(option, keys[indKey], undefined) && this.getsmart(option, keys[indKey], undefined) !== undefined) {
-                return true;
+                return index ? i : true;
               }
             } else {
               if (list[i] && this.getsmart(list[i], keys[indKey], undefined) == this.getsmart(option, keys[indKey], undefined) && this.getsmart(list[i], keys[indKey], undefined) !== undefined) {
                 if (indKey == keys.length - 1) {
-                  return true;
+                  return index ? i : true;
                 }
               } else if (list[i] && typeof list[i] == 'string' && list[i] == this.getsmart(option, keys[indKey], undefined) && this.getsmart(option, keys[indKey], undefined) !== undefined) {
                 if (indKey == keys.length - 1) {
-                  return true;
+                  return index ? i : true;
                 }
               }
             }
@@ -338,7 +339,7 @@ module.exports = function () {
         }
       }
 
-      return false;
+      return index ? -1 : false;
     },
     thingIn: function thingIn() {
       var _ref5 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -665,6 +666,7 @@ module.exports = function () {
       var obj = arguments.length > 2 ? arguments[2] : undefined;
       var keys = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['uuid', '_id', 'id'];
       var keymatchtype = arguments.length > 4 ? arguments[4] : undefined;
+      var index = arguments.length > 5 ? arguments[5] : undefined;
 
       if (_typeof(list) == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
         if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
@@ -677,6 +679,8 @@ module.exports = function () {
           list.push(option);
         }
       }
+
+      return index ? this.optIn(option, list, obj, keys, keymatchtype, index) : this.optIn(option, list, obj, keys, keymatchtype, index);
     },
     pushThing: function pushThing() {
       var _ref9 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
