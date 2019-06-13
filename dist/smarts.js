@@ -18,6 +18,8 @@ require("core-js/modules/web.dom.iterable");
 
 require("core-js/modules/es6.array.iterator");
 
+require("core-js/modules/es6.object.assign");
+
 require("core-js/modules/es6.regexp.match");
 
 require("core-js/modules/es6.regexp.split");
@@ -108,12 +110,12 @@ module.exports = function () {
       return f.parse(f.stringify(obj));
     },
     merge: function merge(obj1, obj2, opts) {
-      return _merge(obj1, obj2, opts || {
+      return Object.assign(obj1, _merge(obj1, obj2, opts || {
         arrayMerge: function arrayMerge(store, saved) {
           return saved;
         },
         clone: false
-      });
+      }));
     },
     mod: function mod(args, _mod) {
       return _mod(args) || args;
