@@ -72,6 +72,15 @@ module.exports = ({
 		dupe(obj){
 			return f.parse(f.stringify(obj))
 		},
+		schema(obj1, obj2, opts){
+			return Object.assign(
+				obj1, 
+				merge(obj2, obj1, opts || {
+					arrayMerge: function (store, saved) { return saved },
+					clone: true,
+				})
+			)		
+		},
 		merge(obj1, obj2, opts){
 			return Object.assign(
 				obj1, 
