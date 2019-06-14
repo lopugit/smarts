@@ -90,6 +90,12 @@ module.exports = ({
 				})
 			)
 		},
+		mergeArray(obj1, obj2, opts){
+			return merge(obj1, obj2, opts || {
+				arrayMerge: function (store, saved) { return saved },
+				clone: true,
+			})
+		},
 		mod(args, mod){
 			return mod(args) || args
 		},
