@@ -125,6 +125,14 @@ module.exports = function () {
         clone: true
       }));
     },
+    mergeArray: function mergeArray(obj1, obj2, opts) {
+      return _merge(obj1, obj2, opts || {
+        arrayMerge: function arrayMerge(store, saved) {
+          return saved;
+        },
+        clone: true
+      });
+    },
     mod: function mod(args, _mod) {
       return _mod(args) || args;
     },
