@@ -82,13 +82,17 @@ module.exports = ({
 			)		
 		},
 		merge(obj1, obj2, opts){
-			return Object.assign(
-				obj1, 
-				merge(obj1, obj2, opts || {
-					arrayMerge: function (store, saved) { return saved },
-					clone: true,
-				})
-			)
+			if(obj1 instanceof Array && typeof obj2 instanceof Array){
+				return this.arrayMerge(obj1, obj2, opts)
+			} else {
+				return Object.assign(
+					obj1, 
+					merge(obj1, obj2, opts || {
+						arrayMerge: function (store, saved) { return saved },
+						clone: true,
+					})
+				)
+			}
 		},
 		mergeArray(obj1, obj2, opts){
 			return merge(obj1, obj2, opts || {
@@ -452,6 +456,19 @@ module.exports = ({
     },
     pushOpt(option, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype, index) {
       if (typeof list == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
+				if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
+					list.splice(list.length, 0, option)
+					if(!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
+						window.$store.commit('thing')
+					}
+				} else {
+					list.push(option)
+				}
+			}
+			return index ? this.optIn(option, list, obj, keys, keymatchtype, index) : this.optIn(option, list, obj, keys, keymatchtype, index)
+    },
+		addOpt(option, list = this.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype, index) {
+      if (typeof list == 'object') {
 				if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
 					list.splice(list.length, 0, option)
 					if(!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
