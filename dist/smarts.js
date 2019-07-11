@@ -118,12 +118,16 @@ module.exports = function () {
       }));
     },
     merge: function merge(obj1, obj2, opts) {
-      return Object.assign(obj1, _merge(obj1, obj2, opts || {
-        arrayMerge: function arrayMerge(store, saved) {
-          return saved;
-        },
-        clone: true
-      }));
+      if (obj1 instanceof Array && _typeof(obj2) instanceof Array) {
+        return this.arrayMerge(obj1, obj2, opts);
+      } else {
+        return Object.assign(obj1, _merge(obj1, obj2, opts || {
+          arrayMerge: function arrayMerge(store, saved) {
+            return saved;
+          },
+          clone: true
+        }));
+      }
     },
     mergeArray: function mergeArray(obj1, obj2, opts) {
       return _merge(obj1, obj2, opts || {
@@ -677,6 +681,27 @@ module.exports = function () {
       var index = arguments.length > 5 ? arguments[5] : undefined;
 
       if (_typeof(list) == 'object' && !this.optIn(option, list, obj, keys, keymatchtype)) {
+        if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
+          list.splice(list.length, 0, option);
+
+          if (!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
+            window.$store.commit('thing');
+          }
+        } else {
+          list.push(option);
+        }
+      }
+
+      return index ? this.optIn(option, list, obj, keys, keymatchtype, index) : this.optIn(option, list, obj, keys, keymatchtype, index);
+    },
+    addOpt: function addOpt(option) {
+      var list = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.getsmart(stringList);
+      var obj = arguments.length > 2 ? arguments[2] : undefined;
+      var keys = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['uuid', '_id', 'id'];
+      var keymatchtype = arguments.length > 4 ? arguments[4] : undefined;
+      var index = arguments.length > 5 ? arguments[5] : undefined;
+
+      if (_typeof(list) == 'object') {
         if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
           list.splice(list.length, 0, option);
 
