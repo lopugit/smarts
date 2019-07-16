@@ -1,5 +1,7 @@
 "use strict";
 
+require("core-js/modules/es6.object.assign");
+
 module.exports = function () {
   var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
       node = _ref.node,
@@ -33,6 +35,6 @@ module.exports = function () {
     });
   }
 
-  if (that) smarts.merge(that, smarts);
+  if (that) Object.assign(that, smarts);
   return smarts;
 };
