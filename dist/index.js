@@ -5,7 +5,8 @@ module.exports = function () {
       node = _ref.node,
       vue = _ref.vue,
       objList = _ref.objList,
-      stringList = _ref.stringList;
+      stringList = _ref.stringList,
+      that = _ref.that;
 
   if (node) {
     var smarts = require('./smarts')({
@@ -32,5 +33,6 @@ module.exports = function () {
     });
   }
 
+  if (that) smarts.merge(that, smarts);
   return smarts;
 };
