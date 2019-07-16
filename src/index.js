@@ -1,4 +1,4 @@
-module.exports = function({node, vue, objList, stringList}={}){
+module.exports = function({node, vue, objList, stringList, that}={}){
     if(node){
         var smarts = require('./smarts')({objList, stringList})
     } else if (vue){
@@ -11,6 +11,7 @@ module.exports = function({node, vue, objList, stringList}={}){
         }
     } else {
         var smarts = require('./smarts')({objList, stringList})
-    }
+		}
+		if(that) smarts.merge(that, smarts)
     return smarts
 }
