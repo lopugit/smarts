@@ -12,6 +12,6 @@ module.exports = function({node, vue, objList, stringList, that}={}){
     } else {
         var smarts = require('./smarts')({objList, stringList})
 		}
-		if(that) smarts.merge(that, smarts)
+		if(that) Object.assign(that, smarts)
     return smarts
 }
