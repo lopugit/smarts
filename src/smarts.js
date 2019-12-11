@@ -1,5 +1,5 @@
-let f = require('flatted')
 let merge = require('deepmerge')
+let babel = require('@babel/parser')
 module.exports = ({
   objList,
   stringList,
@@ -10,21 +10,67 @@ module.exports = ({
 		objList,
 		stringList,
 		reactiveSetter,
-		vue
+		vue,
+		Primitive: String,
+		primitive: "string"
 	}
-  return {
-		stringify(obj, supplemental){
-			return f.stringify(obj, supplemental || this.stringifyFunc)
-		},
-		parse(string, supplemental){
-			return f.parse(string, supplemental || this.parseFunc)
-		},
+
+  let ret = {
+    parse: function parse(text, reviver=this.parseFunc) {
+      var input = JSON.parse(text, reviver)
+			input = input.map(primitives);
+      var value = input[0];
+      var $ = reviver || noop;
+      var tmp = typeof value === 'object' && value ?
+                  revive(input, new Set, value, $) :
+                  value;
+      return $.call({'': tmp}, '', tmp);
+    },
+    stringify: function stringify(value, replacer=this.stringifyFunc, space) {
+      for (var
+        firstRun,
+        known = new Map,
+        input = [],
+        output = [],
+        $ = replacer && typeof replacer === typeof input ?
+              function (k, v) {
+                if (k === '' || -1 < replacer.indexOf(k)) return v;
+              } :
+              (replacer || noop),
+        i = +set(known, input, $.call({'': value}, '', value)),
+        replace = function (key, value) {
+          if (firstRun) {
+            firstRun = !firstRun;
+            return value;
+            // this was invoking twice each root object
+            // return i < 1 ? value : $.call(this, key, value);
+          }
+          var after = $.call(this, key, value);
+          switch (typeof after) {
+            case 'object':
+              if (after === null) return after;
+            case local.primitive:
+              return known.get(after) || set(known, input, after);
+          }
+          return after;
+        };
+        i < input.length; i++
+      ) {
+        firstRun = true;
+        output[i] = JSON.stringify(input[i], replace, space);
+      }
+      return '[' + output.join(',') + ']';
+    },
 		stringifyFunc(key, val){
+			let ret = val
 			if (
 				val instanceof Function && 
 				typeof val.toString === 'function'
 			){
-				return "Function " + val.toString()
+				ret = val.toString()
+				// if(ret.indexOf("(") != 0 && ret.indexOf("function ") != 0) ret = "function "+ret
+				ret = "Function "+ret
+				return ret
 			} else if (
 				val instanceof RegExp &&
 				typeof val.toString === 'function'
@@ -48,10 +94,41 @@ module.exports = ({
 					// ) 
 				) {
 					let ret = val
+					let toMatch = "Function "
+					let functionString = val.substring(val.indexOf(toMatch)+toMatch.length)
+					// let functionString = splitted[1]
+					// if(
+					// 	functionString.indexOf("function") != 0
+					// 	&& (
+					// 		functionString.indexOf("(") != 0
+					// 		||
+					// 		!(functionString.indexOf("=") < functionString.indexOf("("))
+					// 	)
+					// ) functionString = "function "+functionString
 					try {
-						ret = eval("("+val.split('Function ')[1]+")")
+						// ret = babel.parse(functionString)
+						ret = eval(`( ${functionString} )`)
 					} catch(err){
-	
+						// console.log("val: ", val)
+						// console.log("functionString", functionString)
+						// console.error(err)
+						try {
+							// ret = babel.parse(functionString)
+							ret = eval(`({ ${functionString} })`)
+							let keys = Object.keys(ret)
+							ret = ret[keys[0]]
+						} catch(err){
+							// console.log("val: ", val)
+							// console.log("functionString", functionString)
+							// console.error(err)
+							try {
+								ret = eval(`({ b: ${functionString} })`).b
+							} catch(err){
+								// console.log("val: ", val)
+								// console.log("functionString", functionString)
+								// console.error(err)
+							}
+						}
 					}
 					return ret
 				} else if (
@@ -62,12 +139,12 @@ module.exports = ({
 						var regex = val.split('RegExp ')[1].match(/\/(.*)\/(.*)?/);
 						ret = new RegExp(regex[1], regex[2] || "")
 					} catch(err){
-
+						console.error(err)
 					}
 					return ret
 				}
 			}
-			return val
+			return Primitives(key, val)
 		},	
 		dupe(obj){
 			return f.parse(f.stringify(obj))
@@ -167,10 +244,10 @@ module.exports = ({
 					list.splice(index, 1, option)
 					if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
 						if(!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
-							window.$store.commit('thing')
+							window.$store.commit('graph/thing')
 						}
 					} else if (this.getsmart(local.vue, 'store', false) && !localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('thing')
+						window.$store.commit('graph/thing')
 					}
 				}
 				// list[index] = option
@@ -178,7 +255,7 @@ module.exports = ({
 				if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
 					list.splice(list.length, 0, option)
 					if(!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('thing')
+						window.$store.commit('graph/thing')
 					}
 				} else {
 					list.push(option)
@@ -459,7 +536,7 @@ module.exports = ({
 				if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
 					list.splice(list.length, 0, option)
 					if(!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('thing')
+						window.$store.commit('graph/thing')
 					}
 				} else {
 					list.push(option)
@@ -472,7 +549,7 @@ module.exports = ({
 				if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
 					list.splice(list.length, 0, option)
 					if(!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('thing')
+						window.$store.commit('graph/thing')
 					}
 				} else {
 					list.push(option)
@@ -492,7 +569,7 @@ module.exports = ({
 				if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
 					list.splice(list.length, 0, option)
 					if(!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('thing')
+						window.$store.commit('graph/thing')
 					}
 				} else {
 					list.push(option)
@@ -523,7 +600,7 @@ module.exports = ({
 				list.splice(this.optIndex(option, list, obj, keys, keymatchtype), 1)
 				if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
 					if(!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('thing')
+						window.$store.commit('graph/thing')
 					}
 				}      
 			}
@@ -552,7 +629,7 @@ module.exports = ({
 				}), 1)
 				if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
 					if(!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('thing')
+						window.$store.commit('graph/thing')
 					}
 				} 
       }
@@ -745,12 +822,12 @@ module.exports = ({
           if (that.getsmart(vue, 'reactiveSetter', false) && that.$set && obj) {
 						that.$set(obj, propsArray[0], value)
 						if(typeof that.getsmart(window, '$store.commit', undefined) == 'function'){
-							window.$store.commit('thing')
+							window.$store.commit('graph/thing')
 						}
 					} else {
 						obj[propsArray[0]] = value
 						if(that.getsmart(vue, 'store', false) && typeof that.getsmart(window, '$store.commit', undefined) == 'function'){ 
-							window.$store.commit('thing')
+							window.$store.commit('graph/thing')
 						}
           }
           if (context) {
@@ -770,12 +847,12 @@ module.exports = ({
           if (that.getsmart(vue, 'reactiveSetter', false) && that.$set && obj) {
 						that.$set(obj, propsArray[0], {})
 						if(typeof that.getsmart(window, '$store.commit', undefined) == 'function'){
-							window.$store.commit('thing')
+							window.$store.commit('graph/thing')
 						}
           } else {
 						obj[propsArray[0]] = {}
 						if(that.getsmart(vue, 'store', false) && typeof that.getsmart(window, '$store.commit', undefined) == 'function'){ 
-							window.$store.commit('thing')
+							window.$store.commit('graph/thing')
 						}
           }
 				}
@@ -787,12 +864,12 @@ module.exports = ({
         if (that.getsmart(vue, 'reactiveSetter', false) && that.$set && obj) {
 					that.$set(obj, undefined, value)
 					if(typeof that.getsmart(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('thing')
+						window.$store.commit('graph/thing')
 					}
         } else {
 					obj = value
 					if(that.getsmart(vue, 'store', false) && typeof that.getsmart(window, '$store.commit', undefined) == 'function'){ 
-						window.$store.commit('thing')
+						window.$store.commit('graph/thing')
 					}
         }
         if (context) {
@@ -991,4 +1068,49 @@ module.exports = ({
 			}
 		}
 	}
+
+
+  function noop(key, value) {
+    return value;
+  }
+
+  function revive(input, parsed, output, $) {
+    return Object.keys(output).reduce(
+      function (output, key) {
+        var value = output[key];
+        if (value instanceof local.Primitive) {
+          var tmp = input[value];
+          if (typeof tmp === 'object' && !parsed.has(tmp)) {
+            parsed.add(tmp);
+            output[key] = $.call(output, key, revive(input, parsed, tmp, $));
+          } else {
+            output[key] = $.call(output, key, tmp);
+          }
+        } else
+          output[key] = $.call(output, key, value);
+        return output;
+      },
+      output
+    );
+  }
+
+  function set(known, input, value) {
+    var index = local.Primitive(input.push(value) - 1);
+    known.set(value, index);
+    return index;
+  }
+
+  // the two kinds of primitives
+  //  1. the real one
+  //  2. the wrapped one
+
+  function primitives(value) {
+    return value instanceof local.Primitive ? local.Primitive(value) : value;
+  }
+
+  function Primitives(key, value) {
+    return typeof value === local.primitive ? new local.Primitive(value) : value;
+  }
+
+	return ret
 }

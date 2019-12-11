@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
-    "deepmerge": "^3.2.0",
-    "flatted": "^2.0.0"
+    "deepmerge": "^3.2.0"
   }
 }
