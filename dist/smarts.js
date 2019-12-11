@@ -4,9 +4,9 @@ require("core-js/modules/es6.array.for-each");
 
 require("core-js/modules/es6.array.filter");
 
-require("core-js/modules/es6.object.keys");
-
 require("core-js/modules/es6.object.define-property");
+
+require("core-js/modules/es6.array.reduce");
 
 require("core-js/modules/es6.promise");
 
@@ -14,17 +14,13 @@ require("core-js/modules/es7.symbol.async-iterator");
 
 require("core-js/modules/es6.symbol");
 
-require("core-js/modules/web.dom.iterable");
-
-require("core-js/modules/es6.array.iterator");
-
 require("core-js/modules/es6.object.assign");
-
-require("core-js/modules/es6.regexp.match");
 
 require("core-js/modules/es6.regexp.split");
 
-require("core-js/modules/es6.array.index-of");
+require("core-js/modules/es6.regexp.match");
+
+require("core-js/modules/es6.object.keys");
 
 require("core-js/modules/es6.regexp.constructor");
 
@@ -32,7 +28,21 @@ require("core-js/modules/es6.regexp.to-string");
 
 require("core-js/modules/es6.date.to-string");
 
+require("core-js/modules/es6.array.index-of");
+
+require("core-js/modules/es6.map");
+
+require("core-js/modules/web.dom.iterable");
+
+require("core-js/modules/es6.array.iterator");
+
 require("core-js/modules/es6.object.to-string");
+
+require("core-js/modules/es6.string.iterator");
+
+require("core-js/modules/es6.set");
+
+require("core-js/modules/es6.array.map");
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -40,12 +50,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var f = require('flatted');
-
 var _merge = require('deepmerge');
 
+var babel = require('@babel/parser');
+
 module.exports = function () {
-  var _ref16;
+  var _ret3;
 
   var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
       objList = _ref.objList,
@@ -57,18 +67,63 @@ module.exports = function () {
     objList: objList,
     stringList: stringList,
     reactiveSetter: reactiveSetter,
-    vue: vue
+    vue: vue,
+    Primitive: String,
+    primitive: "string"
   };
-  return _ref16 = {
-    stringify: function stringify(obj, supplemental) {
-      return f.stringify(obj, supplemental || this.stringifyFunc);
+  var ret = (_ret3 = {
+    parse: function parse(text) {
+      var reviver = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.parseFunc;
+      var input = JSON.parse(text, reviver);
+      input = input.map(primitives);
+      var value = input[0];
+      var $ = reviver || noop;
+      var tmp = _typeof(value) === 'object' && value ? revive(input, new Set(), value, $) : value;
+      return $.call({
+        '': tmp
+      }, '', tmp);
     },
-    parse: function parse(string, supplemental) {
-      return f.parse(string, supplemental || this.parseFunc);
+    stringify: function stringify(value) {
+      var replacer = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.stringifyFunc;
+      var space = arguments.length > 2 ? arguments[2] : undefined;
+
+      for (var firstRun, known = new Map(), input = [], output = [], $ = replacer && _typeof(replacer) === _typeof(input) ? function (k, v) {
+        if (k === '' || -1 < replacer.indexOf(k)) return v;
+      } : replacer || noop, i = +set(known, input, $.call({
+        '': value
+      }, '', value)), replace = function replace(key, value) {
+        if (firstRun) {
+          firstRun = !firstRun;
+          return value; // this was invoking twice each root object
+          // return i < 1 ? value : $.call(this, key, value);
+        }
+
+        var after = $.call(this, key, value);
+
+        switch (_typeof(after)) {
+          case 'object':
+            if (after === null) return after;
+
+          case local.primitive:
+            return known.get(after) || set(known, input, after);
+        }
+
+        return after;
+      }; i < input.length; i++) {
+        firstRun = true;
+        output[i] = JSON.stringify(input[i], replace, space);
+      }
+
+      return '[' + output.join(',') + ']';
     },
     stringifyFunc: function stringifyFunc(key, val) {
+      var ret = val;
+
       if (val instanceof Function && typeof val.toString === 'function') {
-        return "Function " + val.toString();
+        ret = val.toString(); // if(ret.indexOf("(") != 0 && ret.indexOf("function ") != 0) ret = "function "+ret
+
+        ret = "Function " + ret;
+        return ret;
       } else if (val instanceof RegExp && typeof val.toString === 'function') {
         return "RegExp " + val.toString();
       }
@@ -85,26 +140,59 @@ module.exports = function () {
         // 	val.slice(0,5) === 'async'
         // ) 
         ) {
-            var ret = val;
+            var _ret = val;
+            var toMatch = "Function ";
+            var functionString = val.substring(val.indexOf(toMatch) + toMatch.length); // let functionString = splitted[1]
+            // if(
+            // 	functionString.indexOf("function") != 0
+            // 	&& (
+            // 		functionString.indexOf("(") != 0
+            // 		||
+            // 		!(functionString.indexOf("=") < functionString.indexOf("("))
+            // 	)
+            // ) functionString = "function "+functionString
 
             try {
-              ret = eval("(" + val.split('Function ')[1] + ")");
-            } catch (err) {}
+              // ret = babel.parse(functionString)
+              _ret = eval("( ".concat(functionString, " )"));
+            } catch (err) {
+              // console.log("val: ", val)
+              // console.log("functionString", functionString)
+              // console.error(err)
+              try {
+                // ret = babel.parse(functionString)
+                _ret = eval("({ ".concat(functionString, " })"));
+                var keys = Object.keys(_ret);
+                _ret = _ret[keys[0]];
+              } catch (err) {
+                // console.log("val: ", val)
+                // console.log("functionString", functionString)
+                // console.error(err)
+                try {
+                  _ret = eval("({ b: ".concat(functionString, " })")).b;
+                } catch (err) {// console.log("val: ", val)
+                  // console.log("functionString", functionString)
+                  // console.error(err)
+                }
+              }
+            }
 
-            return ret;
+            return _ret;
           } else if (val.indexOf('RegExp ') == 0) {
-          var _ret = val;
+          var _ret2 = val;
 
           try {
             var regex = val.split('RegExp ')[1].match(/\/(.*)\/(.*)?/);
-            _ret = new RegExp(regex[1], regex[2] || "");
-          } catch (err) {}
+            _ret2 = new RegExp(regex[1], regex[2] || "");
+          } catch (err) {
+            console.error(err);
+          }
 
-          return _ret;
+          return _ret2;
         }
       }
 
-      return val;
+      return Primitives(key, val);
     },
     dupe: function dupe(obj) {
       return f.parse(f.stringify(obj));
@@ -219,10 +307,10 @@ module.exports = function () {
 
           if (this.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
             if (!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
-              window.$store.commit('thing');
+              window.$store.commit('graph/thing');
             }
           } else if (this.getsmart(local.vue, 'store', false) && !localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
-            window.$store.commit('thing');
+            window.$store.commit('graph/thing');
           }
         } // list[index] = option
 
@@ -231,7 +319,7 @@ module.exports = function () {
           list.splice(list.length, 0, option);
 
           if (!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
-            window.$store.commit('thing');
+            window.$store.commit('graph/thing');
           }
         } else {
           list.push(option);
@@ -685,7 +773,7 @@ module.exports = function () {
           list.splice(list.length, 0, option);
 
           if (!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
-            window.$store.commit('thing');
+            window.$store.commit('graph/thing');
           }
         } else {
           list.push(option);
@@ -706,7 +794,7 @@ module.exports = function () {
           list.splice(list.length, 0, option);
 
           if (!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
-            window.$store.commit('thing');
+            window.$store.commit('graph/thing');
           }
         } else {
           list.push(option);
@@ -738,7 +826,7 @@ module.exports = function () {
           list.splice(list.length, 0, option);
 
           if (!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
-            window.$store.commit('thing');
+            window.$store.commit('graph/thing');
           }
         } else {
           list.push(option);
@@ -829,12 +917,12 @@ module.exports = function () {
 
         if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
           if (!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
-            window.$store.commit('thing');
+            window.$store.commit('graph/thing');
           }
         }
       }
     }
-  }, _defineProperty(_ref16, "popThing", function popThing() {
+  }, _defineProperty(_ret3, "popThing", function popThing() {
     var _ref11 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         option = _ref11.option,
         _ref11$list = _ref11.list,
@@ -864,11 +952,11 @@ module.exports = function () {
 
       if (this.getsmart(local.vue, 'reactiveSetter', false) || this.getsmart(local.vue, 'store', false)) {
         if (!localStorage.getItem('vuexWriteLock') && typeof this.getsmart(window, '$store.commit', undefined) == 'function') {
-          window.$store.commit('thing');
+          window.$store.commit('graph/thing');
         }
       }
     }
-  }), _defineProperty(_ref16, "popOpts", function popOpts(options) {
+  }), _defineProperty(_ret3, "popOpts", function popOpts(options) {
     var list = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.getsmart(stringList);
     var obj = arguments.length > 2 ? arguments[2] : undefined;
     var keys = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['uuid', '_id', 'id'];
@@ -897,7 +985,7 @@ module.exports = function () {
         }
       }
     }
-  }), _defineProperty(_ref16, "popThings", function popThings() {
+  }), _defineProperty(_ret3, "popThings", function popThings() {
     var _ref12 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         options = _ref12.options,
         _ref12$list = _ref12.list,
@@ -934,7 +1022,7 @@ module.exports = function () {
         }
       }
     }
-  }), _defineProperty(_ref16, "toggleOpt", function toggleOpt(option) {
+  }), _defineProperty(_ret3, "toggleOpt", function toggleOpt(option) {
     var list = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.getsmart(stringList);
     var obj = arguments.length > 2 ? arguments[2] : undefined;
     var keys = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['uuid', '_id', 'id'];
@@ -945,7 +1033,7 @@ module.exports = function () {
     } else {
       this.pushOpt(option, list, obj, keys, keymatchtype);
     }
-  }), _defineProperty(_ref16, "toggleThing", function toggleThing() {
+  }), _defineProperty(_ret3, "toggleThing", function toggleThing() {
     var _ref13 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         option = _ref13.option,
         _ref13$list = _ref13.list,
@@ -963,7 +1051,7 @@ module.exports = function () {
     } else {
       this.pushOpt(option, list, obj, keys, keymatchtype);
     }
-  }), _defineProperty(_ref16, "toggleOpts", function toggleOpts(options) {
+  }), _defineProperty(_ret3, "toggleOpts", function toggleOpts(options) {
     var list = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.getsmart(stringList);
     var obj = arguments.length > 2 ? arguments[2] : undefined;
     var keys = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['uuid', '_id', 'id'];
@@ -973,7 +1061,7 @@ module.exports = function () {
     for (var option in options) {
       this.toggleOpt(option, list, obj, keys, keymatchtype);
     }
-  }), _defineProperty(_ref16, "toggleThings", function toggleThings() {
+  }), _defineProperty(_ret3, "toggleThings", function toggleThings() {
     var _ref14 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         options = _ref14.options,
         _ref14$list = _ref14.list,
@@ -995,7 +1083,7 @@ module.exports = function () {
         this.pushOpt(option, list, obj, keys, keymatchtype);
       }
     }
-  }), _defineProperty(_ref16, "ratchetOpt", function ratchetOpt(option, list, obj) {// find(obj, property, equals){
+  }), _defineProperty(_ret3, "ratchetOpt", function ratchetOpt(option, list, obj) {// find(obj, property, equals){
     // 	if(this.getsmart(obj, 'constructor', undefined) == Array){
     // 		for(var i=0; i<obj.length; i++){
     // 			find(obj[i], )
@@ -1005,7 +1093,7 @@ module.exports = function () {
 
     var keys = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['uuid', '_id', 'id'];
     var keymatchtype = arguments.length > 4 ? arguments[4] : undefined;
-  }), _defineProperty(_ref16, "getsmart", function getsmart(obj, property, defaultValue, context) {
+  }), _defineProperty(_ret3, "getsmart", function getsmart(obj, property, defaultValue, context) {
     if (!property && obj && typeof obj == 'string') {
       property = obj.split(".");
 
@@ -1082,7 +1170,7 @@ module.exports = function () {
     };
 
     return deepGetByArray(obj, property, defaultValue);
-  }), _defineProperty(_ref16, "setsmart", function setsmart(obj, property, value, context) {
+  }), _defineProperty(_ret3, "setsmart", function setsmart(obj, property, value, context) {
     if (!property && typeof obj == 'string') {
       property = obj.split(".");
 
@@ -1125,13 +1213,13 @@ module.exports = function () {
           that.$set(obj, propsArray[0], value);
 
           if (typeof that.getsmart(window, '$store.commit', undefined) == 'function') {
-            window.$store.commit('thing');
+            window.$store.commit('graph/thing');
           }
         } else {
           obj[propsArray[0]] = value;
 
           if (that.getsmart(vue, 'store', false) && typeof that.getsmart(window, '$store.commit', undefined) == 'function') {
-            window.$store.commit('thing');
+            window.$store.commit('graph/thing');
           }
         }
 
@@ -1154,13 +1242,13 @@ module.exports = function () {
           that.$set(obj, propsArray[0], {});
 
           if (typeof that.getsmart(window, '$store.commit', undefined) == 'function') {
-            window.$store.commit('thing');
+            window.$store.commit('graph/thing');
           }
         } else {
           obj[propsArray[0]] = {};
 
           if (that.getsmart(vue, 'store', false) && typeof that.getsmart(window, '$store.commit', undefined) == 'function') {
-            window.$store.commit('thing');
+            window.$store.commit('graph/thing');
           }
         }
       }
@@ -1175,13 +1263,13 @@ module.exports = function () {
         that.$set(obj, undefined, value);
 
         if (typeof that.getsmart(window, '$store.commit', undefined) == 'function') {
-          window.$store.commit('thing');
+          window.$store.commit('graph/thing');
         }
       } else {
         obj = value;
 
         if (that.getsmart(vue, 'store', false) && typeof that.getsmart(window, '$store.commit', undefined) == 'function') {
-          window.$store.commit('thing');
+          window.$store.commit('graph/thing');
         }
       }
 
@@ -1195,7 +1283,7 @@ module.exports = function () {
         return obj;
       }
     }
-  }), _defineProperty(_ref16, "gosmart", function gosmart(obj, property, value, context) {
+  }), _defineProperty(_ret3, "gosmart", function gosmart(obj, property, value, context) {
     // stands for get or set smart
     var get = this.getsmart(obj, property, value, true);
 
@@ -1209,7 +1297,7 @@ module.exports = function () {
     } else {
       return this.getsmart(get, 'value', get);
     }
-  }), _defineProperty(_ref16, "vgosmart", function vgosmart(obj, property, value, context) {
+  }), _defineProperty(_ret3, "vgosmart", function vgosmart(obj, property, value, context) {
     var _this2 = this;
 
     // stands for v-model get or set smart
@@ -1232,7 +1320,7 @@ module.exports = function () {
         _this2.setsmart(obj, property, val);
       }
     };
-  }), _defineProperty(_ref16, "getsmartval", function getsmartval(obj, property, defaultValue) {
+  }), _defineProperty(_ret3, "getsmartval", function getsmartval(obj, property, defaultValue) {
     // get the value of a property path based off its type
     var target = this.getsmart(obj, property, defaultValue);
 
@@ -1247,11 +1335,11 @@ module.exports = function () {
     }
 
     return defaultValue;
-  }), _defineProperty(_ref16, "safestring", function safestring(something) {
+  }), _defineProperty(_ret3, "safestring", function safestring(something) {
     return this.jsmart.stringify(something || '');
-  }), _defineProperty(_ref16, "safeparse", function safeparse(something) {
+  }), _defineProperty(_ret3, "safeparse", function safeparse(something) {
     return this.jsmart.parse(something || '');
-  }), _defineProperty(_ref16, "mapsmart", function mapsmart(list) {
+  }), _defineProperty(_ret3, "mapsmart", function mapsmart(list) {
     var _this3 = this;
 
     var keyProperty = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'title';
@@ -1335,9 +1423,9 @@ module.exports = function () {
 
       }
     });
-  }), _defineProperty(_ref16, "domval", function domval(thing) {
+  }), _defineProperty(_ret3, "domval", function domval(thing) {
     return this.getsmart(thing, 'properties.description', '');
-  }), _defineProperty(_ref16, "getThing", function getThing() {
+  }), _defineProperty(_ret3, "getThing", function getThing() {
     var _ref15 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         option = _ref15.option,
         _ref15$list = _ref15.list,
@@ -1362,7 +1450,7 @@ module.exports = function () {
     } else {
       return defaultValue;
     }
-  }), _defineProperty(_ref16, "equal", function equal(obj1, obj2) {
+  }), _defineProperty(_ret3, "equal", function equal(obj1, obj2) {
     if (obj1 && obj2 && _typeof(obj1) == 'object' && _typeof(obj2) == 'object') {
       //Loop through properties in object 1
       for (var p in obj1) {
@@ -1393,5 +1481,47 @@ module.exports = function () {
 
       return true;
     }
-  }), _ref16;
+  }), _ret3);
+
+  function noop(key, value) {
+    return value;
+  }
+
+  function revive(input, parsed, output, $) {
+    return Object.keys(output).reduce(function (output, key) {
+      var value = output[key];
+
+      if (value instanceof local.Primitive) {
+        var tmp = input[value];
+
+        if (_typeof(tmp) === 'object' && !parsed.has(tmp)) {
+          parsed.add(tmp);
+          output[key] = $.call(output, key, revive(input, parsed, tmp, $));
+        } else {
+          output[key] = $.call(output, key, tmp);
+        }
+      } else output[key] = $.call(output, key, value);
+
+      return output;
+    }, output);
+  }
+
+  function set(known, input, value) {
+    var index = local.Primitive(input.push(value) - 1);
+    known.set(value, index);
+    return index;
+  } // the two kinds of primitives
+  //  1. the real one
+  //  2. the wrapped one
+
+
+  function primitives(value) {
+    return value instanceof local.Primitive ? local.Primitive(value) : value;
+  }
+
+  function Primitives(key, value) {
+    return _typeof(value) === local.primitive ? new local.Primitive(value) : value;
+  }
+
+  return ret;
 };

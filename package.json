@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel src -d dist",
-    "commit": "git add . ; git commit -m 'ready'",
-    "push": "npm run commit ; git push origin dev",
-    "pull": "git pull origin dev",
+    "commit": "git add . ; git commit -m 'Automated commit'",
+    "push": "npm run commit ; git push",
+    "pull": "git pull",
     "everything": "npm run push ; npm version patch ; npm publish ; npm run push",
     "prepublish": "npm run build"
   },
