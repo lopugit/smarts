@@ -9,7 +9,8 @@
     "commit": "git add . ; git commit -m 'Automated commit'",
     "push": "git push",
     "pull": "git pull",
-    "everything": "git add . ; git commit -m 'version bump' ; npm version patch ; npm publish ; npm run push",
+		"commitVersionBump": "git add . ; git commit -m 'version bump'",
+    "everything": "npm run commitVersionBump ; npm version patch ; npm publish ; npm run push",
     "prepublish": "npm run build"
   },
   "repository": {
