@@ -1043,7 +1043,11 @@ module.exports = ({
 				//Loop through properties in object 1
 				for (var p in obj1) {
 					//Check property exists on both objects
-					if (this.getsmart(obj1, 'hasOwnProperty', ()=>{ return {} })(p) !== this.getsmart(obj2, 'hasOwnProperty', ()=>{ return {} })(p)) return false;
+					if (
+						typeof obj1.hasOwnProperty == 'function' 
+						&& typeof obj2.hasOwnProperty == 'function' 
+						&& obj1.hasOwnProperty(p) !== obj2.hasOwnProperty(p)
+					) return false;
 			 
 					switch (typeof (obj1[p])) {
 						//Deep compare objects
