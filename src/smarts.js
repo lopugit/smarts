@@ -16,27 +16,37 @@ module.exports = ({
 	}
 
   let ret = {
-    parse: function parse(text, reviver=this.parseFunc) {
-      var input = JSON.parse(text, reviver)
-			input = input.map(primitives);
-      var value = input[0];
-      var $ = reviver || noop;
-      var tmp = typeof value === 'object' && value ?
-                  revive(input, new Set, value, $) :
-                  value;
+    parse: function parse(text, opts={reviver:this.parseFunc}) {
+
+			this.gosmart(opts, 'reviver', this.parseFunc)
+			this.gosmart(opts, 'value', {})
+			this.gosmart(opts, 'strictFunctions', true)
+			
+			opts.reviver = opts.reviver.bind(opts)
+      var input = JSON.parse(text, opts.reviver)
+			input = input.map(primitives)
+			Object.assign(opts.value, input[0])
+      var $ = opts.reviver || noop;
+      var tmp = typeof opts.value === 'object' && opts.value ?
+                  revive(input, new Set, opts.value, $) :
+                  opts.value;
       return $.call({'': tmp}, '', tmp);
     },
-    stringify: function stringify(value, replacer=this.stringifyFunc, space) {
+    stringify: function stringify(value, opts={replacer:this.stringifyFunc}) {
+			this.gosmart(opts, 'reviver', this.stringifyFunc)
+			// this.gosmart(opts, 'value', {})
+			this.gosmart(opts, 'strictFunctions', true)
+			opts.reviver = opts.reviver.bind(opts)
       for (var
         firstRun,
         known = new Map,
         input = [],
         output = [],
-        $ = replacer && typeof replacer === typeof input ?
+        $ = opts.replacer && typeof opts.replacer === typeof input ?
               function (k, v) {
-                if (k === '' || -1 < replacer.indexOf(k)) return v;
+                if (k === '' || -1 < opts.replacer.indexOf(k)) return v;
               } :
-              (replacer || noop),
+              (opts.replacer || noop),
         i = +set(known, input, $.call({'': value}, '', value)),
         replace = function (key, value) {
           if (firstRun) {
@@ -57,25 +67,29 @@ module.exports = ({
         i < input.length; i++
       ) {
         firstRun = true;
-        output[i] = JSON.stringify(input[i], replace, space);
+        output[i] = JSON.stringify(input[i], replace, opts.space);
       }
       return '[' + output.join(',') + ']';
     },
 		stringifyFunc(key, val){
 			let ret = val
 			if (
-				val instanceof Function && 
-				typeof val.toString === 'function'
+				val instanceof Function 
+				&& typeof val.toString === 'function'
+				&& !(this.strictFunctions && typeof val.alopu == 'undefined')
 			){
 				ret = val.toString()
 				// if(ret.indexOf("(") != 0 && ret.indexOf("function ") != 0) ret = "function "+ret
 				ret = "Function "+ret
+				if(ret == "Function function () { [native code] }") return
 				return ret
 			} else if (
 				val instanceof RegExp &&
 				typeof val.toString === 'function'
 			) {
 				return "RegExp " + val.toString()
+			} else {
+				return
 			}
 			return val
 		},
@@ -85,6 +99,7 @@ module.exports = ({
 			){
 				if(
 					val.indexOf('Function ') == 0 
+					// && !(this.strictFunctions)
 					// ||
 					// val[val.length-1] == '}' && 
 					// ( 
