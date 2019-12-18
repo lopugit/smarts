@@ -16,27 +16,11 @@ module.exports = ({
 	}
 
   let ret = {
-    parse: function parse(text, opts={reviver:this.parseFunc}) {
-
-			this.gosmart(opts, 'reviver', this.parseFunc)
-			this.gosmart(opts, 'value', {})
-			this.gosmart(opts, 'strictFunctions', true)
-			
-			opts.reviver = opts.reviver.bind(opts)
-      var input = JSON.parse(text, opts.reviver)
-			input = input.map(primitives)
-			Object.assign(opts.value, input[0])
-      var $ = opts.reviver || noop;
-      var tmp = typeof opts.value === 'object' && opts.value ?
-                  revive(input, new Set, opts.value, $) :
-                  opts.value;
-      return $.call({'': tmp}, '', tmp);
-    },
-    stringify: function stringify(value, opts={replacer:this.stringifyFunc}) {
-			this.gosmart(opts, 'reviver', this.stringifyFunc)
+    stringify: function stringify(value, opts={replacer:this.stringifier}) {
+			this.gosmart(opts, 'replacer', this.stringifier)
 			// this.gosmart(opts, 'value', {})
 			this.gosmart(opts, 'strictFunctions', true)
-			opts.reviver = opts.reviver.bind(opts)
+			opts.replacer = opts.replacer.bind(opts)
       for (var
         firstRun,
         known = new Map,
@@ -67,16 +51,19 @@ module.exports = ({
         i < input.length; i++
       ) {
         firstRun = true;
-        output[i] = JSON.stringify(input[i], replace, opts.space);
+				try {
+					output[i] = JSON.stringify(input[i], replace, opts.space);
+				} catch(err){}
       }
+			output = output.filter(i=>typeof i == 'undefined' ? false : true)
       return '[' + output.join(',') + ']';
     },
-		stringifyFunc(key, val){
+		stringifier(key, val){
 			let ret = val
 			if (
 				val instanceof Function 
 				&& typeof val.toString === 'function'
-				&& !(this.strictFunctions && typeof val.alopu == 'undefined')
+				&& (this.strictFunctions ? typeof val.alopu != 'undefined' : true)
 			){
 				ret = val.toString()
 				// if(ret.indexOf("(") != 0 && ret.indexOf("function ") != 0) ret = "function "+ret
@@ -88,26 +75,45 @@ module.exports = ({
 				typeof val.toString === 'function'
 			) {
 				return "RegExp " + val.toString()
-			} else {
-				return
-			}
+			} 
+			// else if(
+			// 	this.strictFunctions
+			// 	&& typeof val == 'object'
+			// 	&& [Object, String, Array, Function, Number].indexOf(val.constructor) < 0
+			// ) {
+			// 	throw new Error("val is a custom class and not serialisable")
+			// }
 			return val
 		},
-		parseFunc(key, val){
+    parse: function parse(text, opts={reviver:this.parser}) {
+			this.gosmart(opts, 'reviver', this.parser)
+			this.gosmart(opts, 'value', {})
+			this.gosmart(opts, 'strictFunctions', true)
+			this.setsmart(opts, 'firstPass', true)
+			opts.reviver = opts.reviver.bind(opts)
+      var input = JSON.parse(text, opts.reviver)
+			this.setsmart(opts, 'firstPass', false)
+			input = input.map(primitives)
+			Object.assign(opts.value, input[0])
+      var $ = opts.reviver || noop;
+      var tmp = typeof opts.value === 'object' && opts.value ?
+                  revive(input, new Set, opts.value, $) :
+                  opts.value;
+      return $.call({'': tmp}, '', tmp);
+    },
+		parser(key, val){
 			if (
 				typeof val === 'string'
 			){
 				if(
 					val.indexOf('Function ') == 0 
-					// && !(this.strictFunctions)
-					// ||
-					// val[val.length-1] == '}' && 
-					// ( 
-					// 	val.slice(0,8) === 'function' || 
-					// 	val.slice(0,2) === '()' || 
-					// 	val.slice(0,5) === 'async'
-					// ) 
 				) {
+					if(
+						this.strictFunctions
+					) {
+						if(this.firstPass) return val
+						throw new Error("strictFunctions is enabled")
+					}
 					let ret = val
 					let toMatch = "Function "
 					let functionString = val.substring(val.indexOf(toMatch)+toMatch.length)
@@ -1101,12 +1107,20 @@ module.exports = ({
           var tmp = input[value];
           if (typeof tmp === 'object' && !parsed.has(tmp)) {
             parsed.add(tmp);
-            output[key] = $.call(output, key, revive(input, parsed, tmp, $));
+            output[key] = primitives($.call(output, key, revive(input, parsed, tmp, $)));
           } else {
-            output[key] = $.call(output, key, tmp);
-          }
+						try {
+							output[key] = primitives($.call(output, key, tmp));
+						} catch(err){
+							delete output[key]
+						}
+					}
         } else
-          output[key] = $.call(output, key, value);
+					try {
+						output[key] = primitives($.call(output, key, value));
+					} catch(err){
+						delete output[key]
+					}
         return output;
       },
       output

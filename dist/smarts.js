@@ -14,8 +14,6 @@ require("core-js/modules/es7.symbol.async-iterator");
 
 require("core-js/modules/es6.symbol");
 
-require("core-js/modules/es6.object.assign");
-
 require("core-js/modules/es6.regexp.split");
 
 require("core-js/modules/es6.regexp.match");
@@ -42,7 +40,11 @@ require("core-js/modules/es6.string.iterator");
 
 require("core-js/modules/es6.set");
 
+require("core-js/modules/es6.object.assign");
+
 require("core-js/modules/es6.array.map");
+
+require("core-js/modules/es6.function.bind");
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -73,23 +75,34 @@ module.exports = function () {
   };
   var ret = (_ret3 = {
     parse: function parse(text) {
-      var reviver = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.parseFunc;
-      var input = JSON.parse(text, reviver);
+      var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
+        reviver: this.parseFunc
+      };
+      this.gosmart(opts, 'reviver', this.parseFunc);
+      this.gosmart(opts, 'value', {});
+      this.gosmart(opts, 'strictFunctions', true);
+      opts.reviver = opts.reviver.bind(opts);
+      var input = JSON.parse(text, opts.reviver);
       input = input.map(primitives);
-      var value = input[0];
-      var $ = reviver || noop;
-      var tmp = _typeof(value) === 'object' && value ? revive(input, new Set(), value, $) : value;
+      Object.assign(opts.value, input[0]);
+      var $ = opts.reviver || noop;
+      var tmp = _typeof(opts.value) === 'object' && opts.value ? revive(input, new Set(), opts.value, $) : opts.value;
       return $.call({
         '': tmp
       }, '', tmp);
     },
     stringify: function stringify(value) {
-      var replacer = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.stringifyFunc;
-      var space = arguments.length > 2 ? arguments[2] : undefined;
+      var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
+        replacer: this.stringifyFunc
+      };
+      this.gosmart(opts, 'reviver', this.stringifyFunc); // this.gosmart(opts, 'value', {})
 
-      for (var firstRun, known = new Map(), input = [], output = [], $ = replacer && _typeof(replacer) === _typeof(input) ? function (k, v) {
-        if (k === '' || -1 < replacer.indexOf(k)) return v;
-      } : replacer || noop, i = +set(known, input, $.call({
+      this.gosmart(opts, 'strictFunctions', true);
+      opts.reviver = opts.reviver.bind(opts);
+
+      for (var firstRun, known = new Map(), input = [], output = [], $ = opts.replacer && _typeof(opts.replacer) === _typeof(input) ? function (k, v) {
+        if (k === '' || -1 < opts.replacer.indexOf(k)) return v;
+      } : opts.replacer || noop, i = +set(known, input, $.call({
         '': value
       }, '', value)), replace = function replace(key, value) {
         if (firstRun) {
@@ -111,7 +124,7 @@ module.exports = function () {
         return after;
       }; i < input.length; i++) {
         firstRun = true;
-        output[i] = JSON.stringify(input[i], replace, space);
+        output[i] = JSON.stringify(input[i], replace, opts.space);
       }
 
       return '[' + output.join(',') + ']';
@@ -119,20 +132,24 @@ module.exports = function () {
     stringifyFunc: function stringifyFunc(key, val) {
       var ret = val;
 
-      if (val instanceof Function && typeof val.toString === 'function') {
+      if (val instanceof Function && typeof val.toString === 'function' && !(this.strictFunctions && typeof val.alopu == 'undefined')) {
         ret = val.toString(); // if(ret.indexOf("(") != 0 && ret.indexOf("function ") != 0) ret = "function "+ret
 
         ret = "Function " + ret;
+        if (ret == "Function function () { [native code] }") return;
         return ret;
       } else if (val instanceof RegExp && typeof val.toString === 'function') {
         return "RegExp " + val.toString();
+      } else {
+        return;
       }
 
       return val;
     },
     parseFunc: function parseFunc(key, val) {
       if (typeof val === 'string') {
-        if (val.indexOf('Function ') == 0 // ||
+        if (val.indexOf('Function ') == 0 // && !(this.strictFunctions)
+        // ||
         // val[val.length-1] == '}' && 
         // ( 
         // 	val.slice(0,8) === 'function' || 
