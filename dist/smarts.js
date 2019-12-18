@@ -2,8 +2,6 @@
 
 require("core-js/modules/es6.array.for-each");
 
-require("core-js/modules/es6.array.filter");
-
 require("core-js/modules/es6.object.define-property");
 
 require("core-js/modules/es6.array.reduce");
@@ -20,15 +18,21 @@ require("core-js/modules/es6.regexp.match");
 
 require("core-js/modules/es6.object.keys");
 
+require("core-js/modules/es6.set");
+
+require("core-js/modules/es6.object.assign");
+
+require("core-js/modules/es6.array.map");
+
 require("core-js/modules/es6.regexp.constructor");
 
 require("core-js/modules/es6.regexp.to-string");
 
 require("core-js/modules/es6.date.to-string");
 
-require("core-js/modules/es6.array.index-of");
+require("core-js/modules/es6.array.filter");
 
-require("core-js/modules/es6.map");
+require("core-js/modules/es6.array.index-of");
 
 require("core-js/modules/web.dom.iterable");
 
@@ -38,11 +42,7 @@ require("core-js/modules/es6.object.to-string");
 
 require("core-js/modules/es6.string.iterator");
 
-require("core-js/modules/es6.set");
-
-require("core-js/modules/es6.object.assign");
-
-require("core-js/modules/es6.array.map");
+require("core-js/modules/es6.map");
 
 require("core-js/modules/es6.function.bind");
 
@@ -74,31 +74,14 @@ module.exports = function () {
     primitive: "string"
   };
   var ret = (_ret3 = {
-    parse: function parse(text) {
-      var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
-        reviver: this.parseFunc
-      };
-      this.gosmart(opts, 'reviver', this.parseFunc);
-      this.gosmart(opts, 'value', {});
-      this.gosmart(opts, 'strictFunctions', true);
-      opts.reviver = opts.reviver.bind(opts);
-      var input = JSON.parse(text, opts.reviver);
-      input = input.map(primitives);
-      Object.assign(opts.value, input[0]);
-      var $ = opts.reviver || noop;
-      var tmp = _typeof(opts.value) === 'object' && opts.value ? revive(input, new Set(), opts.value, $) : opts.value;
-      return $.call({
-        '': tmp
-      }, '', tmp);
-    },
     stringify: function stringify(value) {
       var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
-        replacer: this.stringifyFunc
+        replacer: this.stringifier
       };
-      this.gosmart(opts, 'reviver', this.stringifyFunc); // this.gosmart(opts, 'value', {})
+      this.gosmart(opts, 'replacer', this.stringifier); // this.gosmart(opts, 'value', {})
 
       this.gosmart(opts, 'strictFunctions', true);
-      opts.reviver = opts.reviver.bind(opts);
+      opts.replacer = opts.replacer.bind(opts);
 
       for (var firstRun, known = new Map(), input = [], output = [], $ = opts.replacer && _typeof(opts.replacer) === _typeof(input) ? function (k, v) {
         if (k === '' || -1 < opts.replacer.indexOf(k)) return v;
@@ -124,15 +107,21 @@ module.exports = function () {
         return after;
       }; i < input.length; i++) {
         firstRun = true;
-        output[i] = JSON.stringify(input[i], replace, opts.space);
+
+        try {
+          output[i] = JSON.stringify(input[i], replace, opts.space);
+        } catch (err) {}
       }
 
+      output = output.filter(function (i) {
+        return typeof i == 'undefined' ? false : true;
+      });
       return '[' + output.join(',') + ']';
     },
-    stringifyFunc: function stringifyFunc(key, val) {
+    stringifier: function stringifier(key, val) {
       var ret = val;
 
-      if (val instanceof Function && typeof val.toString === 'function' && !(this.strictFunctions && typeof val.alopu == 'undefined')) {
+      if (val instanceof Function && typeof val.toString === 'function' && (this.strictFunctions ? typeof val.alopu != 'undefined' : true)) {
         ret = val.toString(); // if(ret.indexOf("(") != 0 && ret.indexOf("function ") != 0) ret = "function "+ret
 
         ret = "Function " + ret;
@@ -140,62 +129,83 @@ module.exports = function () {
         return ret;
       } else if (val instanceof RegExp && typeof val.toString === 'function') {
         return "RegExp " + val.toString();
-      } else {
-        return;
-      }
+      } // else if(
+      // 	this.strictFunctions
+      // 	&& typeof val == 'object'
+      // 	&& [Object, String, Array, Function, Number].indexOf(val.constructor) < 0
+      // ) {
+      // 	throw new Error("val is a custom class and not serialisable")
+      // }
+
 
       return val;
     },
-    parseFunc: function parseFunc(key, val) {
+    parse: function parse(text) {
+      var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
+        reviver: this.parser
+      };
+      this.gosmart(opts, 'reviver', this.parser);
+      this.gosmart(opts, 'value', {});
+      this.gosmart(opts, 'strictFunctions', true);
+      this.setsmart(opts, 'firstPass', true);
+      opts.reviver = opts.reviver.bind(opts);
+      var input = JSON.parse(text, opts.reviver);
+      this.setsmart(opts, 'firstPass', false);
+      input = input.map(primitives);
+      Object.assign(opts.value, input[0]);
+      var $ = opts.reviver || noop;
+      var tmp = _typeof(opts.value) === 'object' && opts.value ? revive(input, new Set(), opts.value, $) : opts.value;
+      return $.call({
+        '': tmp
+      }, '', tmp);
+    },
+    parser: function parser(key, val) {
       if (typeof val === 'string') {
-        if (val.indexOf('Function ') == 0 // && !(this.strictFunctions)
-        // ||
-        // val[val.length-1] == '}' && 
-        // ( 
-        // 	val.slice(0,8) === 'function' || 
-        // 	val.slice(0,2) === '()' || 
-        // 	val.slice(0,5) === 'async'
-        // ) 
-        ) {
-            var _ret = val;
-            var toMatch = "Function ";
-            var functionString = val.substring(val.indexOf(toMatch) + toMatch.length); // let functionString = splitted[1]
-            // if(
-            // 	functionString.indexOf("function") != 0
-            // 	&& (
-            // 		functionString.indexOf("(") != 0
-            // 		||
-            // 		!(functionString.indexOf("=") < functionString.indexOf("("))
-            // 	)
-            // ) functionString = "function "+functionString
+        if (val.indexOf('Function ') == 0) {
+          if (this.strictFunctions) {
+            if (this.firstPass) return val;
+            throw new Error("strictFunctions is enabled");
+          }
 
+          var _ret = val;
+          var toMatch = "Function ";
+          var functionString = val.substring(val.indexOf(toMatch) + toMatch.length); // let functionString = splitted[1]
+          // if(
+          // 	functionString.indexOf("function") != 0
+          // 	&& (
+          // 		functionString.indexOf("(") != 0
+          // 		||
+          // 		!(functionString.indexOf("=") < functionString.indexOf("("))
+          // 	)
+          // ) functionString = "function "+functionString
+
+          try {
+            // ret = babel.parse(functionString)
+            _ret = eval("( ".concat(functionString, " )"));
+          } catch (err) {
+            // console.log("val: ", val)
+            // console.log("functionString", functionString)
+            // console.error(err)
             try {
               // ret = babel.parse(functionString)
-              _ret = eval("( ".concat(functionString, " )"));
+              _ret = eval("({ ".concat(functionString, " })"));
+              var keys = Object.keys(_ret);
+              _ret = _ret[keys[0]];
             } catch (err) {
               // console.log("val: ", val)
               // console.log("functionString", functionString)
               // console.error(err)
               try {
-                // ret = babel.parse(functionString)
-                _ret = eval("({ ".concat(functionString, " })"));
-                var keys = Object.keys(_ret);
-                _ret = _ret[keys[0]];
-              } catch (err) {
-                // console.log("val: ", val)
+                _ret = eval("({ b: ".concat(functionString, " })")).b;
+              } catch (err) {// console.log("val: ", val)
                 // console.log("functionString", functionString)
                 // console.error(err)
-                try {
-                  _ret = eval("({ b: ".concat(functionString, " })")).b;
-                } catch (err) {// console.log("val: ", val)
-                  // console.log("functionString", functionString)
-                  // console.error(err)
-                }
               }
             }
+          }
 
-            return _ret;
-          } else if (val.indexOf('RegExp ') == 0) {
+          return _ret;
+        } else if (val.indexOf('RegExp ') == 0) {
           var _ret2 = val;
 
           try {
@@ -1513,11 +1523,19 @@ module.exports = function () {
 
         if (_typeof(tmp) === 'object' && !parsed.has(tmp)) {
           parsed.add(tmp);
-          output[key] = $.call(output, key, revive(input, parsed, tmp, $));
+          output[key] = primitives($.call(output, key, revive(input, parsed, tmp, $)));
         } else {
-          output[key] = $.call(output, key, tmp);
+          try {
+            output[key] = primitives($.call(output, key, tmp));
+          } catch (err) {
+            delete output[key];
+          }
         }
-      } else output[key] = $.call(output, key, value);
+      } else try {
+        output[key] = primitives($.call(output, key, value));
+      } catch (err) {
+        delete output[key];
+      }
 
       return output;
     }, output);
