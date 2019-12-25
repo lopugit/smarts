@@ -1,0 +1,150 @@
+
+let test = { 'woot': 'woot' }
+
+module.exports = {
+	template: `
+		<div id="isRoot() ? 'root' : '' />
+	`,
+	data(){
+		return {
+			vue: {
+				shallow: true
+			},
+			style: `
+				#root {
+					// background-color: rgb(0, 0, 0);
+					background-color: rgb(253, 253, 253);
+				}
+
+				.props-container {
+					// color: rgb(249, 171, 1);
+					color: rgb(66,185,131);
+					font-weight: 500;
+					padding-left: 5px
+				}
+
+				.props {
+					// color: rgb(249, 171, 1);
+					color: rgb(66,185,131);
+					padding-left: 10px;
+				}
+				
+				.prototype-props-container {
+					color: rgb(66,185,131);
+					// color: rgb(26, 115, 232);
+					font-weight: 500;
+					padding-left: 5px;
+				}
+
+				.prototype-props {
+					color: rgb(66,185,131);
+					// color: rgb(26, 115, 232);
+					padding-left: 10px;
+				}
+			`
+		}
+	},
+	computed: {
+		value: {
+			get(){
+				let val = {}
+				let ret = {}
+				if(!this.getsmart(this, 'props.value', false)){
+					val = this.getsmart(this, '$store.state.graph.root', {})
+				} else {
+					val = this.gosmart(this, 'props.value', { undefined: undefined })
+				}
+
+				for(var prop in val){
+					if(this.getsmart(this, 'vue.props', []).indexOf(prop) >= 0){
+						ret[prop] = val[prop]
+					}
+				}
+				
+				return ret
+			}
+		},
+		edges: {
+			get(){
+				let ret = {
+					props: [],
+					prototypeProps: [],
+					editableProps: []
+				}
+				for(let key in this.value) {
+					if(this.vue.props.indexOf(key) > -1) ret.editableProps.push(key)
+					if(this.value.hasOwnProperty(key)) ret.props.push(key)
+					if(!this.value.hasOwnProperty(key)) ret.prototypeProps.push(key)
+				}
+
+				return ret
+			}
+		}
+	},
+	created(){
+		window.$store = this.$store
+		this.ai()
+	},
+	methods: {
+		isRoot(args){
+			let ret = !this.getsmart(this, 'meta.parent', false) && this.getsmart(this, 'value', undefined) == undefined
+			if(ret) this.setsmart(this, 'meta.root', true)
+			return this.getsmart(this, 'meta.root', false)
+		},
+		ai(args){
+			try {
+				if(this.isRoot()){
+					this.gosmart(this, 'meta', {})
+
+					let debug = false
+					if(debug){
+						let testThing = { 
+							"test1.0": {
+								"test1.1": {
+									"test1.2": [
+										'woo'
+									]
+								}
+							},
+							"test2.0": [
+								"test2.1"
+							],
+							"test3.0": false,
+							"test4.0": 4,
+							"test5.0": "test5.1",
+						}
+						testThing["self"] = testThing
+						this.value = testThing
+					} else {
+						// this.setsmart(this, 'value', this)
+						this.setsmart(window, 'v', this)
+					}
+				}
+
+				this.propsHandler(this.props)
+				
+			} catch(err){console.error(err)}
+		},
+		propsHandler(n){
+			for(let key in n){
+				this.setsmart(this, key, n[key])
+			}
+		},
+		mergeStrategy(source){
+			return source
+		}
+	},
+  watch: {
+		'props': {
+			handler: function(n,o){
+				if(!this.equal(n,o)){
+					this.propsHandler(n)
+				}
+			}
+		},
+  },
+	props: {
+		props: {}
+	},
+}
+

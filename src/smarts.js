@@ -63,12 +63,13 @@ module.exports = ({
 			if (
 				val instanceof Function 
 				&& typeof val.toString === 'function'
-				&& (this.strictFunctions ? typeof val.alopu != 'undefined' : true)
+				&& (this.strictFunctions ? typeof val.$scopes != 'undefined' : true)
 			){
-				ret = val.toString()
-				// if(ret.indexOf("(") != 0 && ret.indexOf("function ") != 0) ret = "function "+ret
-				ret = "Function "+ret
-				if(ret == "Function function () { [native code] }") return
+				ret = {
+					$function: val.toString(),
+					$scopes: val.$scopes
+				}
+				if(ret.$function == "function () { [native code] }") return
 				return ret
 			} else if (
 				val instanceof RegExp &&
@@ -161,6 +162,30 @@ module.exports = ({
 						ret = new RegExp(regex[1], regex[2] || "")
 					} catch(err){
 						console.error(err)
+					}
+					return ret
+				} else if (
+					val.$function && val.$scopes
+				) {
+					for(let $scope in val.$scopes.reverse()){
+						if($scope != globalThis){
+							for(let key in $scope){
+								eval("var "+key+" = $scope[key]")
+							}
+						}
+					}
+					try {
+						ret = eval(`( ${val.$function} )`)
+					} catch(err){
+						try {
+							ret = eval(`({ ${val.$function} })`)
+							let keys = Object.keys(ret)
+							ret = ret[keys[0]]
+						} catch(err){
+							try {
+								ret = eval(`({ b: ${val.$function} })`).b
+							} catch(err){}
+						}
 					}
 					return ret
 				}

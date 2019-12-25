@@ -31,7 +31,10 @@
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
-    "@babel/preset-es2015": "^7.0.0-beta.53"
+    "@babel/preset-es2015": "^7.0.0-beta.53",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2",
+    "uuid": "^3.3.3"
   },
   "dependencies": {
     "@babel/parser": "^7.7.5",
