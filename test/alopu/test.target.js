@@ -3,7 +3,7 @@ let $scope = {
 }
 Object.defineProperty($scope, 'uuid', {
 	value: require('uuid/v4')(),
-	enumerable: false
+	enumerable: true
 })
 
 if(!globalThis.$scopes) globalThis.$scopes = []
@@ -16,7 +16,8 @@ Object.defineProperty($scope, "a1", {
 	},
 	set(val){
 		a1 = val
-	}
+	},
+	enumerable: true
 })
 
 var a3 = 'a4'
@@ -26,7 +27,8 @@ Object.defineProperty($scope, "a3", {
 	},
 	set(val){
 		a3 = val
-	}
+	},
+	enumerable: true
 })
 
 const a5 = 'a6'
@@ -36,7 +38,8 @@ Object.defineProperty($scope, "a5", {
 	},
 	set(val){
 		a5 = val
-	}
+	},
+	enumerable: true
 })
 
 function b1(c1){
@@ -49,11 +52,12 @@ Object.defineProperty($scope, "b1", {
 	},
 	set(val){
 		b1 = val
-	}
+	},
+	enumerable: true
 })
 
 Object.defineProperty(b1, '$scopes', {
-	enumerable: false,
+	enumerable: true,
 	value: [$scope, globalThis]
 })
 
@@ -67,11 +71,12 @@ Object.defineProperty($scope, "d1", {
 	},
 	set(val){
 		d1 = val
-	}
+	},
+	enumerable: true
 })
 
 Object.defineProperty(d1, '$scopes', {
-	enumerable: false,
+	enumerable: true,
 	value: [$scope, globalThis]
 })
 
@@ -82,12 +87,12 @@ var f1 = {
 }
 
 Object.defineProperty(f1, '$scopes', {
-	enumerable: false,
+	enumerable: true,
 	value: [$scope, globalThis]
 })
 
 Object.defineProperty(f1.g1, '$scopes', {
-	enumerable: false,
+	enumerable: true,
 	value: [f1, $scope, globalThis]
 })
 

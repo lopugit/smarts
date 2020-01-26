@@ -33,7 +33,9 @@
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-es2015": "^7.0.0-beta.53",
     "chai": "^4.2.0",
+    "deep-for-each": "^3.0.0",
     "mocha": "^6.2.2",
+    "mocha-logger": "^1.0.6",
     "uuid": "^3.3.3"
   },
   "dependencies": {
