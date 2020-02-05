@@ -5,160 +5,160 @@ let test = it
 
 describe("serialisation tests", ()=>{
 
-	// test('parsed should be equivalent to original json function oriented', ()=>{
-	// 	let json = {
-	// 		function1(){},
-	// 	}
+	test('parsed should be equivalent to original json function oriented', ()=>{
+		let json = {
+			function1(){},
+		}
 
-	// 	json.function2 = json.function1
+		json.function2 = json.function1
 
-	// 	json.nested = {
-	// 		function1(){},
-	// 		function2: json.function1
-	// 	}
+		json.nested = {
+			function1(){},
+			function2: json.function1
+		}
 
-	// 	let string = smarts.stringify(json)
-	// 	let parsed = smarts.parse(string)
+		let string = smarts.stringify(json)
+		let parsed = smarts.parse(string)
 
-	// 	expect(smarts.equal(parsed, json)).to.equal(true)
-	// })
-	// test('parsed should be equivalent to original json object oriented', ()=>{
-	// 	let json = {
-	// 		nested: {
-	// 			object: {
-	// 				that: {
-	// 					is: {
-	// 						deep: {
-	// 						}
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 	}
+		expect(smarts.equal(parsed, json)).to.equal(true)
+	})
+	test('parsed should be equivalent to original json object oriented', ()=>{
+		let json = {
+			nested: {
+				object: {
+					that: {
+						is: {
+							deep: {
+							}
+						}
+					}
+				}
+			}
+		}
 
-	// 	let string = smarts.stringify(json)
-	// 	let parsed = smarts.parse(string)
+		let string = smarts.stringify(json)
+		let parsed = smarts.parse(string)
 
-	// 	expect(smarts.equal(parsed, json)).to.equal(true)
-	// })
-	// test('parsed should be equivalent to original json primitive types oriented', ()=>{
-	// 	let json = {
-	// 		yes: true,
-	// 		no: 'false',
-	// 		high: 99999
-	// 	}
+		expect(smarts.equal(parsed, json)).to.equal(true)
+	})
+	test('parsed should be equivalent to original json primitive types oriented', ()=>{
+		let json = {
+			yes: true,
+			no: 'false',
+			high: 99999
+		}
 
-	// 	let string = smarts.stringify(json)
-	// 	let parsed = smarts.parse(string)
+		let string = smarts.stringify(json)
+		let parsed = smarts.parse(string)
 
-	// 	expect(smarts.equal(parsed, json)).to.equal(true)
-	// })
-	// test('parsed should be equivalent to original json circular structure oriented', ()=>{
-	// 	let json = {
-	// 	}
+		expect(smarts.equal(parsed, json)).to.equal(true)
+	})
+	test('parsed should be equivalent to original json circular structure oriented', ()=>{
+		let json = {
+		}
 
-	// 	json.circular = json
+		json.circular = json
 
-	// 	let string = smarts.stringify(json)
-	// 	let parsed = smarts.parse(string)
+		let string = smarts.stringify(json)
+		let parsed = smarts.parse(string)
 
-	// 	expect(smarts.equal(parsed, json)).to.equal(true)
-	// })
-	// test('parsed should be equivalent to original json function oriented', ()=>{
-	// 	let json = {
-	// 		function1(){},
-	// 	}
+		expect(smarts.equal(parsed, json)).to.equal(true)
+	})
+	test('parsed should be equivalent to original json function oriented', ()=>{
+		let json = {
+			function1(){},
+		}
 
-	// 	// json.circular = json
-	// 	json.function2 = json.function1
+		// json.circular = json
+		json.function2 = json.function1
 
-	// 	json.nested = {
-	// 		function1(){},
-	// 		function2: json.function1
-	// 	}
+		json.nested = {
+			function1(){},
+			function2: json.function1
+		}
 
-	// 	let string = smarts.stringify(json)
-	// 	let parsed = smarts.parse(string)
+		let string = smarts.stringify(json)
+		let parsed = smarts.parse(string)
 
-	// 	expect(smarts.equal(parsed, json)).to.equal(true)
-	// })
-	// test('Infinity Test', ()=>{
-	// 	let json = {
-	// 		infinity: Infinity
-	// 	}
+		expect(smarts.equal(parsed, json)).to.equal(true)
+	})
+	test('Infinity Test', ()=>{
+		let json = {
+			infinity: Infinity
+		}
 
-	// 	let string = smarts.stringify(json)
-	// 	let parsed = smarts.parse(string)
+		let string = smarts.stringify(json)
+		let parsed = smarts.parse(string)
 
-	// 	expect(smarts.equal(parsed, json)).to.equal(true)
-	// })
-	// test("circular equality test original json.circular == json", ()=>{
-	// 	let json = {}
+		expect(smarts.equal(parsed, json)).to.equal(true)
+	})
+	test("circular equality test original json.circular == json", ()=>{
+		let json = {}
 
-	// 	json.circular = json
+		json.circular = json
 
-	// 	expect(json.circular == json).to.equal(true)
-	// })
-	// test("circular equality test parsed.circular.circular == parsed.circular", ()=>{
-	// 	let json = {}
+		expect(json.circular == json).to.equal(true)
+	})
+	test("circular equality test parsed.circular.circular == parsed.circular", ()=>{
+		let json = {}
 
-	// 	json.circular = json
+		json.circular = json
 
-	// 	let string = smarts.stringify(json)
-	// 	let parsed = smarts.parse(string)
+		let string = smarts.stringify(json)
+		let parsed = smarts.parse(string)
 		
-	// 	expect(parsed.circular.circular == parsed.circular).to.equal(true)
-	// })
-	// test("circular equality test parsed.circular == parsed", ()=>{
-	// 	let json = {}
+		expect(parsed.circular.circular == parsed.circular).to.equal(true)
+	})
+	test("circular equality test parsed.circular == parsed", ()=>{
+		let json = {}
 
-	// 	json.circular = json
+		json.circular = json
 
-	// 	let string = smarts.stringify(json)
-	// 	let parsed = smarts.parse(string)
+		let string = smarts.stringify(json)
+		let parsed = smarts.parse(string)
 
-	// 	expect(parsed.circular == parsed).to.equal(true)
-	// })
-	// test("scope should be retained in a function", ()=>{
-	// 	globalThis.$scopes = globalThis.$scopes || []
+		expect(parsed.circular == parsed).to.equal(true)
+	})
+	test("scope should be retained in a function", ()=>{
+		globalThis.$scopes = globalThis.$scopes || []
 
-	// 	let $scope = {}
-	// 	globalThis.$scopes.push($scope)
-	// 	let json = {
-	// 		'function': function(){ return foo }
-	// 	}
+		let $scope = {}
+		globalThis.$scopes.push($scope)
+		let json = {
+			'function': function(){ return foo }
+		}
 
-	// 	Object.defineProperty($scope, "json", {
-	// 		get(){
-	// 			return json
-	// 		},
-	// 		set(val){
-	// 			json = val
-	// 		},
-	// 		enumerable: true
-	// 	})
+		Object.defineProperty($scope, "json", {
+			get(){
+				return json
+			},
+			set(val){
+				json = val
+			},
+			enumerable: true
+		})
 
-	// 	Object.defineProperty(json.function, '$scopes', {
-	// 		value: [$scope]
-	// 	})
+		Object.defineProperty(json.function, '$scopes', {
+			value: [$scope]
+		})
 
-	// 	let foo = 1
+		let foo = 1
 
-	// 	Object.defineProperty($scope, "foo", {
-	// 		get(){
-	// 			return foo
-	// 		},
-	// 		set(val){
-	// 			foo = val
-	// 		},
-	// 		enumerable: true
-	// 	})
+		Object.defineProperty($scope, "foo", {
+			get(){
+				return foo
+			},
+			set(val){
+				foo = val
+			},
+			enumerable: true
+		})
 		
-	// 	let string = smarts.stringify(json)
-	// 	let parsed = smarts.parse(string)
+		let string = smarts.stringify(json)
+		let parsed = smarts.parse(string)
 		
-	// 	expect(parsed.function()).to.equal(foo)
-	// })
+		expect(parsed.function()).to.equal(foo)
+	})
 	test("scope should be retained and equal across functions", ()=>{
 		globalThis.$scopes = globalThis.$scopes || []
 

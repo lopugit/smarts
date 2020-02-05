@@ -120,32 +120,19 @@ module.exports = ({
 				
 			return opts.parser('', tmp, opts)
 		},
-		defineVariable(replaceUUID2){
-			var	replaceVariableKey = replaceUUID2.$scope[replaceVariableKey]
-			Object.defineProperty(
-				replaceUUID2.$scope, 
-				replaceVariableKey, 
-				{
-					get(){
-						return replaceVariableKey
-					},
-					set(val){
-						replaceVariableKey = val
-					},
-					enumerable: true
-				}
-			)
-		},
 		scoper(replaceUUID1){
 			try {
 				replaceUUID1.$scopes = replaceUUID1.val.$scopes && typeof replaceUUID1.val.$scopes.reverse == 'function'
 				if(replaceUUID1.$scopes){
-					replaceUUID1.defineVariable = replaceUUID1.smarts.defineVariable.toString().replace(/replaceUUID2/g, replaceUUID1)
+					replaceUUID1.defineVariable = replaceUUID1.smarts.defineVariable.toString().replace(/replaceUUID2/g, `replaceUUID1`)
 					for(replaceUUID1.$scope of replaceUUID1.val.$scopes.reverse()){
 						if(replaceUUID1.$scope != globalThis){
 							for(replaceUUID1.variableKey in replaceUUID1.$scope){
 								try {
-									eval(`(${replaceUUID1.defineVariable.replace(/replaceVariableKey/g, replaceUUID1.variableKey)})(replaceUUID1)`)
+									replaceUUID1.defineVariableTmp = replaceUUID1.defineVariable.replace(/replaceVariableKey/g, replaceUUID1.variableKey)
+									replaceUUID1.defineVariableTmp = replaceUUID1.defineVariableTmp.replace(/defineVariable\(\)\{/, '')
+									replaceUUID1.defineVariableTmp = replaceUUID1.defineVariableTmp.substring(0, replaceUUID1.defineVariableTmp.length-1)
+									eval(replaceUUID1.defineVariableTmp)
 								} catch(err){
 									console.error(err)
 								}
@@ -156,12 +143,28 @@ module.exports = ({
 			} catch(err){
 				console.error(err)
 			}
-			replaceUUID1.$scoper = replaceUUID1.smarts.createFunction.toString().replace(/replaceUUID3/g, replaceUUID1)
+			replaceUUID1.$scoper = eval(`(function ${replaceUUID1.smarts.createFunction.toString().replace(/replaceUUID3/g, `replaceUUID1`)})`)
 			if(replaceUUID1.$scopes){
 				replaceUUID1.val.$scopes.$scoper = replaceUUID1.$scoper
 				return replaceUUID1.val.$scopes.$scoper
 			}
 			return replaceUUID1.$scoper
+		},
+		defineVariable(){
+			var	replaceVariableKey = replaceUUID2.$scope[replaceUUID2.variableKey]
+			Object.defineProperty(
+				replaceUUID2.$scope, 
+				replaceUUID2.variableKey, 
+				{
+					get(){
+						return replaceVariableKey
+					},
+					set(val){
+						replaceVariableKey = val
+					},
+					enumerable: true
+				}
+			)
 		},
 		createFunction(replaceUUID3){
 			try {
@@ -187,78 +190,28 @@ module.exports = ({
 			if (
 				val.$js
 			) {
-				if(!firstRun){
-					let uuid = smarts.uuid().replace(/-/ig, '')
+				let scopes = !(val.$scopes instanceof String) && ((val.$scopes && !(val.$scopes[0] instanceof String)) || (val.$scopes && !val.$scopes[0]))
+				let scopesReady = scopes || !val.$scopes
+				if(scopesReady){
+					let uuid = `a${smarts.uuid().replace(/-/ig, '')}`
 					var fn
+					var scoper
 					if(val.$scopes && val.$scopes.$scoper && typeof val.$scopes.$scoper == 'function'){
-						fn = val.$scopes.$scoper
+						scoper = val.$scopes.$scoper
 					} else {
-						let fns = `function(a${uuid}){
-							try {
-								a${uuid}.$scopes = a${uuid}.val.$scopes && typeof a${uuid}.val.$scopes.reverse == 'function'
-								if(a${uuid}.$scopes){
-									for(a${uuid}.$scope of a${uuid}.val.$scopes.reverse()){
-										if(a${uuid}.$scope != globalThis){
-											for(a${uuid}.variableKey in a${uuid}.$scope){
-												try {
-													eval(
-														\`var \${a${uuid}.variableKey} = a${uuid}.$scope[a${uuid}.variableKey];
-														Object.defineProperty(
-															a${uuid}.$scope, 
-															\${a${uuid}.variableKey}, 
-															{
-																get(){
-																	return \${a${uuid}.variableKey}
-																},
-																set(val){
-																	\${a${uuid}.variableKey} = val
-																},
-																enumerable: true
-															}
-														)
-													\`)												
-												} catch(err){
-													console.error(err)
-												}
-											}
-										}
-									}
-								}
-							} catch(err){
-								console.error(err)
-							}
-							a${uuid}.$scoper = function(b${uuid}){
-								try {
-									b${uuid}.ret = eval('('+b${uuid}.val.$js+')')
-								} catch(err1){
-									try {
-										b${uuid}.ret = eval('({'+b${uuid}.val.$js+'})')
-										b${uuid}.keys = Object.keys(b${uuid}.ret)
-										b${uuid}.ret = b${uuid}.ret[b${uuid}.keys[0]]
-									} catch(err2){
-										try {
-											b${uuid}.ret = eval('({b:'+ b${uuid}.val.$js +'})').b
-										} catch(err3){
-											console.error(err1)
-											console.error(err2)
-											console.error(err3)
-										}
-									}
-								}
-								return b${uuid}.ret
-							}
-							if(a${uuid}.$scopes){
-								a${uuid}.val.$scopes.$scoper = a${uuid}.$scoper
-								return a${uuid}.val.$scopes.$scoper
-							}
-							return a${uuid}.$scoper
-						}`
+						var fns = smarts.scoper.toString().replace(/replaceUUID1/g, uuid)
 
-						fn = eval(`(${fns})`)
+						fn = eval(`(function ${fns})`)
+						scoper = fn({val, smarts})
 
 					}
 
-					let ret = fn({val})({val})
+					let ret = scoper({val})
+					if(!ret.$scopes && scopes){
+						Object.defineProperty(ret, '$scopes', {
+							value: val.$scopes
+						})
+					}
 					opts.input[index] = ret
 					return ret
 				} else {
