@@ -35,12 +35,12 @@
     "chai": "^4.2.0",
     "deep-for-each": "^3.0.0",
     "mocha": "^6.2.2",
-    "mocha-logger": "^1.0.6",
-    "uuid": "^3.3.3"
+    "mocha-logger": "^1.0.6"
   },
   "dependencies": {
     "@babel/parser": "^7.7.5",
     "@babel/polyfill": "^7.4.4",
-    "deepmerge": "^3.2.0"
+    "deepmerge": "^3.2.0",
+    "uuid": "^3.4.0"
   }
 }

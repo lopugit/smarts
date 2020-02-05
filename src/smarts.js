@@ -1,5 +1,6 @@
 let merge = require('deepmerge')
 let babel = require('@babel/parser')
+let uuid = require('uuid/v4')
 module.exports = ({
 	objList,
 	stringList,
@@ -14,52 +15,76 @@ module.exports = ({
 	}
 
 	var smarts = {
+		uuid,
 		pause(value, opts){
 			return smarts.stringify(value, opts)
 		},
 		save(value, opts){
 			return smarts.stringify(value, opts)
 		},
-		stringify: function stringify(value, opts={}) {
+		stringify(value, opts={}) {
 			smarts.schema(opts, {
 				stringifier: smarts.stringifier,
-				strictFunctions: true
+				replacer: eval('(function '+smarts.replacer.toString()+')'),
+				strictFunctions: false,
+				firstRun: undefined,
+				known: new Map,
+				input: [],
+				output: [],
 			})
-			value = opts.stringifier('', value, opts)
-			var firstRun
-			var known = new Map
-			var input = []
-			var output = []
-			var replace = function (key, value) {
-				if (firstRun) {
-					firstRun = !firstRun
-					return value
-				}
-				var after = opts.stringifier(key, value, opts)
-				switch (typeof after) {
-					case 'object':
-						if (after === null) return after
-					case 'string':
-						return known.get(after) || smarts.setKnown(known, input, after)
-				}
-				return after
-			}
+			opts.value = opts.stringifier('', value, opts).value
 			for(
-				i = parseInt(smarts.setKnown(known, input, opts.stringifier('', value, opts)));
-				i < input.length; 
+				i = parseInt(smarts.setKnown(opts.known, opts.input, opts.stringifier('', opts.value, opts)));
+				i < opts.input.length; 
 				i++
 			) {
-				firstRun = true
+				opts.firstRun = true
 				try {
-					output[i] = JSON.stringify(input[i], replace, opts.space)
+					opts.output[i] = JSON.stringify(opts.input[i], opts.replacer, opts.space)
+					debug = 1
 				} catch(err){ console.error(err) }
 			}
-			return '[' + output.join(',') + ']'
+			return '[' + opts.output.join(',') + ']'
 		},
-		setKnown(known, input, value) {
-			var index = String(input.push(value) - 1)
-			known.set(value, index)
+		replacer(key, value){
+			if (opts.firstRun) {
+				opts.firstRun = !opts.firstRun
+				return value
+			}
+			var after = opts.stringifier(key, value, opts)
+			switch (typeof after.value) {
+				case 'object':
+					if (after === null) return after.value
+				case 'string':
+					return opts.known.get(after.key) || smarts.setKnown(opts.known, opts.input, after)
+			}
+			return after.value
+		},
+		setKnown(known, input, virtual) {
+			var index = String(input.push(virtual.value) - 1)
+			known.set(virtual.key, index)
 			return index
+		},
+		stringifier(key, val, opts){
+			let ret = {value: val, key: val}
+			if (
+				val instanceof Function 
+				&& typeof val.toString === 'function'
+				&& (!opts.strictFunctions || typeof val.$scopes != 'undefined')
+			){
+				let known = opts.known.get(ret.key)
+				ret = {
+					value: known || {
+						type: 'function',
+						$js: val.toString(),
+						$scopes: val.$scopes
+					},
+					key: val
+				}
+				if(ret.value.$js == "function () { [native code] }") return
+				if(typeof known == "undefined") smarts.setKnown(opts.known, opts.input, ret)
+			}
+			return ret
 		},
 		primitives(value) {
 			return value instanceof String ? String(value) : value
@@ -67,149 +92,207 @@ module.exports = ({
 		Primitives(key, value) {
 			return typeof value === "string" ? new String(value) : value
 		},
-		stringifier(key, val, opts){
-			let ret = val
-			if (
-				val instanceof Function 
-				&& typeof val.toString === 'function'
-				&& ((opts.strictFunctions && typeof val.$scopes != 'undefined') || typeof val.$scopes != 'undefined')
-			){
-				ret = {
-					$function: val.toString(),
-					$scopes: val.$scopes
-				}
-				if(ret.$function == "function () { [native code] }") return
-				return ret
-			} else if (
-				val instanceof RegExp &&
-				typeof val.toString === 'function'
-			) {
-				return "RegExp " + val.toString()
-			} 
-			// else if(
-			// 	opts.strictFunctions
-			// 	&& typeof val == 'object'
-			// 	&& [Object, String, Array, Function, Number].indexOf(val.constructor) < 0
-			// ) {
-			// 	throw new Error("val is a custom class and not serialisable")
-			// }
-			return val
-		},
 		play(text, opts){
 			return smarts.parse(text, opts)
 		},
 		load(text, opts){
 			return smarts.parse(text, opts)
 		},
-		parse: function parse(text, opts={}) {
+		parse(text, opts={}) {
 			smarts.schema(opts, {
+				// parser: eval('(function '+smarts.parser+')'),
 				parser: smarts.parser,
 				value: {},
 				strictFunctions: true,
-				firstPass: true
+				firstPass: true,
+				output: new Map
 			})
+			let altOpts = opts
 			// opts.parser = opts.parser.bind(opts)
-			var input = JSON.parse(text, opts.parser)
-			smarts.setsmart(opts, 'firstPass', false)
-			input = input.map(smarts.primitives)
-			opts.value = input[0]
-			var tmp = typeof opts.value === 'object' && opts.value 
-				? smarts.revive(input, new Set, opts.value, opts.parser) 
+			opts.input = JSON.parse(text, smarts.Primitives)
+			opts.firstPass = false
+			opts.input = opts.input.map(smarts.primitives)
+			opts.value = opts.input[0]
+			let isObject = typeof opts.value === 'object' && opts.value
+			var tmp = isObject 
+				? smarts.revive(opts.input, opts.output, opts.value, opts.parser, opts) 
 				: opts.value
 				
 			return opts.parser('', tmp, opts)
 		},
-		parser(key, val, opts){
-			if (typeof val === 'string'){
-				if(
-					val.indexOf('Function ') == 0 
-				) {
-					if(
-						opts.strictFunctions
-					) {
-						if(opts.firstPass) return val
-						throw new Error("strictFunctions is enabled")
-					}
-					let ret = val
-					let toMatch = "Function "
-					let functionString = val.substring(val.indexOf(toMatch)+toMatch.length)
-					try {
-						ret = eval(`( ${functionString} )`)
-					} catch(err){
-						try {
-							ret = eval(`({ ${functionString} })`)
-							let keys = Object.keys(ret)
-							ret = ret[keys[0]]
-						} catch(err){
-							try {
-								ret = eval(`({ b: ${functionString} })`).b
-							} catch(err){
+		defineVariable(replaceUUID2){
+			var	replaceVariableKey = replaceUUID2.$scope[replaceVariableKey]
+			Object.defineProperty(
+				replaceUUID2.$scope, 
+				replaceVariableKey, 
+				{
+					get(){
+						return replaceVariableKey
+					},
+					set(val){
+						replaceVariableKey = val
+					},
+					enumerable: true
+				}
+			)
+		},
+		scoper(replaceUUID1){
+			try {
+				replaceUUID1.$scopes = replaceUUID1.val.$scopes && typeof replaceUUID1.val.$scopes.reverse == 'function'
+				if(replaceUUID1.$scopes){
+					replaceUUID1.defineVariable = replaceUUID1.smarts.defineVariable.toString().replace(/replaceUUID2/g, replaceUUID1)
+					for(replaceUUID1.$scope of replaceUUID1.val.$scopes.reverse()){
+						if(replaceUUID1.$scope != globalThis){
+							for(replaceUUID1.variableKey in replaceUUID1.$scope){
+								try {
+									eval(`(${replaceUUID1.defineVariable.replace(/replaceVariableKey/g, replaceUUID1.variableKey)})(replaceUUID1)`)
+								} catch(err){
+									console.error(err)
+								}
 							}
 						}
 					}
-					return ret
-				} else if (
-					val.indexOf('RegExp ') == 0
-				) {
-					let ret = val
-					try {
-						var regex = val.split('RegExp ')[1].match(/\/(.*)\/(.*)?/)
-						ret = new RegExp(regex[1], regex[2] || "")
-					} catch(err){
-						console.error(err)
-					}
-					return ret
-				} 
-			} else if (
-				val.$function && val.$scopes && typeof val.$scopes.reverse == 'function'
-			) {
-				// for(let $scope in val.$scopes.reverse()){
-				// 	if($scope != globalThis){
-				// 		for(let key in $scope){
-				// 			eval("var "+key+" = $scope[key]")
-				// 		}
-				// 	}
-				// }
+				}
+			} catch(err){
+				console.error(err)
+			}
+			replaceUUID1.$scoper = replaceUUID1.smarts.createFunction.toString().replace(/replaceUUID3/g, replaceUUID1)
+			if(replaceUUID1.$scopes){
+				replaceUUID1.val.$scopes.$scoper = replaceUUID1.$scoper
+				return replaceUUID1.val.$scopes.$scoper
+			}
+			return replaceUUID1.$scoper
+		},
+		createFunction(replaceUUID3){
+			try {
+				replaceUUID3.ret = eval('('+replaceUUID3.val.$js+')')
+			} catch(err1){
 				try {
-					ret = eval(`( ${val.$function} )`)
-				} catch(err){
+					replaceUUID3.ret = eval('({'+replaceUUID3.val.$js+'})')
+					replaceUUID3.keys = Object.keys(replaceUUID3.ret)
+					replaceUUID3.ret = replaceUUID3.ret[replaceUUID3.keys[0]]
+				} catch(err2){
 					try {
-						ret = eval(`({ ${val.$function} })`)
-						let keys = Object.keys(ret)
-						ret = ret[keys[0]]
-					} catch(err){
-						try {
-							ret = eval(`({ b: ${val.$function} })`).b
-						} catch(err){}
+						replaceUUID3.ret = eval('({b:'+ replaceUUID3.val.$js +'})').b
+					} catch(err3){
+						console.error(err1)
+						console.error(err2)
+						console.error(err3)
 					}
 				}
-				return ret
+			}
+			return replaceUUID3.ret
+		},
+		parser(key, val, opts, firstRun, index){
+			if (
+				val.$js
+			) {
+				if(!firstRun){
+					let uuid = smarts.uuid().replace(/-/ig, '')
+					var fn
+					if(val.$scopes && val.$scopes.$scoper && typeof val.$scopes.$scoper == 'function'){
+						fn = val.$scopes.$scoper
+					} else {
+						let fns = `function(a${uuid}){
+							try {
+								a${uuid}.$scopes = a${uuid}.val.$scopes && typeof a${uuid}.val.$scopes.reverse == 'function'
+								if(a${uuid}.$scopes){
+									for(a${uuid}.$scope of a${uuid}.val.$scopes.reverse()){
+										if(a${uuid}.$scope != globalThis){
+											for(a${uuid}.variableKey in a${uuid}.$scope){
+												try {
+													eval(
+														\`var \${a${uuid}.variableKey} = a${uuid}.$scope[a${uuid}.variableKey];
+														Object.defineProperty(
+															a${uuid}.$scope, 
+															\${a${uuid}.variableKey}, 
+															{
+																get(){
+																	return \${a${uuid}.variableKey}
+																},
+																set(val){
+																	\${a${uuid}.variableKey} = val
+																},
+																enumerable: true
+															}
+														)
+													\`)												
+												} catch(err){
+													console.error(err)
+												}
+											}
+										}
+									}
+								}
+							} catch(err){
+								console.error(err)
+							}
+							a${uuid}.$scoper = function(b${uuid}){
+								try {
+									b${uuid}.ret = eval('('+b${uuid}.val.$js+')')
+								} catch(err1){
+									try {
+										b${uuid}.ret = eval('({'+b${uuid}.val.$js+'})')
+										b${uuid}.keys = Object.keys(b${uuid}.ret)
+										b${uuid}.ret = b${uuid}.ret[b${uuid}.keys[0]]
+									} catch(err2){
+										try {
+											b${uuid}.ret = eval('({b:'+ b${uuid}.val.$js +'})').b
+										} catch(err3){
+											console.error(err1)
+											console.error(err2)
+											console.error(err3)
+										}
+									}
+								}
+								return b${uuid}.ret
+							}
+							if(a${uuid}.$scopes){
+								a${uuid}.val.$scopes.$scoper = a${uuid}.$scoper
+								return a${uuid}.val.$scopes.$scoper
+							}
+							return a${uuid}.$scoper
+						}`
+
+						fn = eval(`(${fns})`)
+
+					}
+
+					let ret = fn({val})({val})
+					opts.input[index] = ret
+					return ret
+				} else {
+					let tmp = opts.input[opts.output.get(val)]
+					if(typeof tmp == 'function') return tmp
+
+				}
 			}
 			return smarts.Primitives(key, val)
 		},			
-		revive(input, parsed, output, parser) {
+		revive(input, parsed, output, parser, opts) {
 			return Object.keys(output).reduce(
 				(output, key)=>{
 					var value = output[key]
 					// if the value hasn't been revived yet
 					if (value instanceof String) {
 						var tmp = input[value]
-						if (typeof tmp === 'object' && !parsed.has(tmp)) {
-							parsed.add(tmp)
-							output[key] = smarts.primitives(parser(key, smarts.revive(input, parsed, tmp, parser)))
+						if (typeof tmp === 'object' && !parsed.get(tmp)) {
+							parsed.set(tmp, value)
+							output[key] = smarts.primitives(parser(key, smarts.revive(input, parsed, tmp, parser, opts), opts, false, value))
 						} else {
 							try {
-								output[key] = smarts.primitives(parser(key, tmp))
+								output[key] = smarts.primitives(parser(key, tmp, opts, true, value))
 							} catch(err){
 								delete output[key]
 							}
 						}
-					} else
+					} else {
 						try {
-							output[key] = smarts.primitives(parser(key, value))
+							output[key] = smarts.primitives(parser(key, value, opts, true, value))
 						} catch(err){
 							delete output[key]
 						}
+					}
 					return output
 				},
 				output
@@ -219,14 +302,15 @@ module.exports = ({
 			return f.parse(f.stringify(obj))
 		},
 		schema(obj1, obj2, opts){
-			return smarts.create(obj1, obj2, opts)
+			return smarts.create(obj1, obj2, {clone: false,...opts})
 		},
 		create(obj1, obj2, opts){
 			return Object.assign(
 				obj1, 
-				merge(obj2, obj1, opts || {
+				merge(obj2, obj1, {
 					arrayMerge: function (store, saved) { return saved },
 					clone: true,
+					...opts
 				})
 			)		
 		},
@@ -236,17 +320,19 @@ module.exports = ({
 			} else {
 				return Object.assign(
 					obj1, 
-					merge(obj1, obj2, opts || {
+					merge(obj1, obj2, {
 						arrayMerge: function (store, saved) { return saved },
 						clone: true,
+						...opts
 					})
 				)
 			}
 		},
 		mergeArray(obj1, obj2, opts){
-			return merge(obj1, obj2, opts || {
+			return merge(obj1, obj2, {
 				arrayMerge: function (store, saved) { return saved },
 				clone: true,
+				...opts
 			})
 		},
 		mod(args, mod){
@@ -1158,8 +1244,7 @@ module.exports = ({
 		},
 		equal(obj1, obj2, seen=[]){
 			if((obj1 && obj2) && (typeof obj1 == 'object') && (typeof obj2 == 'object')){
-				seen.push(obj1)
-				seen.push(obj2)
+				seen.push(obj1, obj2)
 				//Loop through properties in object 1
 				for (var p in obj1) {
 					//Check property exists on both objects
@@ -1168,7 +1253,7 @@ module.exports = ({
 						&& typeof obj2.hasOwnProperty == 'function' 
 						&& obj1.hasOwnProperty(p) !== obj2.hasOwnProperty(p)
 					) return false
-			 
+
 					switch (typeof (obj1[p])) {
 						//Deep compare objects
 						case 'object':
@@ -1176,14 +1261,14 @@ module.exports = ({
 							break
 						//Compare function code
 						case 'function':
-							if (typeof (obj2[p]) == 'undefined' || (p != 'compare' && obj1[p].toString() != obj2[p].toString())) return false
+							if (typeof (obj2[p]) == 'undefined' || (obj1[p].toString() != obj2[p].toString())) return false
 							break
 						//Compare values
 						default:
 							if (obj1[p] != obj2[p]) return false
 					}
 				}
-			 
+
 				//Check object 2 for any extra properties
 				for (var p in obj2) {
 					if (typeof (obj1[p]) == 'undefined') return false
