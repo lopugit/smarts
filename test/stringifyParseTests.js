@@ -10,114 +10,52 @@ describe("serialisation tests", ()=>{
 			function1(){},
 		}
 
+		json.function1.$scopes = []
+
 		json.function2 = json.function1
 
-		json.nested = {
+		let string = smarts.stringify(json)
+		let parsed = smarts.parse(string)
+
+		expect(smarts.equal(parsed, json)).to.equal(true)
+	})
+	test('functions should not be serialized if strictFunctions is true and they have no $scopes property', ()=>{
+		let json = {
 			function1(){},
-			function2: json.function1
 		}
 
 		let string = smarts.stringify(json)
 		let parsed = smarts.parse(string)
 
-		expect(smarts.equal(parsed, json)).to.equal(true)
+		expect(typeof parsed.function1 == 'undefined').to.equal(true)
 	})
-	test('parsed should be equivalent to original json object oriented', ()=>{
+	test('functions should be serialized if strictFunctions is false and they have no $scopes property', ()=>{
 		let json = {
-			nested: {
-				object: {
-					that: {
-						is: {
-							deep: {
-							}
-						}
-					}
-				}
-			}
+			function1(){},
 		}
 
-		let string = smarts.stringify(json)
+		let string = smarts.stringify(json, {strictFunctions:false})
 		let parsed = smarts.parse(string)
 
-		expect(smarts.equal(parsed, json)).to.equal(true)
-	})
-	test('parsed should be equivalent to original json primitive types oriented', ()=>{
-		let json = {
-			yes: true,
-			no: 'false',
-			high: 99999
-		}
-
-		let string = smarts.stringify(json)
-		let parsed = smarts.parse(string)
-
-		expect(smarts.equal(parsed, json)).to.equal(true)
-	})
-	test('parsed should be equivalent to original json circular structure oriented', ()=>{
-		let json = {
-		}
-
-		json.circular = json
-
-		let string = smarts.stringify(json)
-		let parsed = smarts.parse(string)
-
-		expect(smarts.equal(parsed, json)).to.equal(true)
+		expect(typeof parsed.function1 == 'function').to.equal(true)
 	})
 	test('parsed should be equivalent to original json function oriented', ()=>{
 		let json = {
 			function1(){},
 		}
-
-		// json.circular = json
+		json.function1.$scopes = []
 		json.function2 = json.function1
 
 		json.nested = {
 			function1(){},
 			function2: json.function1
 		}
+		json.nested.function1.$scopes = []
 
 		let string = smarts.stringify(json)
 		let parsed = smarts.parse(string)
 
 		expect(smarts.equal(parsed, json)).to.equal(true)
-	})
-	test('Infinity Test', ()=>{
-		let json = {
-			infinity: Infinity
-		}
-
-		let string = smarts.stringify(json)
-		let parsed = smarts.parse(string)
-
-		expect(smarts.equal(parsed, json)).to.equal(true)
-	})
-	test("circular equality test original json.circular == json", ()=>{
-		let json = {}
-
-		json.circular = json
-
-		expect(json.circular == json).to.equal(true)
-	})
-	test("circular equality test parsed.circular.circular == parsed.circular", ()=>{
-		let json = {}
-
-		json.circular = json
-
-		let string = smarts.stringify(json)
-		let parsed = smarts.parse(string)
-		
-		expect(parsed.circular.circular == parsed.circular).to.equal(true)
-	})
-	test("circular equality test parsed.circular == parsed", ()=>{
-		let json = {}
-
-		json.circular = json
-
-		let string = smarts.stringify(json)
-		let parsed = smarts.parse(string)
-
-		expect(parsed.circular == parsed).to.equal(true)
 	})
 	test("scope should be retained in a function", ()=>{
 		globalThis.$scopes = globalThis.$scopes || []
@@ -203,6 +141,116 @@ describe("serialisation tests", ()=>{
 		
 		expect(parsed.function1() == parsed.function2()).to.equal(true)
 	})
+	test("Babel plugin should add scope properties to functions and scope should be retained in a function", ()=>{
+
+		let src = javascript`
+			let json = {
+				'function': function(){ return foo }
+			}
+
+			let foo = 1
+
+			let string = smarts.stringify(json)
+			let parsed = smarts.parse(string)
+		`
+
+		let code = smarts.transform(src)
+		
+		expect(parsed.function()).to.equal(foo)
+	})
+	test("Babel plugin should add scope properties to functions and scope should be retained and equal across functions", ()=>{
+
+		let json = {
+			'function1': function(){ return foo },
+			'function2': function(){ return foo },
+		}
+
+		let foo = { bar: 1 }
+
+		let string = smarts.stringify(json)
+		let parsed = smarts.parse(string)
+		
+		expect(parsed.function1() == parsed.function2()).to.equal(true)
+	})
+	test('parsed should be equivalent to original json object oriented', ()=>{
+		let json = {
+			nested: {
+				object: {
+					that: {
+						is: {
+							deep: {
+							}
+						}
+					}
+				}
+			}
+		}
+
+		let string = smarts.stringify(json)
+		let parsed = smarts.parse(string)
+
+		expect(smarts.equal(parsed, json)).to.equal(true)
+	})
+	test('parsed should be equivalent to original json primitive types oriented', ()=>{
+		let json = {
+			yes: true,
+			no: 'false',
+			high: 99999
+		}
+
+		let string = smarts.stringify(json)
+		let parsed = smarts.parse(string)
+
+		expect(smarts.equal(parsed, json)).to.equal(true)
+	})
+	test('parsed should be equivalent to original json circular structure oriented', ()=>{
+		let json = {
+		}
+
+		json.circular = json
+
+		let string = smarts.stringify(json)
+		let parsed = smarts.parse(string)
+
+		expect(smarts.equal(parsed, json)).to.equal(true)
+	})
+	test('Infinity Test', ()=>{
+		let json = {
+			infinity: Infinity
+		}
+
+		let string = smarts.stringify(json)
+		let parsed = smarts.parse(string)
+
+		expect(smarts.equal(parsed, json)).to.equal(true)
+	})
+	test("circular equality test original json.circular == json", ()=>{
+		let json = {}
+
+		json.circular = json
+
+		expect(json.circular == json).to.equal(true)
+	})
+	test("circular equality test parsed.circular.circular == parsed.circular", ()=>{
+		let json = {}
+
+		json.circular = json
+
+		let string = smarts.stringify(json)
+		let parsed = smarts.parse(string)
+		
+		expect(parsed.circular.circular == parsed.circular).to.equal(true)
+	})
+	test("circular equality test parsed.circular == parsed", ()=>{
+		let json = {}
+
+		json.circular = json
+
+		let string = smarts.stringify(json)
+		let parsed = smarts.parse(string)
+
+		expect(parsed.circular == parsed).to.equal(true)
+	})
 	test('should equal a constant string ', ()=>{
 		globalThis.$scopes = globalThis.$scopes || []
 
@@ -255,43 +303,48 @@ describe("serialisation tests", ()=>{
 		let string = smarts.stringify(json)
 		let parsed = smarts.parse(string)
 		
-		let definiteString = `[{"foo":"1","zar":1,"nested":"2","function2":"3","function3":"4","circular":"0","function4":"3"},"bar",{"foo":"1","doo":"5","function1":"6","function5":"3"},{"type":"7","$js":"8","$scopes":"9"},{"type":"7","$js":"10"},"dar",{"type":"7","$js":"11"},"function","function2(){}",["12"],"function3(){}","function1(){}",{"json":"0","foo":1}]`
+		let definiteString = `[{"foo":"1","zar":1,"nested":"2","function2":"3","circular":"0","function4":"3"},"bar",{"foo":"1","doo":"4","function5":"3"},{"type":"5","$js":"6","$scopes":"7"},"dar","function","function2(){}",["8"],{"json":"0","foo":1}]`
 		expect(string).to.equal(definiteString)
 	})
 })
 
 describe("nested function tests", ()=>{
 	
-	test('parsed.function1 should equal parsed.nested.function2', ()=>{
+	test('parsed.function1 should equal parsed.nested.function3', ()=>{
 		let json = {
 			function1(){},
 			nested: {
-				function3(){}
+				function2(){}
 			}
 		}
 
-		json.nested.function2 = json.function1
+		json.function1.$scopes = []
+		json.nested.function2.$scopes = []
+
+		json.nested.function3 = json.function1
 
 		let string = smarts.stringify(json)
 		let parsed = smarts.parse(string)
 		
-		expect(parsed.function1 == parsed.nested.function2).to.equal(true)
+		expect(parsed.function1 == parsed.nested.function3).to.equal(true)
 		expect(typeof parsed.function1).to.equal('function')
-		expect(typeof parsed.nested.function2).to.equal('function')
+		expect(typeof parsed.nested.function3).to.equal('function')
 	})
-	test('parsed.function1 should not equal parsed.nested.function3', ()=>{
+	test('parsed.function1 should not equal parsed.nested.function2', ()=>{
 		let json = {
 			function1(){},
 			nested: {
-				function3(){}
+				function2(){}
 			}
 		}
+		json.function1.$scopes = []
+		json.nested.function2.$scopes = []
 
-		json.nested.function2 = json.function1
+		json.nested.function3 = json.function1
 
 		let string = smarts.stringify(json)
 		let parsed = smarts.parse(string)
-		expect(parsed.function1 == parsed.nested.function3).to.equal(false)
+		expect(parsed.function1 == parsed.nested.function2).to.equal(false)
 	})
 })
 

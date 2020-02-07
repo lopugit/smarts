@@ -1,5 +1,5 @@
 let merge = require('deepmerge')
-let babel = require('@babel/parser')
+let babel = require('@babel/core')
 let uuid = require('uuid/v4')
 module.exports = ({
 	objList,
@@ -26,7 +26,7 @@ module.exports = ({
 			smarts.schema(opts, {
 				stringifier: smarts.stringifier,
 				replacer: eval('(function '+smarts.replacer.toString()+')'),
-				strictFunctions: false,
+				strictFunctions: true,
 				firstRun: undefined,
 				known: new Map,
 				input: [],
@@ -249,6 +249,158 @@ module.exports = ({
 					return output
 				},
 				output
+			)
+		},
+		babelPlugin(babel){
+			const t = babel.types
+			const aster = babel.template.ast
+			
+			let initScope = (uuid)=>{
+				let node = aster(/*javascript*/`
+					let uuid${uuid} = {
+						$scope: {},
+						$scoper: (func)=>{
+							Object.defineProperty(
+								func,
+								'$scopes', 
+								{
+									value: [uuid${uuid}.$scope]
+								}
+							)
+							return func
+						},
+						$scopes: [
+							...$scope?$scope.$scopes:[]
+						],
+						uuid: 'uuid${uuid}'
+					}
+				`)
+
+				node.declarations[0].init.properties[1].value.scoperWrapped = true
+				node.declarations[0].init.properties[1].value.body.scopeInitialized = true
+				// node.insertAfter(
+				// 	aster(/*javascript*/`
+				// 		var $scope = uuid${uuid}
+				// 	`)
+				// )
+				return node
+			}
+			let scopeVar = (uuid, key)=>{
+				let node = aster(/*javascript*/`
+					Object.defineProperty(
+						uuid${uuid}.$scope,
+						${JSON.stringify(key)},
+						{
+							get(){
+								return ${key}
+							},
+							set(val){
+								${key} = val
+							}
+						}
+					)
+				`)
+
+				let thirdArg = node.expression.arguments[2]
+				let getter = thirdArg.properties[0]
+				let setter = thirdArg.properties[1]
+				getter.body.scopeInitialized = true
+				setter.body.scopeInitialized = true
+				getter.body.scoperWrapped = true
+				setter.body.scoperWrapped = true
+				getter.scoperWrapped = true
+				setter.scoperWrapped = true
+				
+				return node
+			}
+			let functionWrapper = (uuid, path)=>{
+				let wrapper = aster(/*javascript*/`
+					uuid${uuid}.$scoper()
+				`)
+				wrapper.expression.arguments.push(path.node)
+				return wrapper
+			}
+
+			let bodyInsert = function(index, body, ...things){
+				body.splice(
+					index,
+					0,
+					...things
+				)
+				return things.length
+			}
+			let initBlock = function(path){
+				if(!path.node.scopeInitialized){
+					path.node.scopeInitialized = true
+					let uuid = Math.round(Math.random()*1000000)
+					let i = bodyInsert(
+						0,
+						path.node.body,
+						initScope(uuid),
+						aster(/*javascript*/`
+							var $scope = uuid${uuid}
+						`)
+					)
+					path.scope.uuid = uuid
+				}
+			}
+			let ret =  {
+				visitor: {
+					Program(path){
+						initBlock(path)
+					},
+					BlockStatement(path){
+						initBlock(path)
+					},
+					ObjectMethod(path){
+						let name = path.node.key.name
+						let replacement = aster(/*javascript*/`
+							let a = {
+								${name}: function ${name}(){}
+							}
+						`)
+						replacement = replacement.declarations[0].init.properties[0]
+						replacement.value.body = path.node.body
+						replacement.value.params = path.node.params
+						path.replaceWith(
+							replacement
+						)
+						debug = 1
+					},
+					Function(path){
+						if(!path.node.scoperWrapped && !path.node.body.scoperWrapped){
+							path.node.scoperWrapped = true
+							path.node.body.scoperWrapped = true
+							console.log('path', path)
+							let uuid = path.contexts[0].scope.uuid
+								// uuid = path.state.context.scope.uuid
+							let replacement = functionWrapper(uuid, path)
+							path.replaceWith(
+								replacement
+							)
+						}
+					},
+					VariableDeclaration(path){
+						// console.log('pathhhh', path)
+						if(!path.node.inScope){
+							path.node.inScope = true
+							let uuid = path.contexts[0].scope.uuid
+							path.insertAfter(
+								scopeVar(uuid, path.node.declarations[0].id.name)
+							)
+						}
+					}
+				}
+			}
+			return ret
+		},
+		transform(src, opts){
+			return babel.transform(
+				src, 
+				{
+					plugins: [smarts.babelPlugin],
+					compact: false		
+				}
 			)
 		},
 		dupe(obj){
