@@ -1,37 +1,33 @@
-"use strict";
-
-require("core-js/modules/es6.object.assign");
-
-module.exports = function () {
-  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-      node = _ref.node,
-      vue = _ref.vue,
-      objList = _ref.objList,
-      stringList = _ref.stringList,
-      that = _ref.that;
-
+module.exports = function ({
+  node,
+  vue,
+  objList,
+  stringList,
+  that
+} = {}) {
   if (node) {
     var smarts = require('./smarts')({
-      objList: objList,
-      stringList: stringList
+      objList,
+      stringList
     });
   } else if (vue) {
     var smartsJuice = require('./smarts')({
-      objList: objList,
-      stringList: stringList,
-      vue: vue
+      objList,
+      stringList,
+      vue
     });
 
     var smarts = {
-      data: function data() {
+      data() {
         return {};
       },
+
       methods: smartsJuice
     };
   } else {
     var smarts = require('./smarts')({
-      objList: objList,
-      stringList: stringList
+      objList,
+      stringList
     });
   }
 

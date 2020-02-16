@@ -1,5 +1,6 @@
 let merge = require('deepmerge')
 let babel = require('@babel/core')
+babel.generator = require('@babel/generator').default
 let uuid = require('uuid/v4')
 module.exports = ({
 	objList,
@@ -15,6 +16,7 @@ module.exports = ({
 	}
 
 	var smarts = {
+		babel,
 		uuid,
 		pause(value, opts){
 			return smarts.stringify(value, opts)
@@ -25,28 +27,47 @@ module.exports = ({
 		stringify(value, opts={}) {
 			smarts.schema(opts, {
 				stringifier: smarts.stringifier,
-				replacer: eval('(function '+smarts.replacer.toString()+')'),
+				// replace: eval('(function '+smarts.replace.toString().replace()+')'),
+				replace(key, value){
+					if (opts.firstRun) {
+						opts.firstRun = !opts.firstRun
+						return value
+					}
+					var after = opts.stringifier(key, value, opts)
+					switch (typeof after.value) {
+						case 'object':
+							if (after === null || after.value === null) {
+								let ret = after.value
+								return ret
+							} 
+						// excluding the break; line makes object cases continue to the string case
+						case 'string':
+							let ret = opts.known.get(after.key) || smarts.setKnown(opts.known, opts.input, after)
+							return ret
+					}
+					return after.value
+				}, 
 				strictFunctions: true,
 				firstRun: undefined,
 				known: new Map,
 				input: [],
 				output: [],
-			})
-			opts.value = opts.stringifier('', value, opts).value
+			}, { noSchemaClone: true})
+			opts.virtual = opts.stringifier('', value, opts)
 			for(
-				i = parseInt(smarts.setKnown(opts.known, opts.input, opts.stringifier('', opts.value, opts)));
+				i = parseInt(smarts.setKnown(opts.known, opts.input, opts.virtual));
 				i < opts.input.length; 
 				i++
 			) {
 				opts.firstRun = true
 				try {
-					opts.output[i] = JSON.stringify(opts.input[i], opts.replacer, opts.space)
+					opts.output[i] = JSON.stringify(opts.input[i], opts.replace, opts.space)
 					debug = 1
 				} catch(err){ console.error(err) }
 			}
 			return '[' + opts.output.join(',') + ']'
 		},
-		replacer(key, value){
+		replace(key, value){
 			if (opts.firstRun) {
 				opts.firstRun = !opts.firstRun
 				return value
@@ -54,9 +75,13 @@ module.exports = ({
 			var after = opts.stringifier(key, value, opts)
 			switch (typeof after.value) {
 				case 'object':
-					if (after === null) return after.value
+					if (after === null) {
+						let ret = after.value
+						return ret
+					} 
 				case 'string':
-					return opts.known.get(after.key) || smarts.setKnown(opts.known, opts.input, after)
+					let ret = opts.known.get(after.key) || smarts.setKnown(opts.known, opts.input, after)
+					return ret
 			}
 			return after.value
 		},
@@ -77,11 +102,27 @@ module.exports = ({
 					value: known || {
 						type: 'function',
 						$js: val.toString(),
-						$scopes: val.$scopes
+						$scopes: val.$scopes,
+						$context: val.$context,
 					},
 					key: val
 				}
 				if(ret.value.$js == "function () { [native code] }") return
+				if(typeof known == "undefined") smarts.setKnown(opts.known, opts.input, ret)
+			} else if(
+				ret.value == Infinity
+				&& typeof ret.value != 'string'
+			){
+				let known = opts.known.get(ret.key)
+				ret = {
+					value: known || {
+						type: 'number',
+						$js: "Infinity",
+						$scopes: [],
+						$context: {}
+					},
+					key: val
+				}
 				if(typeof known == "undefined") smarts.setKnown(opts.known, opts.input, ret)
 			}
 			return ret
@@ -101,12 +142,12 @@ module.exports = ({
 		parse(text, opts={}) {
 			smarts.schema(opts, {
 				// parser: eval('(function '+smarts.parser+')'),
-				parser: smarts.parser,
+				parser: smarts.parser(opts),
 				value: {},
 				strictFunctions: true,
 				firstPass: true,
 				output: new Map
-			})
+			}, /*opts*/{ noSchemaClone: true})
 			let altOpts = opts
 			// opts.parser = opts.parser.bind(opts)
 			opts.input = JSON.parse(text, smarts.Primitives)
@@ -117,110 +158,222 @@ module.exports = ({
 			var tmp = isObject 
 				? smarts.revive(opts.input, opts.output, opts.value, opts.parser, opts) 
 				: opts.value
-				
-			return opts.parser('', tmp, opts)
+
+			opts.replaceMode = true
+			let ret = smarts.revive(opts.input, opts.output, tmp, opts.parser, opts)
+			ret = opts.parser('', tmp, opts)
+			return ret
 		},
-		scoper(replaceUUID1){
-			try {
-				replaceUUID1.$scopes = replaceUUID1.val.$scopes && typeof replaceUUID1.val.$scopes.reverse == 'function'
-				if(replaceUUID1.$scopes){
-					replaceUUID1.defineVariable = replaceUUID1.smarts.defineVariable.toString().replace(/replaceUUID2/g, `replaceUUID1`)
-					for(replaceUUID1.$scope of replaceUUID1.val.$scopes.reverse()){
-						if(replaceUUID1.$scope != globalThis){
-							for(replaceUUID1.variableKey in replaceUUID1.$scope){
-								try {
-									replaceUUID1.defineVariableTmp = replaceUUID1.defineVariable.replace(/replaceVariableKey/g, replaceUUID1.variableKey)
-									replaceUUID1.defineVariableTmp = replaceUUID1.defineVariableTmp.replace(/defineVariable\(\)\{/, '')
-									replaceUUID1.defineVariableTmp = replaceUUID1.defineVariableTmp.substring(0, replaceUUID1.defineVariableTmp.length-1)
-									eval(replaceUUID1.defineVariableTmp)
-								} catch(err){
-									console.error(err)
-								}
+		createScopedEval(uuid){
+			let ret =  /*javascript*/`
+				function createScopedEval(${uuid}){
+					
+					// scopeCode
+					${uuid}.scopeCode = ${uuid}.scopeCode || ${uuid}.smarts.babel.template.ast('try{}catch(err){console.log(err)}')
+					${uuid}.previousScopeCode = ${uuid}.currentScopeCode || ${uuid}.scopeCode
+					${uuid}.currentScopeCode = ${uuid}.scopeCode.block.body.length ? ${uuid}.smarts.babel.template.ast('try{}catch(err){console.log(err)}') : ${uuid}.scopeCode
+					if(${uuid}.previousScopeCode != ${uuid}.currentScopeCode){
+						${uuid}.previousScopeCode.block.body.push(
+							${uuid}.currentScopeCode
+						)
+					}
+					${uuid}.closureIndex = ${uuid}.closureIndex || 0
+					${uuid}.closure = ${uuid}.smarts.getsmart(${uuid}, ${/*javascript*/`\`val.$scopes.\${${uuid}.closureIndex}\``}, {})
+					${uuid}.variableKeys = Object.keys(${uuid}.closure)
+					${uuid}.variableMap = ${uuid}.smarts.getsmart(${uuid}, ${/*javascript*/`\`val.$context.$variableMaps.\${${uuid}.closureIndex}\``}, [])
+					${uuid}.allowedIdentifiers = ['let','var','const']
+					${uuid}.variableKeys.forEach((key)=>{
+						if(
+							typeof ${uuid}.variableMap[key] == 'string' 
+							&& ${uuid}.allowedIdentifiers.indexOf(${uuid}.variableMap[key]) >= 0
+						){
+							try{
+								${uuid}.currentScopeCode.block.body.push(
+									${uuid}.smarts.babel.template.ast(
+										${/*javascript*/`\`
+											\${${uuid}.variableMap[key]} \${key} = ${uuid}.val.$scopes[\${${uuid}.closureIndex}]['\${key}']
+										\``}
+									)
+								)
+							}catch(err){console.log(1,err)}
+							try{
+								${uuid}.currentScopeCode.block.body.push(
+									${uuid}.smarts.babel.template.ast(
+										${/*javascript*/`\`
+											Object.defineProperty(
+												${uuid}.val.$scopes[\${${uuid}.closureIndex}],
+												\${JSON.stringify(key)},
+												{
+													get(){
+														return \${key}
+													},
+													set(val){
+														\${key} = val
+													},
+													enumerable: true
+												}
+											)
+										\``}
+									)
+								)
+							}catch(err){console.log(2,err)}
+						}
+						// console.log(${uuid}.scopeCode)
+					})
+					// console.log(${uuid}.scopeCode)
+					${uuid}.closureIndex++
+					if(${uuid}.closureIndex >= ${uuid}.smarts.getsmart(${uuid}, 'val.$scopes.length', -1)){
+						// console.log(${uuid}.scopeCode)
+						try{
+							${uuid}.currentScopeCode.block.body.push(
+								${uuid}.smarts.babel.template.ast(
+									${/*javascript*/`\`
+										return \${${uuid}.smarts.scopedEval('${uuid}')}
+									\``}
+								)
+							)
+						}catch(err){console.log(3,err)}
+						try{
+							${uuid}.wrapper = ${uuid}.smarts.babel.template.ast(
+								${/*javascript*/`\`
+									function anonymous(){}							
+								\``}
+							)
+						}catch(err){console.log(4,err)}
+						// console.log(${uuid}.wrapper)
+						// console.log(${uuid}.scopeCode)
+						${uuid}.wrapper.body.body.push(${uuid}.scopeCode)
+						${uuid}.scopeCode = ${uuid}.wrapper
+						${uuid}.scopeCode = ${uuid}.smarts.babel.generator(
+							${uuid}.scopeCode
+						).code
+						// console.log(${uuid}.scopeCode)
+						${uuid}.scopeCode = eval("("+${uuid}.scopeCode+")")
+						// console.log(${uuid}.scopeCode.toString())
+						try {
+							${uuid}.val.$scopedEval = ${uuid}.scopeCode()
+						}catch(err){console.log(5,err)}
+						// console.log(${uuid}.val.$scopedEval)
+						// return ${uuid}.scopeCode.toString()
+						return ${uuid}.val.$scopedEval
+					} else {
+						return eval(${/*javascript*/`\`(\${${uuid}.smarts.createScopedEval('${uuid}')})\``})(${uuid})
+					}
+				}
+			`
+			return ret
+		},
+		defineVariable(uuid){
+			return /*javascript*/`
+				${uuid.variableType}	${uuid.variableKey} = ${uuid}.$scope[${uuid}.variableKey]
+				Object.defineProperty(
+					${uuid}.$scope, 
+					${uuid}.variableKey, 
+					{
+						get(){
+							return ${uuid.variableKey}
+						},
+						set(val){
+							${uuid.variableKey} = val
+						},
+						enumerable: true
+					}
+				)
+			`
+		},
+		scopedEval(uuid){
+			let ret = /*javascript*/`function scopedEval(${uuid}){
+					if(typeof ${uuid} == 'string'){
+						${uuid} = {
+							val: {
+								$js: ${uuid}
+							}
+						}
+					} else if(typeof ${uuid} == 'function' && typeof ${uuid}.toString == 'function'){
+						${uuid} = {
+							val: {
+								$js: ${uuid}.toString()
 							}
 						}
 					}
-				}
-			} catch(err){
-				console.error(err)
-			}
-			replaceUUID1.$scoper = eval(`(function ${replaceUUID1.smarts.createFunction.toString().replace(/replaceUUID3/g, `replaceUUID1`)})`)
-			if(replaceUUID1.$scopes){
-				replaceUUID1.val.$scopes.$scoper = replaceUUID1.$scoper
-				return replaceUUID1.val.$scopes.$scoper
-			}
-			return replaceUUID1.$scoper
-		},
-		defineVariable(){
-			var	replaceVariableKey = replaceUUID2.$scope[replaceUUID2.variableKey]
-			Object.defineProperty(
-				replaceUUID2.$scope, 
-				replaceUUID2.variableKey, 
-				{
-					get(){
-						return replaceVariableKey
-					},
-					set(val){
-						replaceVariableKey = val
-					},
-					enumerable: true
-				}
-			)
-		},
-		createFunction(replaceUUID3){
-			try {
-				replaceUUID3.ret = eval('('+replaceUUID3.val.$js+')')
-			} catch(err1){
-				try {
-					replaceUUID3.ret = eval('({'+replaceUUID3.val.$js+'})')
-					replaceUUID3.keys = Object.keys(replaceUUID3.ret)
-					replaceUUID3.ret = replaceUUID3.ret[replaceUUID3.keys[0]]
-				} catch(err2){
 					try {
-						replaceUUID3.ret = eval('({b:'+ replaceUUID3.val.$js +'})').b
-					} catch(err3){
-						console.error(err1)
-						console.error(err2)
-						console.error(err3)
+						${uuid}.ret = eval('('+${uuid}.val.$js+')')
+					} catch(err1){
+						try {
+							${uuid}.ret = eval('({'+${uuid}.val.$js+'})')
+							${uuid}.keys = Object.keys(${uuid}.ret)
+							${uuid}.ret = ${uuid}.ret[${uuid}.keys[0]]
+						} catch(err2){
+							try {
+								${uuid}.ret = eval('({b:'+ ${uuid}.val.$js +'})').b
+							} catch(err3){
+								console.error(err1)
+								console.error(err2)
+								console.error(err3)
+							}
+						}
 					}
+					return ${uuid}.ret
 				}
-			}
-			return replaceUUID3.ret
+			`
+			return ret
 		},
-		parser(key, val, opts, firstRun, index){
-			if (
-				val.$js
-			) {
-				let scopes = !(val.$scopes instanceof String) && ((val.$scopes && !(val.$scopes[0] instanceof String)) || (val.$scopes && !val.$scopes[0]))
-				let scopesReady = scopes || !val.$scopes
-				if(scopesReady){
-					let uuid = `a${smarts.uuid().replace(/-/ig, '')}`
+		parser(opts){
+			return function(key, val){
+				if (
+					val.$js
+					&& opts.replaceMode
+				) {
+					let ret = opts.input[opts.output.get(val)]
+					if(typeof ret == val.type) return ret
+					let uuid = smarts.jsUUID()
 					var fn
-					var scoper
-					if(val.$scopes && val.$scopes.$scoper && typeof val.$scopes.$scoper == 'function'){
-						scoper = val.$scopes.$scoper
+					var scopedEval
+					if(val.$scopedEval && typeof val.$scopedEval == 'function'){
+						scopedEval = val.$scopedEval
 					} else {
-						var fns = smarts.scoper.toString().replace(/replaceUUID1/g, uuid)
+						var fns = smarts.createScopedEval(uuid)
 
-						fn = eval(`(function ${fns})`)
-						scoper = fn({val, smarts})
+						fn = eval(`(${fns})`)
+						var input = {val, smarts}
+						try{
+							scopedEval = fn(input)
+						} catch(err){
+							console.log(err)
+						}
 
 					}
 
-					let ret = scoper({val})
-					if(!ret.$scopes && scopes){
+					ret = scopedEval({val})
+					try {
 						Object.defineProperty(ret, '$scopes', {
-							value: val.$scopes
+							value: val.$scopes,
+							enumerable: true
 						})
+					} catch(err){
+						if(opts.verbose) console.error(err)
 					}
-					opts.input[index] = ret
+					try {
+						Object.defineProperty(ret, '$context', {
+							value: val.$context,
+							enumerable: true
+						})
+					} catch(err){
+						if(opts.verbose) console.error(err)
+					}
+					try {
+						Object.defineProperty(ret, '$scopedEval', {
+							value: scopedEval,
+							enumerable: true
+						})
+					} catch(err){
+						if(opts.verbose) console.error(err)
+					}
+					opts.input[opts.output.get(val)] = ret
 					return ret
-				} else {
-					let tmp = opts.input[opts.output.get(val)]
-					if(typeof tmp == 'function') return tmp
-
 				}
+				return smarts.Primitives(key, val)
 			}
-			return smarts.Primitives(key, val)
 		},			
 		revive(input, parsed, output, parser, opts) {
 			return Object.keys(output).reduce(
@@ -231,17 +384,35 @@ module.exports = ({
 						var tmp = input[value]
 						if (typeof tmp === 'object' && !parsed.get(tmp)) {
 							parsed.set(tmp, value)
-							output[key] = smarts.primitives(parser(key, smarts.revive(input, parsed, tmp, parser, opts), opts, false, value))
+							output[key] = smarts.primitives(parser(key, smarts.revive(input, parsed, tmp, parser, opts)))
 						} else {
 							try {
-								output[key] = smarts.primitives(parser(key, tmp, opts, true, value))
+								output[key] = smarts.primitives(parser(key, tmp))
 							} catch(err){
 								delete output[key]
 							}
 						}
 					} else {
 						try {
-							output[key] = smarts.primitives(parser(key, value, opts, true, value))
+							if(opts.replaceMode){
+								// output[key] = smarts.primitives(parser(key, smarts.revive(input, parsed, value, parser, opts)))
+								value = parser(key, value)
+								if (
+									typeof value === 'object' 
+									// && !parsed.get(value)
+								) {
+									// parsed.set(value, value)
+									output[key] = smarts.primitives(parser(key, smarts.revive(input, parsed, value, parser, opts)))
+								} else {
+									try {
+										output[key] = smarts.primitives(value)
+									} catch(err){
+										delete output[key]
+									}
+								}
+							} else {
+								output[key] = smarts.primitives(parser(key, value))
+							}
 						} catch(err){
 							delete output[key]
 						}
@@ -251,106 +422,162 @@ module.exports = ({
 				output
 			)
 		},
+		jsUUID(prefix='uuid'){
+			return prefix+smarts.uuid().replace(/-/g,'')
+		},
+		context(opts){
+			let uuid = smarts.jsUUID()
+			return eval(/*javascript*/`
+				(
+					function(){
+						${smarts.contextObject(uuid)}
+						return ${uuid}
+					}
+				)()
+			`)
+		},
+		contextObject(uuid){
+			return /*javascript*/`
+				let ${uuid} = {
+					$$uuid: '${uuid}',
+					$closure: {},
+					$variableMap: {},
+					$functionScoper: (func)=>{
+						Object.defineProperty(
+							func,
+							'$scopes', 
+							{
+								value: [...${uuid}.$scopes],
+								enumerable: true
+							}
+						)
+						Object.defineProperty(
+							func,
+							'$context',
+							{
+								value: ${uuid}
+							}
+						)
+						return func
+					},
+					$add: (type, name, value)=>{
+						${uuid}.$closure[name] = value
+						${uuid}.$variableMap[name] = type
+					},
+					$scopes: [...(typeof $context != 'undefined') ? $context.$scopes : []],
+					$variableMaps: [...(typeof $context != 'undefined') ? $context.$variableMaps : []],
+					$contexts: [],
+					$parentContexts: [],
+				}
+				${uuid}.$functionScoper = ${uuid}.$functionScoper(${uuid}.$functionScoper)
+				${uuid}.$scopes.splice(0,0,${uuid}.$closure)
+				${uuid}.$variableMaps.splice(0,0,${uuid}.$variableMap)
+				if(typeof $context == 'undefined') {
+					var $context = ${uuid}
+				} else if($context && $context.$contexts instanceof Array){
+					$context.$contexts.push(${uuid})
+					${uuid}.$parentContexts.push($context)
+				}
+				if(!globalThis.$contexts){
+					globalThis.$contexts = [$context]
+				} else if(
+					globalThis.$contexts instanceof Array 
+					&& $context.$parentContexts.length == 0
+					&& globalThis.$contexts.indexOf($context) == -1
+				){
+					globalThis.$contexts.push($context)
+				}
+			`
+		},
+		initContext(uuid, aster){
+			let node = aster(/*javascript*/`
+				${smarts.contextObject(uuid)}
+			`)
+			// so the $functionScoper function doesn't get wrapped or have $context inserted
+			node[0].declarations[0].init.properties[3].value.scoperWrapped = true
+			node[0].declarations[0].init.properties[3].value.body.scopeInitialized = true
+			// so the $addVar function doesn't get wrapped or have $context inserted
+			node[0].declarations[0].init.properties[4].value.scoperWrapped = true
+			node[0].declarations[0].init.properties[4].value.body.scopeInitialized = true
+			// make sure if statement block doesn't get scoped either
+			node[4].consequent.scopeInitialized = true
+			// make sure else if statement block doesn't get scoped either
+			node[4].alternate.consequent.scopeInitialized = true
+			// make sure if statement block doesn't get scoped either
+			node[5].consequent.scopeInitialized = true
+			// make sure else if statement block doesn't get scoped either
+			node[5].alternate.consequent.scopeInitialized = true
+			return node
+		},
+		scopeVar (uuid, key, type, aster){
+			let node = aster(/*javascript*/`
+				Object.defineProperty(
+					${uuid}.$closure,
+					${JSON.stringify(key)},
+					{
+						get(){
+							return ${key}
+						},
+						set(val){
+							${key} = val
+						},
+						enumerable: true
+					}
+				)
+				${uuid}.$variableMap["${key}"] = "${type}"
+			`)
+
+			let thirdArg = node[0].expression.arguments[2]
+			let getter = thirdArg.properties[0]
+			let setter = thirdArg.properties[1]
+			getter.body.scopeInitialized = true
+			setter.body.scopeInitialized = true
+			getter.body.scoperWrapped = true
+			setter.body.scoperWrapped = true
+			getter.scoperWrapped = true
+			setter.scoperWrapped = true
+			
+			return node
+		},
+		functionWrapper(uuid, path, aster){
+			let wrapper = aster(/*javascript*/`
+				${uuid}.$functionScoper()
+			`)
+			wrapper.expression.arguments.push(path.node)
+			return wrapper
+		},
+		bodyInsert(index, body, aster, ...things){
+			body.splice(
+				index,
+				0,
+				...things
+			)
+			return things.length
+		},
+		initBlock(path, aster){
+			if(!path.node.scopeInitialized){
+				path.node.scopeInitialized = true
+				let uuid = smarts.jsUUID()
+				let i = smarts.bodyInsert(
+					0,
+					path.node.body,
+					aster,
+					...smarts.initContext(uuid, aster),
+				)
+				path.scope.uuid = uuid
+			}
+		},
 		babelPlugin(babel){
 			const t = babel.types
 			const aster = babel.template.ast
 			
-			let initScope = (uuid)=>{
-				let node = aster(/*javascript*/`
-					let uuid${uuid} = {
-						$scope: {},
-						$scoper: (func)=>{
-							Object.defineProperty(
-								func,
-								'$scopes', 
-								{
-									value: [uuid${uuid}.$scope]
-								}
-							)
-							return func
-						},
-						$scopes: [
-							...$scope?$scope.$scopes:[]
-						],
-						uuid: 'uuid${uuid}'
-					}
-				`)
-
-				node.declarations[0].init.properties[1].value.scoperWrapped = true
-				node.declarations[0].init.properties[1].value.body.scopeInitialized = true
-				// node.insertAfter(
-				// 	aster(/*javascript*/`
-				// 		var $scope = uuid${uuid}
-				// 	`)
-				// )
-				return node
-			}
-			let scopeVar = (uuid, key)=>{
-				let node = aster(/*javascript*/`
-					Object.defineProperty(
-						uuid${uuid}.$scope,
-						${JSON.stringify(key)},
-						{
-							get(){
-								return ${key}
-							},
-							set(val){
-								${key} = val
-							}
-						}
-					)
-				`)
-
-				let thirdArg = node.expression.arguments[2]
-				let getter = thirdArg.properties[0]
-				let setter = thirdArg.properties[1]
-				getter.body.scopeInitialized = true
-				setter.body.scopeInitialized = true
-				getter.body.scoperWrapped = true
-				setter.body.scoperWrapped = true
-				getter.scoperWrapped = true
-				setter.scoperWrapped = true
-				
-				return node
-			}
-			let functionWrapper = (uuid, path)=>{
-				let wrapper = aster(/*javascript*/`
-					uuid${uuid}.$scoper()
-				`)
-				wrapper.expression.arguments.push(path.node)
-				return wrapper
-			}
-
-			let bodyInsert = function(index, body, ...things){
-				body.splice(
-					index,
-					0,
-					...things
-				)
-				return things.length
-			}
-			let initBlock = function(path){
-				if(!path.node.scopeInitialized){
-					path.node.scopeInitialized = true
-					let uuid = Math.round(Math.random()*1000000)
-					let i = bodyInsert(
-						0,
-						path.node.body,
-						initScope(uuid),
-						aster(/*javascript*/`
-							var $scope = uuid${uuid}
-						`)
-					)
-					path.scope.uuid = uuid
-				}
-			}
 			let ret =  {
 				visitor: {
 					Program(path){
-						initBlock(path)
+						smarts.initBlock(path,aster)
 					},
 					BlockStatement(path){
-						initBlock(path)
+						smarts.initBlock(path,aster)
 					},
 					ObjectMethod(path){
 						let name = path.node.key.name
@@ -371,23 +598,22 @@ module.exports = ({
 						if(!path.node.scoperWrapped && !path.node.body.scoperWrapped){
 							path.node.scoperWrapped = true
 							path.node.body.scoperWrapped = true
-							console.log('path', path)
 							let uuid = path.contexts[0].scope.uuid
-								// uuid = path.state.context.scope.uuid
-							let replacement = functionWrapper(uuid, path)
+							let replacement = smarts.functionWrapper(uuid, path, aster)
 							path.replaceWith(
 								replacement
 							)
 						}
 					},
 					VariableDeclaration(path){
-						// console.log('pathhhh', path)
 						if(!path.node.inScope){
 							path.node.inScope = true
-							let uuid = path.contexts[0].scope.uuid
-							path.insertAfter(
-								scopeVar(uuid, path.node.declarations[0].id.name)
-							)
+							let uuid = smarts.getsmart(path, 'contexts.0.scope.uuid', smarts.getsmart(path, 'contexts.0.scope.path.contexts.0.scope.uuid', null))
+							if(uuid){
+								path.insertAfter(
+									smarts.scopeVar(uuid, path.node.declarations[0].id.name, path.node.kind, aster)
+								)
+							}
 						}
 					}
 				}
@@ -398,26 +624,36 @@ module.exports = ({
 			return babel.transform(
 				src, 
 				{
-					plugins: [smarts.babelPlugin],
-					compact: false		
+					plugins: [smarts.babelPlugin]
 				}
 			)
 		},
-		dupe(obj){
-			return f.parse(f.stringify(obj))
+		dupe(obj, opts={}){
+			return smarts.parse(smarts.stringify(obj))
 		},
-		schema(obj1, obj2, opts){
+		schema(obj1, obj2, opts={}){
+			if(!opts.noSchemaClone){
+				obj2 = smarts.dupe(obj2, opts)
+			}
 			return smarts.create(obj1, obj2, {clone: false,...opts})
 		},
 		create(obj1, obj2, opts){
+			/**
+				Object.assign just puts the properties of the object returned by merge() 
+				back into obj1 because merge() is not in-place
+				we use merge(obj2, obj1) so that obj1 properties are preferenced
+			 */
+
 			return Object.assign(
-				obj1, 
+				obj1,
 				merge(obj2, obj1, {
-					arrayMerge: function (store, saved) { return saved },
-					clone: true,
+					arrayMerge: function (store, saved) { 
+						return saved 
+					},
+					clone: true, // this clones properties and values // the return is always a cloned root object
 					...opts
 				})
-			)		
+			)
 		},
 		merge(obj1, obj2, opts){
 			if(obj1 instanceof Array && typeof obj2 instanceof Array){

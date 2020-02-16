@@ -4,7 +4,7 @@ a smart library for doing smart things
 ## Installation
 
 ```bash
-npm i --save smarts
+npm i smarts
 ```
 
 ### Node

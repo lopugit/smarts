@@ -38,6 +38,7 @@
     "mocha-logger": "^1.0.6"
   },
   "dependencies": {
+    "@babel/generator": "^7.8.4",
     "@babel/polyfill": "^7.4.4",
     "deepmerge": "^3.2.0",
     "uuid": "^3.4.0"
