@@ -1,0 +1,1 @@
+var foo=0,bar=1,zar=2

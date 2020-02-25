@@ -202,7 +202,7 @@ module.exports = ({
 										${/*javascript*/`\`
 											Object.defineProperty(
 												${uuid}.val.$scopes[\${${uuid}.closureIndex}],
-												\${JSON.stringify(key)},
+												\${smarts.stringify(key)},
 												{
 													get(){
 														return \${key}
@@ -426,7 +426,7 @@ module.exports = ({
 			return prefix+smarts.uuid().replace(/-/g,'')
 		},
 		context(opts){
-			let uuid = smarts.jsUUID()
+			let uuid = smarts.gosmart(opts, 'path.context.scope.uuid', smarts.jsUUID())
 			return eval(/*javascript*/`
 				(
 					function(){
@@ -447,7 +447,12 @@ module.exports = ({
 							func,
 							'$scopes', 
 							{
-								value: [...${uuid}.$scopes],
+								value: (function(arr){
+									for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { 
+										arr2[i] = arr[i]; 
+									} 
+									return arr2
+								})((typeof ${uuid} != 'undefined') ? ${uuid}.$scopes : []),
 								enumerable: true
 							}
 						)
@@ -464,70 +469,149 @@ module.exports = ({
 						${uuid}.$closure[name] = value
 						${uuid}.$variableMap[name] = type
 					},
-					$scopes: [...(typeof $context != 'undefined') ? $context.$scopes : []],
-					$variableMaps: [...(typeof $context != 'undefined') ? $context.$variableMaps : []],
-					$contexts: [],
+					$scopes: (function(arr){
+						for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { 
+							arr2[i] = arr[i]; 
+						} 
+						return arr2
+					})((typeof $context != 'undefined') ? $context.$scopes : []),
+					$variableMaps: (function(arr){
+						for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { 
+							arr2[i] = arr[i]; 
+						} 
+						return arr2
+					})((typeof $context != 'undefined') ? $context.$variableMaps : []),
+					$contexts: {},
 					$parentContexts: [],
 				}
 				${uuid}.$functionScoper = ${uuid}.$functionScoper(${uuid}.$functionScoper)
 				${uuid}.$scopes.splice(0,0,${uuid}.$closure)
 				${uuid}.$variableMaps.splice(0,0,${uuid}.$variableMap)
-				if(typeof $context == 'undefined') {
-					var $context = ${uuid}
-				} else if($context && $context.$contexts instanceof Array){
-					$context.$contexts.push(${uuid})
+				try {	eval(${/*javascript*/`\`var $context = $context || ${uuid}\``}) } catch(err){}
+				if($context && $context != ${uuid} && $context.$contexts instanceof Object){
+					$context.$contexts[${uuid}.$$uuid] = $context.$contexts[${uuid}.$$uuid] || []
+					${uuid}.$$instance = $context.$contexts[${uuid}.$$uuid].push(${uuid})-1
 					${uuid}.$parentContexts.push($context)
 				}
+				var globalThis = globalThis || global || window || {}
 				if(!globalThis.$contexts){
-					globalThis.$contexts = [$context]
+					globalThis.$contexts = {}
+					globalThis.$contexts[${uuid}.$$uuid] = [${uuid}]
+					${uuid}.$$instance = 0
 				} else if(
-					globalThis.$contexts instanceof Array 
-					&& $context.$parentContexts.length == 0
-					&& globalThis.$contexts.indexOf($context) == -1
+					globalThis.${uuid}s instanceof Object 
+					&& ${uuid}.$parentContexts.length == 0
+					&& typeof ${uuid}.$$instance == 'undefined'
 				){
-					globalThis.$contexts.push($context)
+					globalThis.${uuid}s[${uuid}.$$uuid] = globalThis.$contexts[${uuid}.$$uuid] || []
+					${uuid}.$$instance = globalThis.$contexts[${uuid}.$$uuid].push(${uuid})-1
+				}
+				{
+					let $context = ${uuid}
 				}
 			`
 		},
-		initContext(uuid, aster){
+		createContext(uuid, aster, path){
 			let node = aster(/*javascript*/`
 				${smarts.contextObject(uuid)}
 			`)
 			// so the $functionScoper function doesn't get wrapped or have $context inserted
-			node[0].declarations[0].init.properties[3].value.scoperWrapped = true
-			node[0].declarations[0].init.properties[3].value.body.scopeInitialized = true
+			let property3 = node[0].declarations[0].init.properties[3]
+			property3.value.scoperWrapped = true
+			property3.value.body.scopeInitialized = true
+			let property3ScopesValue = property3.value.body.body[0].expression.arguments[2].properties[0].value
+			property3ScopesValue.callee.scoperWrapped = true
+			property3ScopesValue.callee.body.scopeInitialized = true
+			let property3ForStatement = property3ScopesValue.callee.body.body[0]
+			property3ForStatement.body.scopeInitialized = true
+			property3ForStatement.init.declarations[0].inScope = true
+			property3ForStatement.init.declarations[1].inScope = true
 			// so the $addVar function doesn't get wrapped or have $context inserted
-			node[0].declarations[0].init.properties[4].value.scoperWrapped = true
-			node[0].declarations[0].init.properties[4].value.body.scopeInitialized = true
-			// make sure if statement block doesn't get scoped either
-			node[4].consequent.scopeInitialized = true
-			// make sure else if statement block doesn't get scoped either
-			node[4].alternate.consequent.scopeInitialized = true
+			let property4 = node[0].declarations[0].init.properties[4]
+			property4.value.scoperWrapped = true
+			property4.value.body.scopeInitialized = true
+			// so the $functionScoper function doesn't get wrapped or have $context inserted
+			let property5 = node[0].declarations[0].init.properties[5]
+			property5.value.callee.scoperWrapped = true
+			property5.value.callee.body.scopeInitialized = true
+			let property5ForStatement = property5.value.callee.body.body[0]
+			property5ForStatement.body.scopeInitialized = true
+			property5ForStatement.init.declarations[0].inScope = true
+			property5ForStatement.init.declarations[1].inScope = true
+			// so the $addVar function doesn't get wrapped or have $context inserted
+			let property6 = node[0].declarations[0].init.properties[6]
+			property6.value.callee.scoperWrapped = true
+			property6.value.callee.body.scopeInitialized = true
+			let property6ForStatement = property6.value.callee.body.body[0]
+			property6ForStatement.body.scopeInitialized = true
+			property6ForStatement.init.declarations[0].inScope = true
+			property6ForStatement.init.declarations[1].inScope = true
+			// make sure try statement block doesn't get scoped either
+			node[4].block.scopeInitialized = true
+			// make sure catch statement block doesn't get scoped either
+			node[4].handler.body.scopeInitialized = true
 			// make sure if statement block doesn't get scoped either
 			node[5].consequent.scopeInitialized = true
+			// make sure if statement block doesn't get scoped either
+			node[7].consequent.scopeInitialized = true
 			// make sure else if statement block doesn't get scoped either
-			node[5].alternate.consequent.scopeInitialized = true
+			node[7].alternate.consequent.scopeInitialized = true
+			node[8].scopeInitialized = true
+			node[8].inheritScope = true
+			node[node.length-1].lastContextNode = true
+			let wrapper = node[node.length-1]
+			wrapper.body.push(...path.node.body)
+			// let addContextToScopeNode = smarts.scopeVar({
+			// 	uuid,
+			// 	key: '$context',
+			// 	type: 'let',
+			// 	aster
+			// })
+			// wrapper.body.splice(1,0,addContextToScopeNode)	
 			return node
 		},
-		scopeVar (uuid, key, type, aster){
-			let node = aster(/*javascript*/`
+		scopeVarCode(opts){
+			let ret = /*javascript*/`
 				Object.defineProperty(
-					${uuid}.$closure,
-					${JSON.stringify(key)},
+					${opts.uuid}.$closure,
+					${smarts.stringify(opts.key)},
 					{
 						get(){
-							return ${key}
+							return ${opts.key}
 						},
 						set(val){
-							${key} = val
+							${opts.key} = val
 						},
 						enumerable: true
 					}
+				) &&
+				(${opts.uuid}.$variableMap["${opts.key}"] = "${opts.type}")
+			`
+			return ret
+		},
+		scopeVarInlineCode(opts){
+			let ret = /*javascript*/`
+				let ${smarts.jsUUID()} = (
+					${smarts.scopeVarCode(opts)}
 				)
-				${uuid}.$variableMap["${key}"] = "${type}"
-			`)
+			`
+			return ret
+		},
+		scopeVar (opts={}){
+			let string
+			let thirdArg
+			let node
+			if(opts.inline){
+				string = smarts.scopeVarInlineCode(opts)
+				node = opts.aster(string)
+				thirdArg = node.declarations[0].init.left.arguments[2]
+				node.declarations[0].inScope = true
+			} else {
+				string = smarts.scopeVarCode(opts)
+				node = opts.aster(string)
+				thirdArg = node.expression.left.arguments[2]
+			}
 
-			let thirdArg = node[0].expression.arguments[2]
 			let getter = thirdArg.properties[0]
 			let setter = thirdArg.properties[1]
 			getter.body.scopeInitialized = true
@@ -536,7 +620,7 @@ module.exports = ({
 			setter.body.scoperWrapped = true
 			getter.scoperWrapped = true
 			setter.scoperWrapped = true
-			
+			if(opts.inline) return node.declarations[0]
 			return node
 		},
 		functionWrapper(uuid, path, aster){
@@ -557,66 +641,154 @@ module.exports = ({
 		initBlock(path, aster){
 			if(!path.node.scopeInitialized){
 				path.node.scopeInitialized = true
-				let uuid = smarts.jsUUID()
-				let i = smarts.bodyInsert(
-					0,
-					path.node.body,
-					aster,
-					...smarts.initContext(uuid, aster),
-				)
-				path.scope.uuid = uuid
+				let uuid = smarts.getPathUUID({path})
+				let contextNode = smarts.createContext(uuid, aster, path)
+				path.node.body = contextNode
 			}
+		},
+		getNodeUUID(opts){
+			if(opts.node.type != 'BlockStatement' && opts.node.type != 'Program') return smarts.getNodeUUID({...opts, node: opts.node.body || opts.node.block})
+			return smarts.gosmart(opts.node, 'uuid', smarts.jsUUID())
+		},
+		getPathUUID(opts){
+			if(opts.path.context.scope.path.node.inheritScope || opts.path.scope.path.node.inheritScope) return smarts.getPathUUID({...opts, path: opts.path.parentPath})
+			return smarts.getNodeUUID({...opts, node: opts.path.context.scope.path.node})
 		},
 		babelPlugin(babel){
 			const t = babel.types
 			const aster = babel.template.ast
-			
-			let ret =  {
-				visitor: {
-					Program(path){
-						smarts.initBlock(path,aster)
-					},
-					BlockStatement(path){
-						smarts.initBlock(path,aster)
-					},
-					ObjectMethod(path){
-						let name = path.node.key.name
-						let replacement = aster(/*javascript*/`
-							let a = {
-								${name}: function ${name}(){}
-							}
-						`)
-						replacement = replacement.declarations[0].init.properties[0]
-						replacement.value.body = path.node.body
-						replacement.value.params = path.node.params
+
+			let metaVisitor = {
+				Program(path){
+					smarts.initBlock(path,aster)
+				},
+				BlockStatement(path){
+					smarts.initBlock(path,aster)
+				},
+				ForInStatement(path){
+					path = path
+				},
+				ObjectMethod(path){
+					let name = path.node.key.name
+					let replacement = aster(/*javascript*/`
+						let a = {
+							${name}: function ${name}(){}
+						}
+					`)
+					replacement = replacement.declarations[0].init.properties[0]
+					replacement.value.body = path.node.body
+					replacement.value.params = path.node.params
+					path.replaceWith(
+						replacement
+					)
+				},
+				Function(path){
+					if(
+						path.type != 'FunctionDeclaration' 
+						&& !path.node.scoperWrapped 
+						&& !path.node.body.scoperWrapped
+					){
+						path.node.scoperWrapped = true
+						path.node.body.scoperWrapped = true
+						let uuid = smarts.getPathUUID({path})
+						let replacement = smarts.functionWrapper(uuid, path, aster)
 						path.replaceWith(
 							replacement
 						)
-						debug = 1
-					},
-					Function(path){
-						if(!path.node.scoperWrapped && !path.node.body.scoperWrapped){
-							path.node.scoperWrapped = true
-							path.node.body.scoperWrapped = true
-							let uuid = path.contexts[0].scope.uuid
-							let replacement = smarts.functionWrapper(uuid, path, aster)
-							path.replaceWith(
-								replacement
+					}
+				},
+				FunctionDeclaration(path){
+					if(!path.node.scoped){
+						path.node.scoped = true
+						parentBlock = path.scope.parent
+						try {
+							parentBlock.block.body.forEach((node,index)=>{
+								if(node.lastContextNode){
+									let uuid = smarts.getPathUUID({path})
+									let newNode = aster(/*javascript*/`
+										${uuid}.$functionScoper(${path.node.id.name})
+									`)
+									node.body.splice(1, 0, 
+										newNode
+									)
+									throw new Error('break foreach')
+								}
+							})
+						} catch(err){}
+					}
+				},
+				VariableDeclarator(path){
+					if(!path.node.inScope){
+						path.node.inScope = true
+						let parentPath = smarts.getsmart(path, 'parentPath', undefined)
+						if(
+							parentPath.node.kind == "let"
+							// we check the length of declarations because we only have to do inline replacement
+							// if there's a chance another declaration might use a former one
+							&& parentPath.node.declarations.length > 1
+							&& !(
+								parentPath.parentPath.node.type == 'ForInStatement'
+								|| parentPath.parentPath.node.type == 'ForOfStatement'
 							)
-						}
-					},
-					VariableDeclaration(path){
-						if(!path.node.inScope){
-							path.node.inScope = true
-							let uuid = smarts.getsmart(path, 'contexts.0.scope.uuid', smarts.getsmart(path, 'contexts.0.scope.path.contexts.0.scope.uuid', null))
+						){
+							let uuid = smarts.getPathUUID({path})
 							if(uuid){
-								path.insertAfter(
-									smarts.scopeVar(uuid, path.node.declarations[0].id.name, path.node.kind, aster)
-								)
+								let indexInParent = parentPath.node.declarations.indexOf(path.node)
+								let newDeclaration = smarts.scopeVar({
+									aster, 
+									inline: true,
+									uuid,
+									key: parentPath.node.declarations[indexInParent].id.name,
+									type: parentPath.node.kind
+								})
+								parentPath.node.declarations.splice(indexInParent+1, 0, newDeclaration)
+							}
+						} else if(
+							parentPath.node.kind == "let" 
+							// and check if variable is declared inside a ForX statement
+							&& (
+								parentPath.parentPath.node.type == 'ForInStatement'
+								|| parentPath.parentPath.node.type == 'ForOfStatement'
+							)						
+						){
+							let uuid = smarts.getPathUUID({path})
+							if(uuid){
+								let indexInParent = parentPath.node.declarations.indexOf(path.node)
+								let newNode = smarts.scopeVar({
+									aster, 
+									uuid,
+									key: parentPath.node.declarations[indexInParent].id.name,
+									type: parentPath.node.kind
+								})
+								parentPath.parentPath.node.body.body.splice(0,0,newNode)
+							}
+						} else if(false){							
+						} else if(false){							
+						} else if(false){							
+						} else if(false){							
+						} else {
+							let uuid = smarts.getPathUUID({path})
+							if(uuid){
+								let indexInParent = parentPath.node.declarations.indexOf(path.node)
+								let newNode = smarts.scopeVar({
+									aster, 
+									uuid,
+									key: parentPath.node.declarations[indexInParent].id.name,
+									type: parentPath.node.kind
+								})
+								parentPath.insertAfter(newNode)
 							}
 						}
 					}
 				}
+			}
+			let ret = {
+				visitor: metaVisitor,
+				// visitor: {
+				// 	Program(path){
+				// 		path.traverse(metaVisitor)
+				// 	}
+				// } 
 			}
 			return ret
 		},
@@ -1356,7 +1528,7 @@ module.exports = ({
 			}
 			// if no obj make obj
 			if(!obj) obj = {}
-			// switch contexts
+			// switch Blocks
 			// In order to avoid constantly checking the type of the property
 			// we separate the real logic out into an inner function.
 			var deepGetByArray = function (obj, propsArray, value) {
