@@ -482,21 +482,24 @@ module.exports = ({
 						return arr2
 					})((typeof $context != 'undefined') ? $context.$variableMaps : []),
 					$contexts: {},
+					$contextsList: [],
 					$parentContexts: [],
 				}
 				${uuid}.$functionScoper = ${uuid}.$functionScoper(${uuid}.$functionScoper)
 				${uuid}.$scopes.splice(0,0,${uuid}.$closure)
 				${uuid}.$variableMaps.splice(0,0,${uuid}.$variableMap)
 				try {	eval(${/*javascript*/`\`var $context = $context || ${uuid}\``}) } catch(err){}
-				if($context && $context != ${uuid} && $context.$contexts instanceof Object){
+				if(typeof $context != 'undefined' && $context != ${uuid} && $context.$contexts instanceof Object){
 					$context.$contexts[${uuid}.$$uuid] = $context.$contexts[${uuid}.$$uuid] || []
 					${uuid}.$$instance = $context.$contexts[${uuid}.$$uuid].push(${uuid})-1
 					${uuid}.$parentContexts.push($context)
+					$context.$contextsList.push(${uuid})
 				}
 				var globalThis = globalThis || global || window || {}
 				if(!globalThis.$contexts){
 					globalThis.$contexts = {}
 					globalThis.$contexts[${uuid}.$$uuid] = [${uuid}]
+					globalThis.$contextsList = [${uuid}]
 					${uuid}.$$instance = 0
 				} else if(
 					globalThis.${uuid}s instanceof Object 
@@ -505,16 +508,21 @@ module.exports = ({
 				){
 					globalThis.${uuid}s[${uuid}.$$uuid] = globalThis.$contexts[${uuid}.$$uuid] || []
 					${uuid}.$$instance = globalThis.$contexts[${uuid}.$$uuid].push(${uuid})-1
+					globalThis.$contextsList.push(${uuid})
 				}
 				{
 					let $context = ${uuid}
 				}
 			`
 		},
-		createContext(uuid, aster, path){
-			let node = aster(/*javascript*/`
-				${smarts.contextObject(uuid)}
+		createContext(opts){
+			smarts.schema(opts, {
+				wrapBody: true
+			})
+			let node = opts.aster(/*javascript*/`
+				${smarts.contextObject(opts.uuid)}
 			`)
+			node[0].declarations[0].contextDeclaration = true
 			// so the $functionScoper function doesn't get wrapped or have $context inserted
 			let property3 = node[0].declarations[0].init.properties[3]
 			property3.value.scoperWrapped = true
@@ -526,11 +534,11 @@ module.exports = ({
 			property3ForStatement.body.scopeInitialized = true
 			property3ForStatement.init.declarations[0].inScope = true
 			property3ForStatement.init.declarations[1].inScope = true
-			// so the $addVar function doesn't get wrapped or have $context inserted
+			// so the $add function doesn't get wrapped or have $context inserted
 			let property4 = node[0].declarations[0].init.properties[4]
 			property4.value.scoperWrapped = true
 			property4.value.body.scopeInitialized = true
-			// so the $functionScoper function doesn't get wrapped or have $context inserted
+			// so the $scopes self-invoking function doesn't get wrapped or have $context inserted
 			let property5 = node[0].declarations[0].init.properties[5]
 			property5.value.callee.scoperWrapped = true
 			property5.value.callee.body.scopeInitialized = true
@@ -538,7 +546,7 @@ module.exports = ({
 			property5ForStatement.body.scopeInitialized = true
 			property5ForStatement.init.declarations[0].inScope = true
 			property5ForStatement.init.declarations[1].inScope = true
-			// so the $addVar function doesn't get wrapped or have $context inserted
+			// so the $variableMaps self-invoking function doesn't get wrapped or have $context inserted
 			let property6 = node[0].declarations[0].init.properties[6]
 			property6.value.callee.scoperWrapped = true
 			property6.value.callee.body.scopeInitialized = true
@@ -559,8 +567,11 @@ module.exports = ({
 			node[8].scopeInitialized = true
 			node[8].inheritScope = true
 			node[node.length-1].lastContextNode = true
-			let wrapper = node[node.length-1]
-			wrapper.body.push(...path.node.body)
+			if(opts.wrapBody){
+				let bodyWrapper = node[node.length-1]
+				bodyWrapper.body.push(...opts.path.node.body)
+			}
+			smarts.addBindingsToContext({...opts, node})
 			// let addContextToScopeNode = smarts.scopeVar({
 			// 	uuid,
 			// 	key: '$context',
@@ -569,6 +580,32 @@ module.exports = ({
 			// })
 			// wrapper.body.splice(1,0,addContextToScopeNode)	
 			return node
+		},
+		createInlineContext(opts){
+			let wrapperString = /*javascript*/`
+				for(let ${opts.uuid} = function(){
+					// node goes here
+					return ${opts.uuid}
+				}() ; a<1;a++){}
+			`
+			let inlineContextNode = opts.aster(wrapperString).init.declarations[0]
+			let contextBody = smarts.createContext({...opts, wrapBody: false})
+			inlineContextNode.init.callee.body.body.splice(0,0,...contextBody)
+			inlineContextNode.contextDeclaration = true
+			return inlineContextNode
+		},
+		addBindingsToContext(opts){
+			for(let key in opts.path.scope.bindings){
+				let binding = opts.path.scope.bindings[key]
+				if(binding.kind == 'var'){
+					let newNode = smarts.scopeVar({
+						...opts,
+						key,
+						type: binding.kind
+					})
+					opts.node.splice(opts.node.length-1, 0, newNode)
+				}
+			}
 		},
 		scopeVarCode(opts){
 			let ret = /*javascript*/`
@@ -642,7 +679,7 @@ module.exports = ({
 			if(!path.node.scopeInitialized){
 				path.node.scopeInitialized = true
 				let uuid = smarts.getPathUUID({path})
-				let contextNode = smarts.createContext(uuid, aster, path)
+				let contextNode = smarts.createContext({uuid, aster, path})
 				path.node.body = contextNode
 			}
 		},
@@ -722,13 +759,19 @@ module.exports = ({
 						path.node.inScope = true
 						let parentPath = smarts.getsmart(path, 'parentPath', undefined)
 						if(
-							parentPath.node.kind == "let"
+							// this is for inline let and const declarations in normal
+							// js blocks
+							(
+								parentPath.node.kind == "let"
+								|| parentPath.node.kind == "const"
+							)
 							// we check the length of declarations because we only have to do inline replacement
 							// if there's a chance another declaration might use a former one
 							&& parentPath.node.declarations.length > 1
 							&& !(
 								parentPath.parentPath.node.type == 'ForInStatement'
 								|| parentPath.parentPath.node.type == 'ForOfStatement'
+								|| parentPath.parentPath.node.type == 'ForStatement'
 							)
 						){
 							let uuid = smarts.getPathUUID({path})
@@ -744,11 +787,19 @@ module.exports = ({
 								parentPath.node.declarations.splice(indexInParent+1, 0, newDeclaration)
 							}
 						} else if(
-							parentPath.node.kind == "let" 
+							// 
+							(
+								parentPath.node.kind == "let" 
+								|| parentPath.node.kind == "var"
+								|| parentPath.node.kind == "const"
+							)
+							// only do this for singular declarations
+							&& parentPath.node.declarations.length < 2
 							// and check if variable is declared inside a ForX statement
 							&& (
 								parentPath.parentPath.node.type == 'ForInStatement'
 								|| parentPath.parentPath.node.type == 'ForOfStatement'
+								|| parentPath.parentPath.node.type ==  "ForStatement"
 							)						
 						){
 							let uuid = smarts.getPathUUID({path})
@@ -762,11 +813,45 @@ module.exports = ({
 								})
 								parentPath.parentPath.node.body.body.splice(0,0,newNode)
 							}
-						} else if(false){							
-						} else if(false){							
-						} else if(false){							
-						} else if(false){							
-						} else {
+						} else if(
+							// this is a special case for when ForStatements get their own scope
+							(
+								parentPath.node.kind == "let"
+								|| parentPath.node.kind == "const"
+							)
+							// we check the length of declarations because we only have to do inline replacement
+							// if there's a chance another declaration might use a former one
+							&& parentPath.node.declarations.length > 1
+							&& parentPath.parentPath.node.type == 'ForStatement'
+						){
+							// if the first declaration isn't our context declaration, insert one
+							let uuid = smarts.gosmart(path, 'scope.uuid', smarts.jsUUID())
+							if(!parentPath.node.declarations[0].contextDeclaration){
+								let inlineContextDeclaration = smarts.createInlineContext({
+									path,
+									uuid,
+									aster
+								})
+								parentPath.node.declarations.splice(0,0, inlineContextDeclaration)
+							}
+							if(uuid){
+								let indexInParent = parentPath.node.declarations.indexOf(path.node)
+								let newDeclaration = smarts.scopeVar({
+									aster, 
+									inline: true,
+									uuid,
+									key: parentPath.node.declarations[indexInParent].id.name,
+									type: parentPath.node.kind
+								})
+								parentPath.node.declarations.splice(indexInParent+1, 0, newDeclaration)
+							}
+
+						} else if(
+							(
+								parentPath.node.kind == "let"
+								|| parentPath.node.kind == "const"
+							)
+						){							
 							let uuid = smarts.getPathUUID({path})
 							if(uuid){
 								let indexInParent = parentPath.node.declarations.indexOf(path.node)
@@ -778,6 +863,20 @@ module.exports = ({
 								})
 								parentPath.insertAfter(newNode)
 							}
+						} else if(false){							
+						} else if(false){							
+						} else {
+							// let uuid = smarts.getPathUUID({path})
+							// if(uuid){
+							// 	let indexInParent = parentPath.node.declarations.indexOf(path.node)
+							// 	let newNode = smarts.scopeVar({
+							// 		aster, 
+							// 		uuid,
+							// 		key: parentPath.node.declarations[indexInParent].id.name,
+							// 		type: parentPath.node.kind
+							// 	})
+							// 	parentPath.insertAfter(newNode)
+							// }
 						}
 					}
 				}
@@ -792,11 +891,12 @@ module.exports = ({
 			}
 			return ret
 		},
-		transform(src, opts){
+		transform(src, opts={}){
 			return babel.transform(
 				src, 
 				{
-					plugins: [smarts.babelPlugin]
+					plugins: [smarts.babelPlugin],
+					...opts					
 				}
 			)
 		},

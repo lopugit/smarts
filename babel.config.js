@@ -1,12 +1,13 @@
 module.exports = {
   presets: [
-		// [
-		// 	'@babel/preset-env',
-		// 	{
-		// 		useBuiltIns: 'entry',
-		// 		corejs: '2'
-		// 	}
-		// ],
+		[
+			'@babel/preset-env',
+			{
+				"targets": "> 5%, not dead",
+				useBuiltIns: 'entry',
+				corejs: '3'
+			}
+		],
 	],
 	plugins: [
 		[
