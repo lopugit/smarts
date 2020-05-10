@@ -493,15 +493,11 @@ module.exports = ({
 				var globalThis = globalThis || global || window || {}
 				${uuid}.$contextStatus = ${uuid}.$mode == 'strict' ? '' : 'var'
 				try { 
-					eval(${/*javascript*/`\`
-						\${${uuid}.$contextStatus} $context = $context || ${uuid}
-					\``})
+					eval(${/*javascript*/`\`\${${uuid}.$contextStatus} $context = $context || ${uuid}\``})
 				} catch(err){
 					${uuid}.$contextStatus = ''
 				}
-				eval(${/*javascript*/`\`
-					\${${uuid}.$contextStatus} $context = $context || ${uuid}
-				\``})
+				eval(${/*javascript*/`\`\${${uuid}.$contextStatus} $context = $context || ${uuid}\``})
 				if(typeof $context == 'object' && $context != ${uuid} && $context.$contexts instanceof Object){
 					$context.$contexts[${uuid}.$$uuid] = $context.$contexts[${uuid}.$$uuid] || []
 					${uuid}.$$instance = $context.$contexts[${uuid}.$$uuid].push(${uuid})-1
