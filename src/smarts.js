@@ -474,28 +474,40 @@ module.exports = ({
 							arr2[i] = arr[i]; 
 						} 
 						return arr2
-					})((typeof $context != 'undefined') ? $context.$scopes : []),
+					})((typeof $context == 'object') ? $context.$scopes : []),
 					$variableMaps: (function(arr){
 						for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { 
 							arr2[i] = arr[i]; 
 						} 
 						return arr2
-					})((typeof $context != 'undefined') ? $context.$variableMaps : []),
+					})((typeof $context == 'object') ? $context.$variableMaps : []),
 					$contexts: {},
 					$contextsList: [],
 					$parentContexts: [],
+					$contextStatus: "var",
+					$mode: (eval("var ${uuid}1 = null"), (typeof ${uuid+"1"} === "undefined")) ? "strict" : "non-strict",
 				}
 				${uuid}.$functionScoper = ${uuid}.$functionScoper(${uuid}.$functionScoper)
 				${uuid}.$scopes.splice(0,0,${uuid}.$closure)
 				${uuid}.$variableMaps.splice(0,0,${uuid}.$variableMap)
-				try {	eval(${/*javascript*/`\`var $context = $context || ${uuid}\``}) } catch(err){}
-				if(typeof $context != 'undefined' && $context != ${uuid} && $context.$contexts instanceof Object){
+				var globalThis = globalThis || global || window || {}
+				${uuid}.$contextStatus = ${uuid}.$mode == 'strict' ? '' : 'var'
+				try { 
+					eval(${/*javascript*/`\`
+						\${${uuid}.$contextStatus} $context = $context || ${uuid}
+					\``})
+				} catch(err){
+					${uuid}.$contextStatus = ''
+				}
+				eval(${/*javascript*/`\`
+					\${${uuid}.$contextStatus} $context = $context || ${uuid}
+				\``})
+				if(typeof $context == 'object' && $context != ${uuid} && $context.$contexts instanceof Object){
 					$context.$contexts[${uuid}.$$uuid] = $context.$contexts[${uuid}.$$uuid] || []
 					${uuid}.$$instance = $context.$contexts[${uuid}.$$uuid].push(${uuid})-1
 					${uuid}.$parentContexts.push($context)
 					$context.$contextsList.push(${uuid})
 				}
-				var globalThis = globalThis || global || window || {}
 				if(!globalThis.$contexts){
 					globalThis.$contexts = {}
 					globalThis.$contexts[${uuid}.$$uuid] = [${uuid}]
@@ -554,18 +566,22 @@ module.exports = ({
 			property6ForStatement.body.scopeInitialized = true
 			property6ForStatement.init.declarations[0].inScope = true
 			property6ForStatement.init.declarations[1].inScope = true
+			node6 = node[6]
 			// make sure try statement block doesn't get scoped either
-			node[4].block.scopeInitialized = true
+			node6.block.scopeInitialized = true
 			// make sure catch statement block doesn't get scoped either
-			node[4].handler.body.scopeInitialized = true
+			node6.handler.body.scopeInitialized = true
+			node8 = node[8]
 			// make sure if statement block doesn't get scoped either
-			node[5].consequent.scopeInitialized = true
+			node8.consequent.scopeInitialized = true
+			node9 = node[9]
 			// make sure if statement block doesn't get scoped either
-			node[7].consequent.scopeInitialized = true
+			node9.consequent.scopeInitialized = true
 			// make sure else if statement block doesn't get scoped either
-			node[7].alternate.consequent.scopeInitialized = true
-			node[8].scopeInitialized = true
-			node[8].inheritScope = true
+			node9.alternate.consequent.scopeInitialized = true
+			node10 = node[10]
+			node10.scopeInitialized = true
+			node10.inheritScope = true
 			node[node.length-1].lastContextNode = true
 			if(opts.wrapBody){
 				let bodyWrapper = node[node.length-1]

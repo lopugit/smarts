@@ -45,7 +45,7 @@ describe("Transform tests", ()=>{
 			let code = smarts.transform(src)
 			let path = `${__dirname}/../../dump/babel.out.${iter++}.js`
 			fs.writeFileSync(path, code.code)
-
+			globalThis.smartErrors = true
 			eval(code.code)
 			let evaldScope = $context.$closure
 			expect(evaldScope.parsed.function1()).to.equal("foo")
@@ -187,13 +187,28 @@ describe("Transform tests", ()=>{
 			})
 		}
 	})
+	describe("Should eval any transformed source code", ()=>{
+		let mainPath = `${__dirname}/../../snippets/`
+		let inPath = mainPath+'in/'
+		let outPath = mainPath+'out/'
+		let files = fs.readdirSync(`${inPath}`, 'utf-8')
+		for(let file of files){
+			if(file.indexOf('require') < 0){
+				test(`${file} should not error when eval'd`, ()=>{
+					let code = smarts.transform(fs.readFileSync(`${inPath}${file}`, `utf-8`))
+					eval(code.code)
+					debug=1
+				})
+			}
+		}
+	})
 	describe("Any self-contained transformed source code should run without error", ()=>{
 		let mainPath = `${__dirname}/../../snippets/`
 		let outPath = mainPath+'out/'
 		let files = fs.readdirSync(`${outPath}`, 'utf-8')
 		for(let file of files){
 			test(`${file} should not error when run after being transformed`, ()=>{
-					require(`${outPath}${file}`)
+				require(`${outPath}${file}`)
 			})
 		}
 	})
