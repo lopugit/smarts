@@ -700,7 +700,7 @@ module.exports = ({
 			}
 		},
 		getNodeUUID(opts){
-			if(opts.node.type != 'BlockStatement' && opts.node.type != 'Program') return smarts.getNodeUUID({...opts, node: opts.node.body || opts.node.block})
+			if(opts.node && opts.node.type != 'BlockStatement' && opts.node.type != 'Program') return smarts.getNodeUUID({...opts, node: opts.node.body || opts.node.block})
 			return smarts.gosmart(opts.node, 'uuid', smarts.jsUUID())
 		},
 		getPathUUID(opts){
