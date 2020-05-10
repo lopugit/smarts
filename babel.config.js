@@ -11,9 +11,9 @@ module.exports = {
 		],
 	],
 	plugins: [
-		[
-			'./exports/babelPlugin.js'
-		],
+		// [
+		// 	'./exports/babelPlugin.js'
+		// ],
 	]
 }
 
