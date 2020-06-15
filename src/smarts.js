@@ -12,9 +12,10 @@ module.exports = ({
 		objList,
 		stringList,
 		reactiveSetter,
-		vue
+		vue,
+		that: this
 	}
-
+	
 	var smarts = {
 		babel,
 		uuid,
@@ -1648,8 +1649,8 @@ module.exports = ({
 				// If the path array has only 1 more element, we've reached
 				// the intended property and set its value
 				if (propsArray.length == 1) {
-					if (smarts.getsmart(vue, 'reactiveSetter', false) && that.$set && obj) {
-						that.$set(obj, propsArray[0], value)
+					if (smarts.getsmart(vue, 'reactiveSetter', false) && local.that.$set && obj) {
+						local.that.$set(obj, propsArray[0], value)
 						if(typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){
 							window.$store.commit('graph/thing')
 						}
@@ -1673,8 +1674,8 @@ module.exports = ({
 				// check if next prop is 
 				if (typeof obj[propsArray[0]] !== 'object') {
 					// If we have reached an undefined/null property
-					if (smarts.getsmart(vue, 'reactiveSetter', false) && that.$set && obj) {
-						that.$set(obj, propsArray[0], {})
+					if (smarts.getsmart(vue, 'reactiveSetter', false) && local.that.$set && obj) {
+						local.that.$set(obj, propsArray[0], {})
 						if(typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){
 							window.$store.commit('graph/thing')
 						}
@@ -1690,8 +1691,8 @@ module.exports = ({
 			if (property) {
 				return deepGetByArray(obj, property, value)
 			} else {
-				if (smarts.getsmart(vue, 'reactiveSetter', false) && that.$set && obj) {
-					that.$set(obj, undefined, value)
+				if (smarts.getsmart(vue, 'reactiveSetter', false) && local.that.$set && obj) {
+					local.that.$set(obj, undefined, value)
 					if(typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){
 						window.$store.commit('graph/thing')
 					}

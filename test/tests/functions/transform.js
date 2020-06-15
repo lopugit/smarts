@@ -1,4 +1,4 @@
-smarts = require('../../../src/index.js')()
+smarts = require(global.smartsPath || '../../../src/index.js')()
 let expect = require('chai').expect
 let mlog = require('mocha-logger');
 let test = it

@@ -7,6 +7,15 @@
 		{
 			"type": "node",
 			"request": "launch",
+			"name": "Current File",
+			"program": "${workspaceFolder}/${relativeFile}",
+			"skipFiles": [
+				"<node_internals>/**"
+			]
+		},
+		{
+			"type": "node",
+			"request": "launch",
 			"name": "Serialisation Tests",
 			"program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
 			"args": [
