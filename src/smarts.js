@@ -1,6 +1,6 @@
 let merge = require('deepmerge')
-let babel2 = require('@babel/core')
-babel2.generator = require('@babel/generator').default
+let babel = require('@babel/core')
+babel.generator = require('@babel/generator').default
 let uuid = require('uuid/v4')
 module.exports = ({
 	objList,
@@ -17,7 +17,7 @@ module.exports = ({
 	}
 	
 	var smarts = {
-		babel2: babel2,
+		babel: babel,
 		uuid,
 		pause(value, opts){
 			return smarts.stringify(value, opts)
@@ -170,9 +170,9 @@ module.exports = ({
 				function createScopedEval(${uuid}){
 					
 					// scopeCode
-					${uuid}.scopeCode = ${uuid}.scopeCode || ${uuid}.smarts.babel2.template.ast('try{}catch(err){console.log(err)}')
+					${uuid}.scopeCode = ${uuid}.scopeCode || ${uuid}.smarts.babel.template.ast('try{}catch(err){console.log(err)}')
 					${uuid}.previousScopeCode = ${uuid}.currentScopeCode || ${uuid}.scopeCode
-					${uuid}.currentScopeCode = ${uuid}.scopeCode.block.body.length ? ${uuid}.smarts.babel2.template.ast('try{}catch(err){console.log(err)}') : ${uuid}.scopeCode
+					${uuid}.currentScopeCode = ${uuid}.scopeCode.block.body.length ? ${uuid}.smarts.babel.template.ast('try{}catch(err){console.log(err)}') : ${uuid}.scopeCode
 					if(${uuid}.previousScopeCode != ${uuid}.currentScopeCode){
 						${uuid}.previousScopeCode.block.body.push(
 							${uuid}.currentScopeCode
@@ -190,7 +190,7 @@ module.exports = ({
 						){
 							try{
 								${uuid}.currentScopeCode.block.body.push(
-									${uuid}.smarts.babel2.template.ast(
+									${uuid}.smarts.babel.template.ast(
 										${/*javascript*/`\`
 											\${${uuid}.variableMap[key]} \${key} = ${uuid}.val.$scopes[\${${uuid}.closureIndex}]['\${key}']
 										\``}
@@ -199,7 +199,7 @@ module.exports = ({
 							}catch(err){console.log(1,err)}
 							try{
 								${uuid}.currentScopeCode.block.body.push(
-									${uuid}.smarts.babel2.template.ast(
+									${uuid}.smarts.babel.template.ast(
 										${/*javascript*/`\`
 											Object.defineProperty(
 												${uuid}.val.$scopes[\${${uuid}.closureIndex}],
@@ -227,7 +227,7 @@ module.exports = ({
 						// console.log(${uuid}.scopeCode)
 						try{
 							${uuid}.currentScopeCode.block.body.push(
-								${uuid}.smarts.babel2.template.ast(
+								${uuid}.smarts.babel.template.ast(
 									${/*javascript*/`\`
 										return \${${uuid}.smarts.scopedEval('${uuid}')}
 									\``}
@@ -235,7 +235,7 @@ module.exports = ({
 							)
 						}catch(err){console.log(3,err)}
 						try{
-							${uuid}.wrapper = ${uuid}.smarts.babel2.template.ast(
+							${uuid}.wrapper = ${uuid}.smarts.babel.template.ast(
 								${/*javascript*/`\`
 									function anonymous(){}							
 								\``}
@@ -245,7 +245,7 @@ module.exports = ({
 						// console.log(${uuid}.scopeCode)
 						${uuid}.wrapper.body.body.push(${uuid}.scopeCode)
 						${uuid}.scopeCode = ${uuid}.wrapper
-						${uuid}.scopeCode = ${uuid}.smarts.babel2.generator(
+						${uuid}.scopeCode = ${uuid}.smarts.babel.generator(
 							${uuid}.scopeCode
 						).code
 						// console.log(${uuid}.scopeCode)
@@ -905,7 +905,7 @@ module.exports = ({
 			return ret
 		},
 		transform(src, opts={}){
-			return babel2.transform(
+			return babel.transform(
 				src, 
 				{
 					plugins: [smarts.babelPlugin],
