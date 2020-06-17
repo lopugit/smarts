@@ -1576,11 +1576,13 @@ module.exports = ({
 				}
 			}
 
+			let deepGetByArray = deepGetByArrayUnbound.bind(this)
+
 			return deepGetByArray(obj, property, defaultValue)
 
 			// In order to avoid constantly checking the type of the property
 			// we separate the real logic out into an inner function.
-			function deepGetByArray(obj, propsArray, defaultValue) {
+			function deepGetByArrayUnbound (obj, propsArray, defaultValue) {
 				// If we have reached an undefined/null property
 				// then stop executing and return the default value.
 				// If no default was provided it will be undefined.
@@ -1642,59 +1644,14 @@ module.exports = ({
 			}
 			// if no obj make obj
 			if(!obj) obj = {}
+
+			let deepSetByArray = deepSetByArrayUnbound.bind(this)
 			
-			// Prepare our path array for recursion
-			var remainingProps = propsArray.slice(1)
-			// check if next prop is 
-			if (typeof obj[propsArray[0]] !== 'object') {
-				// If we have reached an undefined/null property
-				if (smarts.getsmart(vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false) && obj) {
-					this.$set(obj, propsArray[0], {})
-					if(typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('graph/thing')
-					}
-				} else {
-					obj[propsArray[0]] = {}
-					if(smarts.getsmart(vue, 'store', false) && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){ 
-						window.$store.commit('graph/thing')
-					}
-				}
-			}
-			return deepGetByArray(obj[propsArray[0]], remainingProps, value)
-
-			// In order to avoid constantly checking the type of the property
-			// we separate the real logic out into an inner function.
-			function deepGetByArray (obj, propsArray, value) {
-
-				// If the path array has only 1 more element, we've reached
-				// the intended property and set its value
-				if (propsArray.length == 1) {
-					if (smarts.getsmart(vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false) && obj) {
-						this.$set(obj, propsArray[0], value)
-						if(typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){
-							window.$store.commit('graph/thing')
-						}
-					} else {
-						obj[propsArray[0]] = value
-						if(smarts.getsmart(vue, 'store', false) && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){ 
-							window.$store.commit('graph/thing')
-						}
-					}
-					if (context) {
-						return {
-							value: obj[propsArray[0]],
-							undefined: false
-						}
-					} else {
-						return obj[propsArray[0]]
-					}
-				}
-			}
 			if (property) {
-				return deepGetByArray(obj, property, value)
+				return deepSetByArray(obj, property, value)
 			} else {
-				if (smarts.getsmart(vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false) && obj) {
-					this.$set(obj, undefined, value)
+				if (smarts.getsmart(vue, 'reactiveSetter', false) && local.that.$set && obj) {
+					local.that.$set(obj, undefined, value)
 					if(typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){
 						window.$store.commit('graph/thing')
 					}
@@ -1713,6 +1670,53 @@ module.exports = ({
 				} else {
 					return obj
 				}
+			}
+
+			// In order to avoid constantly checking the type of the property
+			// we separate the real logic out into an inner function.
+			function deepSetByArrayUnbound (obj, propsArray, value) {
+
+				// If the path array has only 1 more element, we've reached
+				// the intended property and set its value
+				if (propsArray.length == 1) {
+					if (smarts.getsmart(vue, 'reactiveSetter', false) && local.that.$set && obj) {
+						local.that.$set(obj, propsArray[0], value)
+						if(typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){
+							window.$store.commit('graph/thing')
+						}
+					} else {
+						obj[propsArray[0]] = value
+						if(smarts.getsmart(vue, 'store', false) && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){ 
+							window.$store.commit('graph/thing')
+						}
+					}
+					if (context) {
+						return {
+							value: obj[propsArray[0]],
+							undefined: false
+						}
+					} else {
+						return obj[propsArray[0]]
+					}
+				}
+				// Prepare our path array for recursion
+				var remainingProps = propsArray.slice(1)
+				// check if next prop is 
+				if (typeof obj[propsArray[0]] !== 'object') {
+					// If we have reached an undefined/null property
+					if (smarts.getsmart(vue, 'reactiveSetter', false) && local.that.$set && obj) {
+						local.that.$set(obj, propsArray[0], {})
+						if(typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){
+							window.$store.commit('graph/thing')
+						}
+					} else {
+						obj[propsArray[0]] = {}
+						if(smarts.getsmart(vue, 'store', false) && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){ 
+							window.$store.commit('graph/thing')
+						}
+					}
+				}
+				return deepSetByArray(obj[propsArray[0]], remainingProps, value)
 			}
 		},
 		gosmart(obj, property, value, context) {
