@@ -1073,7 +1073,7 @@ module.exports = ({
 					}
 				} else {
 					list.splice(index, 1, option)
-					if (smarts.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+					if (smarts.getsmart(local.vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false)) {
 						if(!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){
 							window.$store.commit('graph/thing')
 						}
@@ -1576,9 +1576,11 @@ module.exports = ({
 				}
 			}
 
+			return deepGetByArray(obj, property, defaultValue)
+
 			// In order to avoid constantly checking the type of the property
 			// we separate the real logic out into an inner function.
-			var deepGetByArray = function (obj, propsArray, defaultValue) {
+			function deepGetByArray(obj, propsArray, defaultValue) {
 				// If we have reached an undefined/null property
 				// then stop executing and return the default value.
 				// If no default was provided it will be undefined.
@@ -1612,7 +1614,6 @@ module.exports = ({
 
 				return deepGetByArray(nextObj, remainingProps, defaultValue)
 			}
-			return deepGetByArray(obj, property, defaultValue)
 		},
 		setsmart(obj, property, value, context) {
 			if (!property && typeof obj == 'string') {
@@ -1641,16 +1642,35 @@ module.exports = ({
 			}
 			// if no obj make obj
 			if(!obj) obj = {}
-			// switch Blocks
+			
+			// Prepare our path array for recursion
+			var remainingProps = propsArray.slice(1)
+			// check if next prop is 
+			if (typeof obj[propsArray[0]] !== 'object') {
+				// If we have reached an undefined/null property
+				if (smarts.getsmart(vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false) && obj) {
+					this.$set(obj, propsArray[0], {})
+					if(typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){
+						window.$store.commit('graph/thing')
+					}
+				} else {
+					obj[propsArray[0]] = {}
+					if(smarts.getsmart(vue, 'store', false) && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){ 
+						window.$store.commit('graph/thing')
+					}
+				}
+			}
+			return deepGetByArray(obj[propsArray[0]], remainingProps, value)
+
 			// In order to avoid constantly checking the type of the property
 			// we separate the real logic out into an inner function.
-			var deepGetByArray = function (obj, propsArray, value) {
+			function deepGetByArray (obj, propsArray, value) {
 
 				// If the path array has only 1 more element, we've reached
 				// the intended property and set its value
 				if (propsArray.length == 1) {
-					if (smarts.getsmart(vue, 'reactiveSetter', false) && local.that.$set && obj) {
-						local.that.$set(obj, propsArray[0], value)
+					if (smarts.getsmart(vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false) && obj) {
+						this.$set(obj, propsArray[0], value)
 						if(typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){
 							window.$store.commit('graph/thing')
 						}
@@ -1669,30 +1689,12 @@ module.exports = ({
 						return obj[propsArray[0]]
 					}
 				}
-				// Prepare our path array for recursion
-				var remainingProps = propsArray.slice(1)
-				// check if next prop is 
-				if (typeof obj[propsArray[0]] !== 'object') {
-					// If we have reached an undefined/null property
-					if (smarts.getsmart(vue, 'reactiveSetter', false) && local.that.$set && obj) {
-						local.that.$set(obj, propsArray[0], {})
-						if(typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){
-							window.$store.commit('graph/thing')
-						}
-					} else {
-						obj[propsArray[0]] = {}
-						if(smarts.getsmart(vue, 'store', false) && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){ 
-							window.$store.commit('graph/thing')
-						}
-					}
-				}
-				return deepGetByArray(obj[propsArray[0]], remainingProps, value)
 			}
 			if (property) {
 				return deepGetByArray(obj, property, value)
 			} else {
-				if (smarts.getsmart(vue, 'reactiveSetter', false) && local.that.$set && obj) {
-					local.that.$set(obj, undefined, value)
+				if (smarts.getsmart(vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false) && obj) {
+					this.$set(obj, undefined, value)
 					if(typeof smarts.getsmart(window, '$store.commit', undefined) == 'function'){
 						window.$store.commit('graph/thing')
 					}
@@ -1781,7 +1783,7 @@ module.exports = ({
 						}
 					}
 					if (!list.mapped || typeof list.mapped === 'boolean') {
-						if (smarts.getsmart(local.vue, 'reactiveSetter', false) && this.$set && list) {
+						if (smarts.getsmart(local.vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false) && list) {
 							this.$set(list, 'mapped', {})
 						} else {
 							list['mapped'] = {}
@@ -1789,7 +1791,7 @@ module.exports = ({
 					}
 					for (var i = 0; i < list.length; i++) {
 						if (typeof list[i] !== 'string') {
-							if (smarts.getsmart(local.vue, 'reactiveSetter', false) && this.$set && list.mapped) {
+							if (smarts.getsmart(local.vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false) && list.mapped) {
 								this.$set(list.mapped, list[i][keyProperty], list[i])
 							} else {
 								list['mapped'][list[i][keyProperty]] = list[i]
