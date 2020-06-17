@@ -20,7 +20,10 @@ module.exports = ({
     that: this
   };
   var smarts = {
-    babel: babel,
+    getBabel() {
+      return smarts.getBabel();
+    },
+
     uuid,
 
     pause(value, opts) {
@@ -196,19 +199,19 @@ module.exports = ({
     createScopedEval(uuid) {
       let ret =
       /*javascript*/
-      "\n\t\t\t\tfunction createScopedEval(".concat(uuid, "){\n\t\t\t\t\t\n\t\t\t\t\t// scopeCode\n\t\t\t\t\t").concat(uuid, ".scopeCode = ").concat(uuid, ".scopeCode || ").concat(uuid, ".smarts.babel.template.ast('try{}catch(err){console.log(err)}')\n\t\t\t\t\t").concat(uuid, ".previousScopeCode = ").concat(uuid, ".currentScopeCode || ").concat(uuid, ".scopeCode\n\t\t\t\t\t").concat(uuid, ".currentScopeCode = ").concat(uuid, ".scopeCode.block.body.length ? ").concat(uuid, ".smarts.babel.template.ast('try{}catch(err){console.log(err)}') : ").concat(uuid, ".scopeCode\n\t\t\t\t\tif(").concat(uuid, ".previousScopeCode != ").concat(uuid, ".currentScopeCode){\n\t\t\t\t\t\t").concat(uuid, ".previousScopeCode.block.body.push(\n\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode\n\t\t\t\t\t\t)\n\t\t\t\t\t}\n\t\t\t\t\t").concat(uuid, ".closureIndex = ").concat(uuid, ".closureIndex || 0\n\t\t\t\t\t").concat(uuid, ".closure = ").concat(uuid, ".smarts.getsmart(").concat(uuid, ", ",
+      "\n\t\t\t\tfunction createScopedEval(".concat(uuid, "){\n\t\t\t\t\t\n\t\t\t\t\t// scopeCode\n\t\t\t\t\t").concat(uuid, ".scopeCode = ").concat(uuid, ".scopeCode || ").concat(uuid, ".smarts.getBabel().template.ast('try{}catch(err){console.log(err)}')\n\t\t\t\t\t").concat(uuid, ".previousScopeCode = ").concat(uuid, ".currentScopeCode || ").concat(uuid, ".scopeCode\n\t\t\t\t\t").concat(uuid, ".currentScopeCode = ").concat(uuid, ".scopeCode.block.body.length ? ").concat(uuid, ".smarts.getBabel().template.ast('try{}catch(err){console.log(err)}') : ").concat(uuid, ".scopeCode\n\t\t\t\t\tif(").concat(uuid, ".previousScopeCode != ").concat(uuid, ".currentScopeCode){\n\t\t\t\t\t\t").concat(uuid, ".previousScopeCode.block.body.push(\n\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode\n\t\t\t\t\t\t)\n\t\t\t\t\t}\n\t\t\t\t\t").concat(uuid, ".closureIndex = ").concat(uuid, ".closureIndex || 0\n\t\t\t\t\t").concat(uuid, ".closure = ").concat(uuid, ".smarts.getsmart(").concat(uuid, ", ",
       /*javascript*/
       "`val.$scopes.${".concat(uuid, ".closureIndex}`"), ", {})\n\t\t\t\t\t").concat(uuid, ".variableKeys = Object.keys(").concat(uuid, ".closure)\n\t\t\t\t\t").concat(uuid, ".variableMap = ").concat(uuid, ".smarts.getsmart(").concat(uuid, ", ",
       /*javascript*/
-      "`val.$context.$variableMaps.${".concat(uuid, ".closureIndex}`"), ", [])\n\t\t\t\t\t").concat(uuid, ".allowedIdentifiers = ['let','var','const']\n\t\t\t\t\t").concat(uuid, ".variableKeys.forEach((key)=>{\n\t\t\t\t\t\tif(\n\t\t\t\t\t\t\ttypeof ").concat(uuid, ".variableMap[key] == 'string' \n\t\t\t\t\t\t\t&& ").concat(uuid, ".allowedIdentifiers.indexOf(").concat(uuid, ".variableMap[key]) >= 0\n\t\t\t\t\t\t){\n\t\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.babel.template.ast(\n\t\t\t\t\t\t\t\t\t\t",
+      "`val.$context.$variableMaps.${".concat(uuid, ".closureIndex}`"), ", [])\n\t\t\t\t\t").concat(uuid, ".allowedIdentifiers = ['let','var','const']\n\t\t\t\t\t").concat(uuid, ".variableKeys.forEach((key)=>{\n\t\t\t\t\t\tif(\n\t\t\t\t\t\t\ttypeof ").concat(uuid, ".variableMap[key] == 'string' \n\t\t\t\t\t\t\t&& ").concat(uuid, ".allowedIdentifiers.indexOf(").concat(uuid, ".variableMap[key]) >= 0\n\t\t\t\t\t\t){\n\t\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t\t\t",
       /*javascript*/
-      "`\n\t\t\t\t\t\t\t\t\t\t\t${".concat(uuid, ".variableMap[key]} ${key} = ").concat(uuid, ".val.$scopes[${").concat(uuid, ".closureIndex}]['${key}']\n\t\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t}catch(err){console.log(1,err)}\n\t\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.babel.template.ast(\n\t\t\t\t\t\t\t\t\t\t",
+      "`\n\t\t\t\t\t\t\t\t\t\t\t${".concat(uuid, ".variableMap[key]} ${key} = ").concat(uuid, ".val.$scopes[${").concat(uuid, ".closureIndex}]['${key}']\n\t\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t}catch(err){console.log(1,err)}\n\t\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t\t\t",
       /*javascript*/
-      "`\n\t\t\t\t\t\t\t\t\t\t\tObject.defineProperty(\n\t\t\t\t\t\t\t\t\t\t\t\t".concat(uuid, ".val.$scopes[${").concat(uuid, ".closureIndex}],\n\t\t\t\t\t\t\t\t\t\t\t\t${smarts.stringify(key)},\n\t\t\t\t\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\t\t\t\t\tget(){\n\t\t\t\t\t\t\t\t\t\t\t\t\t\treturn ${key}\n\t\t\t\t\t\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t\t\t\t\t\t\tset(val){\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t${key} = val\n\t\t\t\t\t\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t\t\t\t\t\t\tenumerable: true\n\t\t\t\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t}catch(err){console.log(2,err)}\n\t\t\t\t\t\t}\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t})\n\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t").concat(uuid, ".closureIndex++\n\t\t\t\t\tif(").concat(uuid, ".closureIndex >= ").concat(uuid, ".smarts.getsmart(").concat(uuid, ", 'val.$scopes.length', -1)){\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.babel.template.ast(\n\t\t\t\t\t\t\t\t\t",
+      "`\n\t\t\t\t\t\t\t\t\t\t\tObject.defineProperty(\n\t\t\t\t\t\t\t\t\t\t\t\t".concat(uuid, ".val.$scopes[${").concat(uuid, ".closureIndex}],\n\t\t\t\t\t\t\t\t\t\t\t\t${smarts.stringify(key)},\n\t\t\t\t\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\t\t\t\t\tget(){\n\t\t\t\t\t\t\t\t\t\t\t\t\t\treturn ${key}\n\t\t\t\t\t\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t\t\t\t\t\t\tset(val){\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t${key} = val\n\t\t\t\t\t\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t\t\t\t\t\t\tenumerable: true\n\t\t\t\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t}catch(err){console.log(2,err)}\n\t\t\t\t\t\t}\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t})\n\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t").concat(uuid, ".closureIndex++\n\t\t\t\t\tif(").concat(uuid, ".closureIndex >= ").concat(uuid, ".smarts.getsmart(").concat(uuid, ", 'val.$scopes.length', -1)){\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t\t",
       /*javascript*/
-      "`\n\t\t\t\t\t\t\t\t\t\treturn ${".concat(uuid, ".smarts.scopedEval('").concat(uuid, "')}\n\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t)\n\t\t\t\t\t\t}catch(err){console.log(3,err)}\n\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t").concat(uuid, ".wrapper = ").concat(uuid, ".smarts.babel.template.ast(\n\t\t\t\t\t\t\t\t",
+      "`\n\t\t\t\t\t\t\t\t\t\treturn ${".concat(uuid, ".smarts.scopedEval('").concat(uuid, "')}\n\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t)\n\t\t\t\t\t\t}catch(err){console.log(3,err)}\n\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t").concat(uuid, ".wrapper = ").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t",
       /*javascript*/
-      "`\n\t\t\t\t\t\t\t\t\tfunction anonymous(){}\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t`", "\n\t\t\t\t\t\t\t)\n\t\t\t\t\t\t}catch(err){console.log(4,err)}\n\t\t\t\t\t\t// console.log(").concat(uuid, ".wrapper)\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\t").concat(uuid, ".wrapper.body.body.push(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\t").concat(uuid, ".scopeCode = ").concat(uuid, ".wrapper\n\t\t\t\t\t\t").concat(uuid, ".scopeCode = ").concat(uuid, ".smarts.babel.generator(\n\t\t\t\t\t\t\t").concat(uuid, ".scopeCode\n\t\t\t\t\t\t).code\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\t").concat(uuid, ".scopeCode = eval(\"(\"+").concat(uuid, ".scopeCode+\")\")\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode.toString())\n\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\t").concat(uuid, ".val.$scopedEval = ").concat(uuid, ".scopeCode()\n\t\t\t\t\t\t}catch(err){console.log(5,err)}\n\t\t\t\t\t\t// console.log(").concat(uuid, ".val.$scopedEval)\n\t\t\t\t\t\t// return ").concat(uuid, ".scopeCode.toString()\n\t\t\t\t\t\treturn ").concat(uuid, ".val.$scopedEval\n\t\t\t\t\t} else {\n\t\t\t\t\t\treturn eval(",
+      "`\n\t\t\t\t\t\t\t\t\tfunction anonymous(){}\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t`", "\n\t\t\t\t\t\t\t)\n\t\t\t\t\t\t}catch(err){console.log(4,err)}\n\t\t\t\t\t\t// console.log(").concat(uuid, ".wrapper)\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\t").concat(uuid, ".wrapper.body.body.push(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\t").concat(uuid, ".scopeCode = ").concat(uuid, ".wrapper\n\t\t\t\t\t\t").concat(uuid, ".scopeCode = ").concat(uuid, ".smarts.getBabel().generator(\n\t\t\t\t\t\t\t").concat(uuid, ".scopeCode\n\t\t\t\t\t\t).code\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\t").concat(uuid, ".scopeCode = eval(\"(\"+").concat(uuid, ".scopeCode+\")\")\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode.toString())\n\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\t").concat(uuid, ".val.$scopedEval = ").concat(uuid, ".scopeCode()\n\t\t\t\t\t\t}catch(err){console.log(5,err)}\n\t\t\t\t\t\t// console.log(").concat(uuid, ".val.$scopedEval)\n\t\t\t\t\t\t// return ").concat(uuid, ".scopeCode.toString()\n\t\t\t\t\t\treturn ").concat(uuid, ".val.$scopedEval\n\t\t\t\t\t} else {\n\t\t\t\t\t\treturn eval(",
       /*javascript*/
       "`(${".concat(uuid, ".smarts.createScopedEval('").concat(uuid, "')})`"), ")(").concat(uuid, ")\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t");
       return ret;
@@ -723,7 +726,7 @@ module.exports = ({
     },
 
     transform(src, opts = {}) {
-      return babel.transform(src, {
+      return smarts.getBabel().transform(src, {
         plugins: [smarts.babelPlugin],
         ...opts
       });
@@ -912,7 +915,7 @@ module.exports = ({
         } else {
           list.splice(index, 1, option);
 
-          if (smarts.getsmart(local.vue, 'reactiveSetter', false) && this.$set) {
+          if (smarts.getsmart(local.vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false)) {
             if (!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
               window.$store.commit('graph/thing');
             }
@@ -1483,11 +1486,13 @@ module.exports = ({
         } else {
           return defaultValue;
         }
-      } // In order to avoid constantly checking the type of the property
+      }
+
+      let deepGetByArray = deepGetByArrayUnbound.bind(this);
+      return deepGetByArray(obj, property, defaultValue); // In order to avoid constantly checking the type of the property
       // we separate the real logic out into an inner function.
 
-
-      var deepGetByArray = function (obj, propsArray, defaultValue) {
+      function deepGetByArrayUnbound(obj, propsArray, defaultValue) {
         // If we have reached an undefined/null property
         // then stop executing and return the default value.
         // If no default was provided it will be undefined.
@@ -1519,9 +1524,7 @@ module.exports = ({
         var nextObj = obj[propsArray[0]];
         var remainingProps = propsArray.slice(1);
         return deepGetByArray(nextObj, remainingProps, defaultValue);
-      };
-
-      return deepGetByArray(obj, property, defaultValue);
+      }
     },
 
     setsmart(obj, property, value, context) {
@@ -1554,11 +1557,40 @@ module.exports = ({
       } // if no obj make obj
 
 
-      if (!obj) obj = {}; // switch Blocks
-      // In order to avoid constantly checking the type of the property
+      if (!obj) obj = {};
+      let deepSetByArray = deepSetByArrayUnbound.bind(this);
+
+      if (property) {
+        return deepSetByArray(obj, property, value);
+      } else {
+        if (smarts.getsmart(vue, 'reactiveSetter', false) && local.that.$set && obj) {
+          local.that.$set(obj, undefined, value);
+
+          if (typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
+            window.$store.commit('graph/thing');
+          }
+        } else {
+          obj = value;
+
+          if (smarts.getsmart(vue, 'store', false) && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
+            window.$store.commit('graph/thing');
+          }
+        }
+
+        if (context) {
+          return {
+            value: obj,
+            undefined: false,
+            err: 'there were no properties passed'
+          };
+        } else {
+          return obj;
+        }
+      } // In order to avoid constantly checking the type of the property
       // we separate the real logic out into an inner function.
 
-      var deepGetByArray = function (obj, propsArray, value) {
+
+      function deepSetByArrayUnbound(obj, propsArray, value) {
         // If the path array has only 1 more element, we've reached
         // the intended property and set its value
         if (propsArray.length == 1) {
@@ -1606,35 +1638,7 @@ module.exports = ({
           }
         }
 
-        return deepGetByArray(obj[propsArray[0]], remainingProps, value);
-      };
-
-      if (property) {
-        return deepGetByArray(obj, property, value);
-      } else {
-        if (smarts.getsmart(vue, 'reactiveSetter', false) && local.that.$set && obj) {
-          local.that.$set(obj, undefined, value);
-
-          if (typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
-            window.$store.commit('graph/thing');
-          }
-        } else {
-          obj = value;
-
-          if (smarts.getsmart(vue, 'store', false) && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
-            window.$store.commit('graph/thing');
-          }
-        }
-
-        if (context) {
-          return {
-            value: obj,
-            undefined: false,
-            err: 'there were no properties passed'
-          };
-        } else {
-          return obj;
-        }
+        return deepSetByArray(obj[propsArray[0]], remainingProps, value);
       }
     },
 
@@ -1718,7 +1722,7 @@ module.exports = ({
           }
 
           if (!list.mapped || typeof list.mapped === 'boolean') {
-            if (smarts.getsmart(local.vue, 'reactiveSetter', false) && this.$set && list) {
+            if (smarts.getsmart(local.vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false) && list) {
               this.$set(list, 'mapped', {});
             } else {
               list['mapped'] = {};
@@ -1727,7 +1731,7 @@ module.exports = ({
 
           for (var i = 0; i < list.length; i++) {
             if (typeof list[i] !== 'string') {
-              if (smarts.getsmart(local.vue, 'reactiveSetter', false) && this.$set && list.mapped) {
+              if (smarts.getsmart(local.vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false) && list.mapped) {
                 this.$set(list.mapped, list[i][keyProperty], list[i]);
               } else {
                 list['mapped'][list[i][keyProperty]] = list[i];
