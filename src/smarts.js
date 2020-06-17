@@ -1,6 +1,6 @@
 let merge = require('deepmerge')
-let smarts.getBabel() = require('@babel/core')
-smarts.getBabel().generator = require('@babel/generator').default
+let babel = require('@babel/core')
+babel.generator = require('@babel/generator').default
 let uuid = require('uuid/v4')
 module.exports = ({
 	objList,
