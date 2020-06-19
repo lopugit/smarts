@@ -16,8 +16,7 @@ module.exports = ({
     objList,
     stringList,
     reactiveSetter,
-    vue,
-    that: this
+    vue
   };
   var smarts = {
     getBabel() {
@@ -199,15 +198,15 @@ module.exports = ({
     createScopedEval(uuid) {
       let ret =
       /*javascript*/
-      "\n\t\t\t\tfunction createScopedEval(".concat(uuid, "){\n\t\t\t\t\t\n\t\t\t\t\t// scopeCode\n\t\t\t\t\t").concat(uuid, ".scopeCode = ").concat(uuid, ".scopeCode || ").concat(uuid, ".smarts.getBabel().template.ast('try{}catch(err){console.log(err)}')\n\t\t\t\t\t").concat(uuid, ".previousScopeCode = ").concat(uuid, ".currentScopeCode || ").concat(uuid, ".scopeCode\n\t\t\t\t\t").concat(uuid, ".currentScopeCode = ").concat(uuid, ".scopeCode.block.body.length ? ").concat(uuid, ".smarts.getBabel().template.ast('try{}catch(err){console.log(err)}') : ").concat(uuid, ".scopeCode\n\t\t\t\t\tif(").concat(uuid, ".previousScopeCode != ").concat(uuid, ".currentScopeCode){\n\t\t\t\t\t\t").concat(uuid, ".previousScopeCode.block.body.push(\n\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode\n\t\t\t\t\t\t)\n\t\t\t\t\t}\n\t\t\t\t\t").concat(uuid, ".closureIndex = ").concat(uuid, ".closureIndex || 0\n\t\t\t\t\t").concat(uuid, ".closure = ").concat(uuid, ".smarts.getsmart(").concat(uuid, ", ",
+      "\n\t\t\t\tfunction createScopedEval(".concat(uuid, "){\n\t\t\t\t\t\n\t\t\t\t\t// scopeCode\n\t\t\t\t\t").concat(uuid, ".scopeCode = ").concat(uuid, ".scopeCode || ").concat(uuid, ".smarts.getBabel().template.ast('try{}catch(err){console.log(err)}')\n\t\t\t\t\t").concat(uuid, ".previousScopeCode = ").concat(uuid, ".currentScopeCode || ").concat(uuid, ".scopeCode\n\t\t\t\t\t").concat(uuid, ".currentScopeCode = ").concat(uuid, ".scopeCode.block.body.length ? ").concat(uuid, ".smarts.getBabel().template.ast('try{}catch(err){console.log(err)}') : ").concat(uuid, ".scopeCode\n\t\t\t\t\tif(").concat(uuid, ".previousScopeCode != ").concat(uuid, ".currentScopeCode){\n\t\t\t\t\t\t").concat(uuid, ".previousScopeCode.block.body.push(\n\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode\n\t\t\t\t\t\t)\n\t\t\t\t\t}\n\t\t\t\t\t").concat(uuid, ".closureIndex = ").concat(uuid, ".closureIndex || 0\n\t\t\t\t\t").concat(uuid, ".closure = ").concat(uuid, ".smarts.getsmart.bind(this)(").concat(uuid, ", ",
       /*javascript*/
-      "`val.$scopes.${".concat(uuid, ".closureIndex}`"), ", {})\n\t\t\t\t\t").concat(uuid, ".variableKeys = Object.keys(").concat(uuid, ".closure)\n\t\t\t\t\t").concat(uuid, ".variableMap = ").concat(uuid, ".smarts.getsmart(").concat(uuid, ", ",
+      "`val.$scopes.${".concat(uuid, ".closureIndex}`"), ", {})\n\t\t\t\t\t").concat(uuid, ".variableKeys = Object.keys(").concat(uuid, ".closure)\n\t\t\t\t\t").concat(uuid, ".variableMap = ").concat(uuid, ".smarts.getsmart.bind(this)(").concat(uuid, ", ",
       /*javascript*/
       "`val.$context.$variableMaps.${".concat(uuid, ".closureIndex}`"), ", [])\n\t\t\t\t\t").concat(uuid, ".allowedIdentifiers = ['let','var','const']\n\t\t\t\t\t").concat(uuid, ".variableKeys.forEach((key)=>{\n\t\t\t\t\t\tif(\n\t\t\t\t\t\t\ttypeof ").concat(uuid, ".variableMap[key] == 'string' \n\t\t\t\t\t\t\t&& ").concat(uuid, ".allowedIdentifiers.indexOf(").concat(uuid, ".variableMap[key]) >= 0\n\t\t\t\t\t\t){\n\t\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t\t\t",
       /*javascript*/
       "`\n\t\t\t\t\t\t\t\t\t\t\t${".concat(uuid, ".variableMap[key]} ${key} = ").concat(uuid, ".val.$scopes[${").concat(uuid, ".closureIndex}]['${key}']\n\t\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t}catch(err){console.log(1,err)}\n\t\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t\t\t",
       /*javascript*/
-      "`\n\t\t\t\t\t\t\t\t\t\t\tObject.defineProperty(\n\t\t\t\t\t\t\t\t\t\t\t\t".concat(uuid, ".val.$scopes[${").concat(uuid, ".closureIndex}],\n\t\t\t\t\t\t\t\t\t\t\t\t${smarts.stringify(key)},\n\t\t\t\t\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\t\t\t\t\tget(){\n\t\t\t\t\t\t\t\t\t\t\t\t\t\treturn ${key}\n\t\t\t\t\t\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t\t\t\t\t\t\tset(val){\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t${key} = val\n\t\t\t\t\t\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t\t\t\t\t\t\tenumerable: true\n\t\t\t\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t}catch(err){console.log(2,err)}\n\t\t\t\t\t\t}\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t})\n\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t").concat(uuid, ".closureIndex++\n\t\t\t\t\tif(").concat(uuid, ".closureIndex >= ").concat(uuid, ".smarts.getsmart(").concat(uuid, ", 'val.$scopes.length', -1)){\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t\t",
+      "`\n\t\t\t\t\t\t\t\t\t\t\tObject.defineProperty(\n\t\t\t\t\t\t\t\t\t\t\t\t".concat(uuid, ".val.$scopes[${").concat(uuid, ".closureIndex}],\n\t\t\t\t\t\t\t\t\t\t\t\t${smarts.stringify(key)},\n\t\t\t\t\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\t\t\t\t\tget(){\n\t\t\t\t\t\t\t\t\t\t\t\t\t\treturn ${key}\n\t\t\t\t\t\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t\t\t\t\t\t\tset(val){\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t${key} = val\n\t\t\t\t\t\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t\t\t\t\t\t\tenumerable: true\n\t\t\t\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t}catch(err){console.log(2,err)}\n\t\t\t\t\t\t}\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t})\n\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t").concat(uuid, ".closureIndex++\n\t\t\t\t\tif(").concat(uuid, ".closureIndex >= ").concat(uuid, ".smarts.getsmart.bind(this)(").concat(uuid, ", 'val.$scopes.length', -1)){\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t\t",
       /*javascript*/
       "`\n\t\t\t\t\t\t\t\t\t\treturn ${".concat(uuid, ".smarts.scopedEval('").concat(uuid, "')}\n\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t)\n\t\t\t\t\t\t}catch(err){console.log(3,err)}\n\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t").concat(uuid, ".wrapper = ").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t",
       /*javascript*/
@@ -347,7 +346,7 @@ module.exports = ({
     },
 
     context(opts) {
-      let uuid = smarts.gosmart(opts, 'path.context.scope.uuid', smarts.jsUUID());
+      let uuid = smarts.gosmart.bind(this)(opts, 'path.context.scope.uuid', smarts.jsUUID());
       return eval(
       /*javascript*/
       "\n\t\t\t\t(\n\t\t\t\t\tfunction(){\n\t\t\t\t\t\t".concat(smarts.contextObject(uuid), "\n\t\t\t\t\t\treturn ").concat(uuid, "\n\t\t\t\t\t}\n\t\t\t\t)()\n\t\t\t"));
@@ -540,7 +539,7 @@ module.exports = ({
       if (opts.node && opts.node.type != 'BlockStatement' && opts.node.type != 'Program') return smarts.getNodeUUID({ ...opts,
         node: opts.node.body || opts.node.block
       });
-      return smarts.gosmart(opts.node, 'uuid', smarts.jsUUID());
+      return smarts.gosmart.bind(this)(opts.node, 'uuid', smarts.jsUUID());
     },
 
     getPathUUID(opts) {
@@ -616,7 +615,7 @@ module.exports = ({
         VariableDeclarator(path) {
           if (!path.node.inScope) {
             path.node.inScope = true;
-            let parentPath = smarts.getsmart(path, 'parentPath', undefined);
+            let parentPath = smarts.getsmart.bind(this)(path, 'parentPath', undefined);
 
             if ( // this is for inline let and const declarations in normal
             // js blocks
@@ -661,7 +660,7 @@ module.exports = ({
             // if there's a chance another declaration might use a former one
             parentPath.node.declarations.length > 1 && parentPath.parentPath.node.type == 'ForStatement') {
               // if the first declaration isn't our context declaration, insert one
-              let uuid = smarts.gosmart(path, 'scope.uuid', smarts.jsUUID());
+              let uuid = smarts.gosmart.bind(this)(path, 'scope.uuid', smarts.jsUUID());
 
               if (!parentPath.node.declarations[0].contextDeclaration) {
                 let inlineContextDeclaration = smarts.createInlineContext({
@@ -850,7 +849,7 @@ module.exports = ({
 
     popThing({
       option,
-      list = smarts.getsmart(stringList),
+      list = smarts.getsmart.bind(this)(stringList),
       obj = true,
       keys = ['uuid', '_id', 'id'],
       keymatchtype,
@@ -878,7 +877,7 @@ module.exports = ({
 
     setThing({
       option,
-      list = smarts.getsmart(objList),
+      list = smarts.getsmart.bind(this)(objList),
       obj = true,
       keys = ['uuid', '_id', 'id'],
       keymatchtype,
@@ -906,29 +905,29 @@ module.exports = ({
       if (index >= 0 && list) {
         if (targets && targets.length && typeof targets.length == 'number') {
           for (var i = 0; i < targets.length; i++) {
-            let value = smarts.getsmart(option, targets[i], undefined);
+            let value = smarts.getsmart.bind(this)(option, targets[i], undefined);
 
             if (value) {
-              smarts.setsmart(list[index], targets[i], value);
+              smarts.setsmart.bind(this)(list[index], targets[i], value);
             }
           }
         } else {
           list.splice(index, 1, option);
 
-          if (smarts.getsmart(local.vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false)) {
-            if (!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
+          if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false)) {
+            if (!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
               window.$store.commit('graph/thing');
             }
-          } else if (smarts.getsmart(local.vue, 'store', false) && !localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
+          } else if (smarts.getsmart.bind(this)(local.vue, 'store', false) && !localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('graph/thing');
           }
         } // list[index] = option
 
       } else if (push && list) {
-        if (smarts.getsmart(local.vue, 'reactiveSetter', false) || smarts.getsmart(local.vue, 'store', false)) {
+        if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) || smarts.getsmart.bind(this)(local.vue, 'store', false)) {
           list.splice(list.length, 0, option);
 
-          if (!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
+          if (!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('graph/thing');
           }
         } else {
@@ -943,7 +942,7 @@ module.exports = ({
 
     setThings({
       options,
-      list = smarts.getsmart(objList),
+      list = smarts.getsmart.bind(this)(objList),
       obj = true,
       keys = ['uuid', '_id', 'id'],
       keymatchtype,
@@ -980,7 +979,7 @@ module.exports = ({
       return list;
     },
 
-    optIn(option, list = smarts.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype, index) {
+    optIn(option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype, index) {
       if (typeof option === 'object') {
         obj = true;
       }
@@ -993,17 +992,17 @@ module.exports = ({
 
           for (var indKey = 0; indKey < keys.length; indKey++) {
             if (keymatchtype == 'broad') {
-              if (list[i] && smarts.getsmart(list[i], keys[indKey], undefined) == smarts.getsmart(option, keys[indKey], undefined) && smarts.getsmart(list[i], keys[indKey], undefined) !== undefined) {
+              if (list[i] && smarts.getsmart.bind(this)(list[i], keys[indKey], undefined) == smarts.getsmart.bind(this)(option, keys[indKey], undefined) && smarts.getsmart.bind(this)(list[i], keys[indKey], undefined) !== undefined) {
                 return index ? i : true;
-              } else if (list[i] && typeof list[i] == 'string' && list[i] == smarts.getsmart(option, keys[indKey], undefined) && smarts.getsmart(option, keys[indKey], undefined) !== undefined) {
+              } else if (list[i] && typeof list[i] == 'string' && list[i] == smarts.getsmart.bind(this)(option, keys[indKey], undefined) && smarts.getsmart.bind(this)(option, keys[indKey], undefined) !== undefined) {
                 return index ? i : true;
               }
             } else {
-              if (list[i] && smarts.getsmart(list[i], keys[indKey], undefined) == smarts.getsmart(option, keys[indKey], undefined) && smarts.getsmart(list[i], keys[indKey], undefined) !== undefined) {
+              if (list[i] && smarts.getsmart.bind(this)(list[i], keys[indKey], undefined) == smarts.getsmart.bind(this)(option, keys[indKey], undefined) && smarts.getsmart.bind(this)(list[i], keys[indKey], undefined) !== undefined) {
                 if (indKey == keys.length - 1) {
                   return index ? i : true;
                 }
-              } else if (list[i] && typeof list[i] == 'string' && list[i] == smarts.getsmart(option, keys[indKey], undefined) && smarts.getsmart(option, keys[indKey], undefined) !== undefined) {
+              } else if (list[i] && typeof list[i] == 'string' && list[i] == smarts.getsmart.bind(this)(option, keys[indKey], undefined) && smarts.getsmart.bind(this)(option, keys[indKey], undefined) !== undefined) {
                 if (indKey == keys.length - 1) {
                   return index ? i : true;
                 }
@@ -1018,7 +1017,7 @@ module.exports = ({
 
     thingIn({
       option,
-      list = smarts.getsmart(objList),
+      list = smarts.getsmart.bind(this)(objList),
       obj = true,
       keys = ['uuid', '_id', 'id'],
       keymatchtype,
@@ -1042,13 +1041,13 @@ module.exports = ({
 
           for (var indKey = 0; indKey < keys.length; indKey++) {
             if (keymatchtype == 'broad') {
-              if (list[i] && smarts.getsmart(list[i], keys[indKey], undefined) == smarts.getsmart(option, keys[indKey], undefined) && smarts.getsmart(list[i], keys[indKey], undefined) !== undefined) {
+              if (list[i] && smarts.getsmart.bind(this)(list[i], keys[indKey], undefined) == smarts.getsmart.bind(this)(option, keys[indKey], undefined) && smarts.getsmart.bind(this)(list[i], keys[indKey], undefined) !== undefined) {
                 if (retIndex) {
                   return i;
                 } else {
                   return true;
                 }
-              } else if (list[i] && typeof list[i] == 'string' && list[i] == smarts.getsmart(option, keys[indKey], undefined) && smarts.getsmart(option, keys[indKey], undefined) !== undefined) {
+              } else if (list[i] && typeof list[i] == 'string' && list[i] == smarts.getsmart.bind(this)(option, keys[indKey], undefined) && smarts.getsmart.bind(this)(option, keys[indKey], undefined) !== undefined) {
                 if (retIndex) {
                   return i;
                 } else {
@@ -1056,7 +1055,7 @@ module.exports = ({
                 }
               }
             } else {
-              if (list[i] && smarts.getsmart(list[i], keys[indKey], undefined) == smarts.getsmart(option, keys[indKey], undefined) && smarts.getsmart(list[i], keys[indKey], undefined) !== undefined) {
+              if (list[i] && smarts.getsmart.bind(this)(list[i], keys[indKey], undefined) == smarts.getsmart.bind(this)(option, keys[indKey], undefined) && smarts.getsmart.bind(this)(list[i], keys[indKey], undefined) !== undefined) {
                 if (indKey == keys.length - 1) {
                   if (retIndex) {
                     return i;
@@ -1064,7 +1063,7 @@ module.exports = ({
                     return true;
                   }
                 }
-              } else if (list[i] && typeof list[i] == 'string' && list[i] == smarts.getsmart(option, keys[indKey], undefined) && smarts.getsmart(option, keys[indKey], undefined) !== undefined) {
+              } else if (list[i] && typeof list[i] == 'string' && list[i] == smarts.getsmart.bind(this)(option, keys[indKey], undefined) && smarts.getsmart.bind(this)(option, keys[indKey], undefined) !== undefined) {
                 if (indKey == keys.length - 1) {
                   if (retIndex) {
                     return i;
@@ -1085,7 +1084,7 @@ module.exports = ({
       }
     },
 
-    optsIn(options, list = smarts.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+    optsIn(options, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
       if (!(options instanceof Array)) return true;
 
       for (let option of options) {
@@ -1109,7 +1108,7 @@ module.exports = ({
 
     thingsIn({
       options,
-      list = smarts.getsmart(stringList),
+      list = smarts.getsmart.bind(this)(stringList),
       obj,
       keys = ['uuid', '_id', 'id'],
       keymatchtype,
@@ -1136,7 +1135,7 @@ module.exports = ({
       return true;
     },
 
-    anyOptsIn(options, list = smarts.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+    anyOptsIn(options, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
       if (!(options instanceof Array)) return false;
 
       for (let option of options) {
@@ -1159,7 +1158,7 @@ module.exports = ({
 
     anyThingsIn({
       options,
-      list = smarts.getsmart(stringList),
+      list = smarts.getsmart.bind(this)(stringList),
       obj,
       keys = ['uuid', '_id', 'id'],
       keymatchtype,
@@ -1185,7 +1184,7 @@ module.exports = ({
       return false;
     },
 
-    optIndex(option, list = smarts.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+    optIndex(option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
       if (typeof option === 'object') {
         obj = true;
       }
@@ -1234,12 +1233,12 @@ module.exports = ({
       return -1;
     },
 
-    pushOpt(option, list = smarts.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype, index) {
+    pushOpt(option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype, index) {
       if (typeof list == 'object' && !smarts.optIn(option, list, obj, keys, keymatchtype)) {
-        if (smarts.getsmart(local.vue, 'reactiveSetter', false) || smarts.getsmart(local.vue, 'store', false)) {
+        if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) || smarts.getsmart.bind(this)(local.vue, 'store', false)) {
           list.splice(list.length, 0, option);
 
-          if (!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
+          if (!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('graph/thing');
           }
         } else {
@@ -1250,12 +1249,12 @@ module.exports = ({
       return index ? smarts.optIn(option, list, obj, keys, keymatchtype, index) : smarts.optIn(option, list, obj, keys, keymatchtype, index);
     },
 
-    addOpt(option, list = smarts.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype, index) {
+    addOpt(option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype, index) {
       if (typeof list == 'object') {
-        if (smarts.getsmart(local.vue, 'reactiveSetter', false) || smarts.getsmart(local.vue, 'store', false)) {
+        if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) || smarts.getsmart.bind(this)(local.vue, 'store', false)) {
           list.splice(list.length, 0, option);
 
-          if (!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
+          if (!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('graph/thing');
           }
         } else {
@@ -1268,7 +1267,7 @@ module.exports = ({
 
     pushThing({
       option,
-      list = smarts.getsmart(stringList),
+      list = smarts.getsmart.bind(this)(stringList),
       obj,
       keys = ['uuid', '_id', 'id'],
       keymatchtype,
@@ -1281,10 +1280,10 @@ module.exports = ({
         keys,
         keymatchtype
       })) {
-        if (smarts.getsmart(local.vue, 'reactiveSetter', false) || smarts.getsmart(local.vue, 'store', false)) {
+        if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) || smarts.getsmart.bind(this)(local.vue, 'store', false)) {
           list.splice(list.length, 0, option);
 
-          if (!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
+          if (!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('graph/thing');
           }
         } else {
@@ -1293,7 +1292,7 @@ module.exports = ({
       }
     },
 
-    pushOpts(options, list = smarts.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+    pushOpts(options, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
       if (!(options instanceof Array)) return;
 
       for (let option of options) {
@@ -1303,7 +1302,7 @@ module.exports = ({
 
     pushThings({
       options,
-      list = smarts.getsmart(stringList),
+      list = smarts.getsmart.bind(this)(stringList),
       obj,
       keys = ['uuid', '_id', 'id'],
       keymatchtype,
@@ -1322,12 +1321,12 @@ module.exports = ({
       }
     },
 
-    popOpt(option, list = smarts.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+    popOpt(option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
       if (typeof list == 'object' && smarts.optIn(option, list, obj, keys, keymatchtype)) {
         list.splice(smarts.optIndex(option, list, obj, keys, keymatchtype), 1);
 
-        if (smarts.getsmart(local.vue, 'reactiveSetter', false) || smarts.getsmart(local.vue, 'store', false)) {
-          if (!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
+        if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) || smarts.getsmart.bind(this)(local.vue, 'store', false)) {
+          if (!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('graph/thing');
           }
         }
@@ -1336,7 +1335,7 @@ module.exports = ({
 
     popThing({
       option,
-      list = smarts.getsmart(stringList),
+      list = smarts.getsmart.bind(this)(stringList),
       obj = true,
       keys = ['uuid', '_id', 'id'],
       keymatchtype,
@@ -1357,15 +1356,15 @@ module.exports = ({
           keymatchtype
         }), 1);
 
-        if (smarts.getsmart(local.vue, 'reactiveSetter', false) || smarts.getsmart(local.vue, 'store', false)) {
-          if (!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
+        if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) || smarts.getsmart.bind(this)(local.vue, 'store', false)) {
+          if (!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('graph/thing');
           }
         }
       }
     },
 
-    popOpts(options, list = smarts.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+    popOpts(options, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
       if (!(options instanceof Array)) return;
 
       for (let option of options) {
@@ -1375,7 +1374,7 @@ module.exports = ({
 
     popThings({
       options,
-      list = smarts.getsmart(stringList),
+      list = smarts.getsmart.bind(this)(stringList),
       obj = true,
       keys = ['uuid', '_id', 'id'],
       keymatchtype,
@@ -1388,7 +1387,7 @@ module.exports = ({
       }
     },
 
-    toggleOpt(option, list = smarts.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+    toggleOpt(option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
       if (smarts.optIn(option, list, obj, keys, keymatchtype)) {
         smarts.popOpt(option, list, obj, keys, keymatchtype);
       } else {
@@ -1398,7 +1397,7 @@ module.exports = ({
 
     toggleThing({
       option,
-      list = smarts.getsmart(stringList),
+      list = smarts.getsmart.bind(this)(stringList),
       obj = true,
       keys = ['uuid', '_id', 'id'],
       keymatchtype,
@@ -1411,7 +1410,7 @@ module.exports = ({
       }
     },
 
-    toggleOpts(options, list = smarts.getsmart(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+    toggleOpts(options, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
       if (!(options instanceof Array)) return;
 
       for (let option in options) {
@@ -1421,7 +1420,7 @@ module.exports = ({
 
     toggleThings({
       options,
-      list = smarts.getsmart(stringList),
+      list = smarts.getsmart.bind(this)(stringList),
       obj = true,
       keys = ['uuid', '_id', 'id'],
       keymatchtype,
@@ -1440,7 +1439,7 @@ module.exports = ({
 
     // no use right now
     ratchetOpt(option, list, obj, keys = ['uuid', '_id', 'id'], keymatchtype) {// find(obj, property, equals){
-      // 	if(smarts.getsmart(obj, 'constructor', undefined) == Array){
+      // 	if(smarts.getsmart.bind(this)(obj, 'constructor', undefined) == Array){
       // 		for(var i=0; i<obj.length; i++){
       // 			find(obj[i], )
       // 		}
@@ -1475,8 +1474,8 @@ module.exports = ({
 
 
       if (typeof property == "string") {
-        property = property.split(".");
-      } else if (smarts.getsmart(property, 'constructor', false) !== Array) {
+        property = smarts.parsePropertyPath(property);
+      } else if (smarts.getsmart.bind(this)(property, 'constructor', false) !== Array) {
         if (context) {
           return {
             value: defaultValue,
@@ -1527,6 +1526,46 @@ module.exports = ({
       }
     },
 
+    escapePropertyPath(path = "") {
+      return "[\"" + path + "\"]";
+    },
+
+    epp(path = "") {
+      return smarts.escapePropertyPath(path);
+    },
+
+    parsePropertyPath(path = "") {
+      let array = [""];
+      let readingArrayBasedPath = false;
+      let i = 0;
+
+      while (i < path.length) {
+        if (readingArrayBasedPath) {
+          // we found the end of an array delimited path
+          if (path[i] == "\"" && path[i + 1] == "]") {
+            i += 1;
+            readingArrayBasedPath = false;
+            array.push("");
+          } else {
+            array[array.length - 1] += path[i];
+          }
+        } else if (path[i] == '.') {
+          array.push("");
+        } // we found the start of an array delimited path
+        else if (path[i] == '[' && path[i + 1] == "\"") {
+            readingArrayBasedPath = true;
+            array.push("");
+            i += 1;
+          } else {
+            array[array.length - 1] += path[i];
+          }
+
+        i++;
+      }
+
+      return array;
+    },
+
     setsmart(obj, property, value, context) {
       if (!property && typeof obj == 'string') {
         property = obj.split(".");
@@ -1543,8 +1582,8 @@ module.exports = ({
 
 
       if (typeof property == "string") {
-        property = property.split(".");
-      } else if (smarts.getsmart(property, 'constructor', false) !== Array) {
+        property = smarts.parsePropertyPath(property);
+      } else if (smarts.getsmart.bind(this)(property, 'constructor', false) !== Array) {
         if (context) {
           return {
             value: value,
@@ -1563,16 +1602,16 @@ module.exports = ({
       if (property) {
         return deepSetByArray(obj, property, value);
       } else {
-        if (smarts.getsmart(vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false) && obj) {
+        if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
           this.$set(obj, undefined, value);
 
-          if (typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
+          if (typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('graph/thing');
           }
         } else {
           obj = value;
 
-          if (smarts.getsmart(vue, 'store', false) && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
+          if (smarts.getsmart.bind(this)(vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('graph/thing');
           }
         }
@@ -1594,16 +1633,16 @@ module.exports = ({
         // If the path array has only 1 more element, we've reached
         // the intended property and set its value
         if (propsArray.length == 1) {
-          if (smarts.getsmart(vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false) && obj) {
+          if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
             this.$set(obj, propsArray[0], value);
 
-            if (typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
+            if (typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
               window.$store.commit('graph/thing');
             }
           } else {
             obj[propsArray[0]] = value;
 
-            if (smarts.getsmart(vue, 'store', false) && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
+            if (smarts.getsmart.bind(this)(vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
               window.$store.commit('graph/thing');
             }
           }
@@ -1623,16 +1662,16 @@ module.exports = ({
 
         if (typeof obj[propsArray[0]] !== 'object') {
           // If we have reached an undefined/null property
-          if (smarts.getsmart(vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false) && obj) {
+          if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
             this.$set(obj, propsArray[0], {});
 
-            if (typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
+            if (typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
               window.$store.commit('graph/thing');
             }
           } else {
             obj[propsArray[0]] = {};
 
-            if (smarts.getsmart(vue, 'store', false) && typeof smarts.getsmart(window, '$store.commit', undefined) == 'function') {
+            if (smarts.getsmart.bind(this)(vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
               window.$store.commit('graph/thing');
             }
           }
@@ -1644,17 +1683,17 @@ module.exports = ({
 
     gosmart(obj, property, value, context) {
       // stands for get or set smart
-      var get = smarts.getsmart(obj, property, value, true);
+      var get = smarts.getsmart.bind(this)(obj, property, value, true);
 
       if (get.undefined) {
-        get = smarts.setsmart(obj, property, get.value, context);
+        get = smarts.setsmart.bind(this)(obj, property, get.value, context);
       } // return value from property path, either gotten or smartly set
 
 
       if (context) {
         return get;
       } else {
-        return smarts.getsmart(get, 'value', get);
+        return smarts.getsmart.bind(this)(get, 'value', get);
       }
     },
 
@@ -1663,27 +1702,27 @@ module.exports = ({
       // return value from property path, either gotten or smartly set
       return {
         get: () => {
-          var get = smarts.getsmart(obj, property, value, true);
+          var get = smarts.getsmart.bind(this)(obj, property, value, true);
 
           if (get.undefined) {
-            get = smarts.setsmart(obj, property, get.value, context);
+            get = smarts.setsmart.bind(this)(obj, property, get.value, context);
           }
 
           if (context) {
             return get;
           } else {
-            return smarts.getsmart(get, 'value', get);
+            return smarts.getsmart.bind(this)(get, 'value', get);
           }
         },
         set: val => {
-          smarts.setsmart(obj, property, val);
+          smarts.setsmart.bind(this)(obj, property, val);
         }
       };
     },
 
     getsmartval(obj, property, defaultValue) {
       // get the value of a property path based off its type
-      let target = smarts.getsmart(obj, property, defaultValue);
+      let target = smarts.getsmart.bind(this)(obj, property, defaultValue);
 
       if (target && target.type) {
         if (target[target.type]) {
@@ -1706,13 +1745,25 @@ module.exports = ({
       return smarts.jsmart.parse(something || '');
     },
 
+    flatten(arrays, func = i => i) {
+      const flat = [];
+      arrays.forEach(array => {
+        if (Array.isArray(array)) {
+          flat.push(...smarts.flatten(array));
+        } else {
+          flat.push(func(array));
+        }
+      });
+      return flat;
+    },
+
     mapsmart(list, keyProperty = 'title', returnExistant, populate) {
       return new Promise((resolve, reject) => {
         if (!keyProperty) {
           reject();
         } else if (list && typeof list.length == 'number') {
           if (list.length == 0) {
-            if (returnExistant && smarts.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
+            if (returnExistant && smarts.getsmart.bind(this)(list, 'mapped.' + returnExistant, false) || !returnExistant) {
               resolve(true);
             } else if (returnExistant) {
               resolve(false);
@@ -1722,7 +1773,7 @@ module.exports = ({
           }
 
           if (!list.mapped || typeof list.mapped === 'boolean') {
-            if (smarts.getsmart(local.vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false) && list) {
+            if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && list) {
               this.$set(list, 'mapped', {});
             } else {
               list['mapped'] = {};
@@ -1731,14 +1782,14 @@ module.exports = ({
 
           for (var i = 0; i < list.length; i++) {
             if (typeof list[i] !== 'string') {
-              if (smarts.getsmart(local.vue, 'reactiveSetter', false) && smarts.getsmart(this, '$set', false) && list.mapped) {
+              if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && list.mapped) {
                 this.$set(list.mapped, list[i][keyProperty], list[i]);
               } else {
                 list['mapped'][list[i][keyProperty]] = list[i];
               }
 
               if (i == list.length - 1) {
-                if (returnExistant && smarts.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
+                if (returnExistant && smarts.getsmart.bind(this)(list, 'mapped.' + returnExistant, false) || !returnExistant) {
                   resolve(true);
                 } else if (returnExistant) {
                   resolve(false);
@@ -1760,7 +1811,7 @@ module.exports = ({
             //       this.$set(list.mapped, list[i][keyProperty], list[i])
             //     }
             //     if(i==list.length-1){
-            //       if((returnExistant && smarts.getsmart(list, 'mapped.'+returnExistant, false)) || !returnExistant){
+            //       if((returnExistant && smarts.getsmart.bind(this)(list, 'mapped.'+returnExistant, false)) || !returnExistant){
             //         resolve(true)
             //       } else if(returnExistant) {
             //         resolve(false)
@@ -1771,7 +1822,7 @@ module.exports = ({
             //   } 
             // } 
             else if (i == list.length - 1) {
-                if (returnExistant && smarts.getsmart(list, 'mapped.' + returnExistant, false) || !returnExistant) {
+                if (returnExistant && smarts.getsmart.bind(this)(list, 'mapped.' + returnExistant, false) || !returnExistant) {
                   resolve(true);
                 } else if (returnExistant) {
                   resolve(false);
@@ -1788,12 +1839,12 @@ module.exports = ({
     },
 
     domval(thing) {
-      return smarts.getsmart(thing, 'properties.description', '');
+      return smarts.getsmart.bind(this)(thing, 'properties.description', '');
     },
 
     getThing({
       option,
-      list = smarts.getsmart(objList),
+      list = smarts.getsmart.bind(this)(objList),
       obj = true,
       keys = ['uuid', '_id', 'id'],
       keymatchtype,

@@ -1628,6 +1628,7 @@ module.exports = ({
 
 			let readingArrayBasedPath = false
 			let i = 0
+			let push = false
 			while (i < path.length){
 
 				if(readingArrayBasedPath){
@@ -1636,24 +1637,27 @@ module.exports = ({
 					if(path[i] == "\"" && path[i+1] == "]") {
 						i += 1
 						readingArrayBasedPath = false
-						array.push("")
+						push = true
 					} else {
 						array[array.length-1] += path[i]
 					}
 				} else if(path[i] == '.'){
-					array.push("")
+					push = true
 				} 
 				// we found the start of an array delimited path
 				else if(path[i] == '[' && path[i+1] == "\"") {
 					readingArrayBasedPath = true
-					array.push("")
+					push = true
 					i += 1
 				} else {
 					array[array.length-1] += path[i]
 				}
 
 				i++
-
+				if(push && i < path.length){
+					array.push("")
+					push = false
+				}
 			}
 
 			return array
