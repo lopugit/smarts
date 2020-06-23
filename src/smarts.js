@@ -2043,6 +2043,7 @@ module.exports = ({
 				})
 			}
 			if(!known.has(source)){
+				known.add(source)
 				smarts.getKeys(source).forEach(function(key) {
 					if (smarts.propertyIsUnsafe(target, key)) {
 						return
@@ -2054,8 +2055,6 @@ module.exports = ({
 						destination[key] = smarts.cloneUnlessOtherwiseSpecified(source[key], options)
 					}
 				})
-			} else {
-				known.add(source)
 			}
 
 			return destination
