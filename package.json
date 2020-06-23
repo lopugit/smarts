@@ -42,6 +42,7 @@
     "@babel/polyfill": "^7.4.4",
     "core-js": "^3.6.4",
     "deepmerge": "^3.2.0",
+    "is-mergeable-object": "^1.1.1",
     "uuid": "^3.4.0"
   }
 }

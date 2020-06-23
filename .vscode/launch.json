@@ -88,6 +88,60 @@
 		{
 			"type": "node",
 			"request": "launch",
+			"name": "Merge Tests",
+			"program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+			"args": [
+				"-u",
+				"bdd",
+				"--timeout",
+				"999999",
+				"--colors",
+				"${workspaceFolder}/test/tests/functions/merge.js"
+			],
+			"internalConsoleOptions": "openOnSessionStart",
+			"skipFiles": [
+				// "<node_internals>/**"
+			]
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Parse Tests",
+			"program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+			"args": [
+				"-u",
+				"bdd",
+				"--timeout",
+				"999999",
+				"--colors",
+				"${workspaceFolder}/test/tests/functions/parse.js"
+			],
+			"internalConsoleOptions": "openOnSessionStart",
+			"skipFiles": [
+				// "<node_internals>/**"
+			]
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Stringify Tests",
+			"program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+			"args": [
+				"-u",
+				"bdd",
+				"--timeout",
+				"999999",
+				"--colors",
+				"${workspaceFolder}/test/tests/functions/stringify.js"
+			],
+			"internalConsoleOptions": "openOnSessionStart",
+			"skipFiles": [
+				// "<node_internals>/**"
+			]
+		},
+		{
+			"type": "node",
+			"request": "launch",
 			"name": "Setsmart Tests",
 			"program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
 			"args": [

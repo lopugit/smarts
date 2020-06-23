@@ -1,7 +1,8 @@
-let importedMerge = require('deepmerge')
 let babel = require('@babel/core')
 babel.generator = require('@babel/generator').default
 let uuid = require('uuid/v4')
+let defaultIsMergeableObject = require('is-mergeable-object')
+
 module.exports = ({
 	objList,
 	stringList,
@@ -16,7 +17,7 @@ module.exports = ({
 	}
 	
 	var smarts = {
-		getBabel(){ return smarts.getBabel() },
+		getBabel(){ return babel },
 		uuid,
 		pause(value, opts){
 			return smarts.stringify(value, opts)
@@ -25,7 +26,7 @@ module.exports = ({
 			return smarts.stringify(value, opts)
 		},
 		stringify(value, opts={}) {
-			smarts.schema(opts, {
+			let schema = {
 				stringifier: smarts.stringifier,
 				// replace: eval('(function '+smarts.replace.toString().replace()+')'),
 				replace(key, value){
@@ -52,7 +53,14 @@ module.exports = ({
 				known: new Map,
 				input: [],
 				output: [],
-			}, { noSchemaClone: true})
+			}
+
+			Object.keys(schema).forEach(key=>{
+				if(smarts.getsmart(opts, smarts.epp(key), {undefined:true}, true).undefined == true){
+					opts[key] = schema[key]
+				}
+			})
+
 			opts.virtual = opts.stringifier('', value, opts)
 			for(
 				i = parseInt(smarts.setKnown(opts.known, opts.input, opts.virtual));
@@ -140,14 +148,21 @@ module.exports = ({
 			return smarts.parse(text, opts)
 		},
 		parse(text, opts={}) {
-			smarts.schema(opts, {
+			let schema = {
 				// parser: eval('(function '+smarts.parser+')'),
 				parser: smarts.parser(opts),
 				value: {},
 				strictFunctions: true,
 				firstPass: true,
 				output: new Map
-			}, /*opts*/{ noSchemaClone: true})
+			}
+
+			Object.keys(schema).forEach(key=>{
+				if(smarts.getsmart(opts, smarts.epp(key), {undefined:true}, true).undefined == true){
+					opts[key] = schema[key]
+				}
+			})
+			
 			let altOpts = opts
 			// opts.parser = opts.parser.bind(opts)
 			opts.input = JSON.parse(text, smarts.Primitives)
@@ -371,6 +386,8 @@ module.exports = ({
 					}
 					opts.input[opts.output.get(val)] = ret
 					return ret
+				} else if(opts.replaceMode){
+					return val
 				}
 				return smarts.Primitives(key, val)
 			}
@@ -399,9 +416,9 @@ module.exports = ({
 								value = parser(key, value)
 								if (
 									typeof value === 'object' 
-									// && !parsed.get(value)
+									&& !parsed.get(value)
 								) {
-									// parsed.set(value, value)
+									parsed.set(value, value)
 									output[key] = smarts.primitives(parser(key, smarts.revive(input, parsed, value, parser, opts)))
 								} else {
 									try {
@@ -930,7 +947,7 @@ module.exports = ({
 
 			return Object.assign(
 				obj1,
-				importedMerge(obj2, obj1, {
+				smarts.deepmerge.deepmerge(obj2, obj1, {
 					arrayMerge: function (store, saved) { 
 						return saved 
 					},
@@ -951,7 +968,7 @@ module.exports = ({
 			}
 			return Object.assign(
 				obj1, 
-				importedMerge(obj1, obj2, {
+				smarts.deepmerge.deepmerge(obj1, obj2, {
 					arrayMerge: function (store, saved) { return saved },
 					clone: true,
 					...opts
@@ -959,7 +976,7 @@ module.exports = ({
 			)
 		},
 		mergeArray(obj1, obj2, opts){
-			return importedMerge(obj1, obj2, {
+			return smarts.deepmerge.deepmerge(obj1, obj2, {
 				arrayMerge: function (store, saved) { return saved },
 				clone: true,
 				...opts
@@ -1971,6 +1988,109 @@ module.exports = ({
 					if (typeof (obj1[p]) == 'undefined') return false
 				}
 				return true
+			}
+		},
+		deepmerge: {
+			emptyTarget(val) {
+				return Array.isArray(val) ? [] : {}
+			},
+			cloneUnlessOtherwiseSpecified(value, options, known) {
+				return (options.clone !== false && options.isMergeableObject(value))
+					? smarts.parse(smarts.stringify(value))
+					: value
+			},
+			defaultArrayMerge(target, source, options, known) {
+				if(known.has(source)) return target 
+				known.add(source)
+				target.concat(source).map(function(element) {
+					return smarts.deepmerge.cloneUnlessOtherwiseSpecified(element, options)
+				})
+			},
+			getMergeFunction(key, options) {
+				if (!options.customMerge) {
+					return smarts.deepmerge.deepmerge
+				}
+				var customMerge = options.customMerge(key)
+				return typeof customMerge === 'function' ? customMerge : smarts.deepmerge.deepmerge
+			},
+			getEnumerableOwnPropertySymbols(target) {
+				return Object.getOwnPropertySymbols
+					? Object.getOwnPropertySymbols(target).filter(function(symbol) {
+						return target.propertyIsEnumerable(symbol)
+					})
+					: []
+			},
+			getKeys(target) {
+				return Object.keys(target).concat(smarts.deepmerge.getEnumerableOwnPropertySymbols(target))
+			},
+			propertyIsOnObject(object, property) {
+				try {
+					return property in object
+				} catch(_) {
+					return false
+				}
+			},
+			// Protects from prototype poisoning and unexpected merging up the prototype chain.
+			propertyIsUnsafe(target, key) {
+				return smarts.deepmerge.propertyIsOnObject(target, key) // Properties are safe to merge if they don't exist in the target yet,
+					&& !(Object.hasOwnProperty.call(target, key) // unsafe if they exist up the prototype chain,
+						&& Object.propertyIsEnumerable.call(target, key)) // and also unsafe if they're nonenumerable.
+			},
+			mergeObject(target, source, options, known) {
+				var destination = {}
+				if (options.isMergeableObject(target)) {
+					smarts.deepmerge.getKeys(target).forEach(function(key) {
+						destination[key] = smarts.deepmerge.cloneUnlessOtherwiseSpecified(target[key], options)
+					})
+				}
+				if(!known.has(source)){
+					smarts.deepmerge.getKeys(source).forEach(function(key) {
+						if (smarts.deepmerge.propertyIsUnsafe(target, key)) {
+							return
+						}
+
+						if (smarts.deepmerge.propertyIsOnObject(target, key) && options.isMergeableObject(source[key])) {
+							destination[key] = smarts.deepmerge.getMergeFunction(key, options)(target[key], source[key], options)
+						} else {
+							destination[key] = smarts.deepmerge.cloneUnlessOtherwiseSpecified(source[key], options)
+						}
+					})
+				} else {
+					known.add(source)
+				}
+
+				return destination
+			},
+			deepmerge(target, source, options) {
+				options = options || {}
+				options.arrayMerge = options.arrayMerge || smarts.deepmerge.defaultArrayMerge
+				options.isMergeableObject = options.isMergeableObject || defaultIsMergeableObject
+				// smarts.deepmerge.cloneUnlessOtherwiseSpecified is added to `options` so that custom arrayMerge()
+				// implementations can use it. The caller may not replace it.
+				options.cloneUnlessOtherwiseSpecified = smarts.deepmerge.cloneUnlessOtherwiseSpecified
+
+				known = new Set()
+
+				var sourceIsArray = Array.isArray(source)
+				var targetIsArray = Array.isArray(target)
+				var sourceAndTargetTypesMatch = sourceIsArray === targetIsArray
+
+				if (!sourceAndTargetTypesMatch) {
+					return smarts.deepmerge.cloneUnlessOtherwiseSpecified(source, options, known)
+				} else if (sourceIsArray) {
+					return options.arrayMerge(target, source, options, known)
+				} else {
+					return smarts.deepmerge.mergeObject(target, source, options, known)
+				}
+			},
+			deepmergeAll(array, options) {
+				if (!Array.isArray(array)) {
+					throw new Error('first argument should be an array')
+				}
+
+				return array.reduce(function(prev, next) {
+					return smarts.deepmerge.deepmerge(prev, next, options)
+				}, {})
 			}
 		}
 	}
