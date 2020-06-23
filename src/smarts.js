@@ -1,4 +1,4 @@
-let merge = require('deepmerge')
+let importedMerge = require('deepmerge')
 let babel = require('@babel/core')
 babel.generator = require('@babel/generator').default
 let uuid = require('uuid/v4')
@@ -930,7 +930,7 @@ module.exports = ({
 
 			return Object.assign(
 				obj1,
-				merge(obj2, obj1, {
+				importedMerge(obj2, obj1, {
 					arrayMerge: function (store, saved) { 
 						return saved 
 					},
@@ -945,7 +945,7 @@ module.exports = ({
 			} else {
 				return Object.assign(
 					obj1, 
-					merge(obj1, obj2, {
+					importedMerge(obj1, obj2, {
 						arrayMerge: function (store, saved) { return saved },
 						clone: true,
 						...opts
@@ -954,7 +954,7 @@ module.exports = ({
 			}
 		},
 		mergeArray(obj1, obj2, opts){
-			return merge(obj1, obj2, {
+			return importedMerge(obj1, obj2, {
 				arrayMerge: function (store, saved) { return saved },
 				clone: true,
 				...opts
