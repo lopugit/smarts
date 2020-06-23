@@ -1987,7 +1987,7 @@ module.exports = ({
           }
 
           if (smarts.propertyIsOnObject(target, key) && options.isMergeableObject(source[key])) {
-            destination[key] = smarts.getMergeFunction(key, options)(target[key], source[key], options);
+            destination[key] = smarts.getMergeFunction(key, options)(target[key], source[key], options, known);
           } else {
             destination[key] = smarts.cloneUnlessOtherwiseSpecified(source[key], options);
           }
