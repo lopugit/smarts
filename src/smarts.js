@@ -942,16 +942,21 @@ module.exports = ({
 		merge(obj1, obj2, opts){
 			if(obj1 instanceof Array && typeof obj2 instanceof Array){
 				return smarts.arrayMerge(obj1, obj2, opts)
-			} else {
-				return Object.assign(
-					obj1, 
-					importedMerge(obj1, obj2, {
-						arrayMerge: function (store, saved) { return saved },
-						clone: true,
-						...opts
-					})
-				)
 			}
+			if(typeof obj1 !== 'object'){
+				obj1 = {}
+			} 
+			if(typeof obj2 !== 'object'){
+				obj2 = {}
+			}
+			return Object.assign(
+				obj1, 
+				importedMerge(obj1, obj2, {
+					arrayMerge: function (store, saved) { return saved },
+					clone: true,
+					...opts
+				})
+			)
 		},
 		mergeArray(obj1, obj2, opts){
 			return importedMerge(obj1, obj2, {

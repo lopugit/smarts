@@ -1,4 +1,4 @@
-let merge = require('deepmerge');
+let importedMerge = require('deepmerge');
 
 let babel = require('@babel/core');
 
@@ -752,7 +752,7 @@ module.exports = ({
       	back into obj1 because merge() is not in-place
       	we use merge(obj2, obj1) so that obj1 properties are preferenced
        */
-      return Object.assign(obj1, merge(obj2, obj1, {
+      return Object.assign(obj1, importedMerge(obj2, obj1, {
         arrayMerge: function (store, saved) {
           return saved;
         },
@@ -766,7 +766,7 @@ module.exports = ({
       if (obj1 instanceof Array && typeof obj2 instanceof Array) {
         return smarts.arrayMerge(obj1, obj2, opts);
       } else {
-        return Object.assign(obj1, merge(obj1, obj2, {
+        return Object.assign(obj1, importedMerge(obj1, obj2, {
           arrayMerge: function (store, saved) {
             return saved;
           },
@@ -777,7 +777,7 @@ module.exports = ({
     },
 
     mergeArray(obj1, obj2, opts) {
-      return merge(obj1, obj2, {
+      return importedMerge(obj1, obj2, {
         arrayMerge: function (store, saved) {
           return saved;
         },
