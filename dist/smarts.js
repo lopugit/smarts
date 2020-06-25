@@ -1997,14 +1997,13 @@ module.exports = ({
       return destination;
     },
 
-    deepmerge(target, source, options) {
+    deepmerge(target, source, options, known = new Set()) {
       options = options || {};
       options.arrayMerge = options.arrayMerge || smarts.defaultArrayMerge;
       options.isMergeableObject = options.isMergeableObject || defaultIsMergeableObject; // smarts.cloneUnlessOtherwiseSpecified is added to `options` so that custom arrayMerge()
       // implementations can use it. The caller may not replace it.
 
       options.cloneUnlessOtherwiseSpecified = smarts.cloneUnlessOtherwiseSpecified;
-      known = new Set();
       var sourceIsArray = Array.isArray(source);
       var targetIsArray = Array.isArray(target);
       var sourceAndTargetTypesMatch = sourceIsArray === targetIsArray;

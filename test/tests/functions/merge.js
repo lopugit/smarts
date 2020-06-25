@@ -15,6 +15,9 @@ describe("Function smarts.merge tests", ()=>{
 		}
 
 		let obj2 = {
+			prop1: {
+				prop2: 'val1'
+			},
 			test: 'hey'
 		}
 

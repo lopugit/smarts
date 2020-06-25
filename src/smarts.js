@@ -1603,40 +1603,49 @@ module.exports = ({
 
 			// In order to avoid constantly checking the type of the property
 			// we separate the real logic out into an inner function.
-			function deepGetByArrayUnbound (obj, propsArray, defaultValue) {
-				// If we have reached an undefined/null property
-				// then stop executing and return the default value.
-				// If no default was provided it will be undefined.
-				if (!propsArray || (typeof obj == 'undefined') || obj == null) {
-					if (context) {
-						return {
-							value: defaultValue,
-							undefined: true
-						}
-					} else {
-						return defaultValue
+      function deepGetByArrayUnbound(obj, propsArray, defaultValue) {
+
+				// This case getting to the last property but it not being ultimately defined
+				// Not just having a value of undefined
+				if(propsArray.length > 0 && context && typeof obj == 'object' && obj !== null && !(propsArray[0] in obj)){
+					return {
+						value: defaultValue,
+						undefined: true
 					}
 				}
+				
+        // If we have reached an undefined/null property
+        // then stop executing and return the default value.
+        // If no default was provided it will be undefined.
+        if (propsArray.length > 0 && ( typeof obj == 'undefined' || obj == null ) ) {
+          if (context) {
+            return {
+              value: defaultValue,
+              undefined: true
+							};
+          } else {
+            return defaultValue;
+          }
+        } // If the path array has no more elements, we've reached
+        // the intended property and return its value
 
-				// If the path array has no more elements, we've reached
-				// the intended property and return its value
-				if (propsArray.length === 0) {
-					if (context) {
-						return {
-							value: obj,
-							undefined: false
-						}
-					} else {
-						return obj
-					}
-				}
 
-				// Prepare our found property and path array for recursion
-				var nextObj = obj[propsArray[0]]
-				var remainingProps = propsArray.slice(1)
+        if (propsArray.length === 0) {
+          if (context) {
+            return {
+              value: obj,
+              undefined: false
+            };
+          } else {
+            return obj;
+          }
+        } // Prepare our found property and path array for recursion
 
-				return deepGetByArray(nextObj, remainingProps, defaultValue)
-			}
+
+        var nextObj = obj[propsArray[0]];
+        var remainingProps = propsArray.slice(1);
+        return deepGetByArray(nextObj, remainingProps, defaultValue);
+      }
 		},
 		escapePropertyPath(path=""){
 			return "[\""+path+"\"]"
