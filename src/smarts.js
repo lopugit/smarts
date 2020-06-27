@@ -966,14 +966,25 @@ module.exports = ({
 			if(typeof obj2 !== 'object'){
 				obj2 = {}
 			}
-			return Object.assign(
-				obj1, 
-				smarts.deepmerge(obj1, obj2, {
-					arrayMerge: function (store, saved) { return saved },
-					clone: true,
-					...opts
-				})
-			)
+			let newProps = smarts.deepmerge(obj1, obj2, {
+				arrayMerge: function (store, saved) { return saved },
+				clone: true,
+				...opts
+			})
+			Object.keys(newProps).forEach(key=>{
+				if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj1) {
+					this.$set(obj1, key, newProps[key])
+					if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
+						window.$store.commit('graph/thing')
+					}
+				} else {
+					obj1[key] = newProps[key]
+					if(smarts.getsmart.bind(this)(vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
+						window.$store.commit('graph/thing')
+					}
+				}
+			})
+			return obj1
 		},
 		mergeArray(obj1, obj2, opts){
 			return smarts.deepmerge(obj1, obj2, {

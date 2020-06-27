@@ -1984,7 +1984,19 @@ module.exports = ({
 
       if (options.isMergeableObject(target)) {
         smarts.getKeys(target).forEach(function (key) {
-          destination[key] = smarts.cloneUnlessOtherwiseSpecified(target[key], options);
+          if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
+            this.$set(destination, key, smarts.cloneUnlessOtherwiseSpecified(target[key], options));
+
+            if (typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
+              window.$store.commit('graph/thing');
+            }
+          } else {
+            destination[key] = smarts.cloneUnlessOtherwiseSpecified(target[key], options);
+
+            if (smarts.getsmart.bind(this)(vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
+              window.$store.commit('graph/thing');
+            }
+          }
         });
       }
 
@@ -1996,9 +2008,33 @@ module.exports = ({
           }
 
           if (smarts.propertyIsOnObject(target, key) && options.isMergeableObject(source[key])) {
-            destination[key] = smarts.getMergeFunction(key, options)(target[key], source[key], options, known);
+            if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
+              this.$set(destination, key, smarts.getMergeFunction(key, options)(target[key], source[key], options, known));
+
+              if (typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
+                window.$store.commit('graph/thing');
+              }
+            } else {
+              destination[key] = smarts.getMergeFunction(key, options)(target[key], source[key], options, known);
+
+              if (smarts.getsmart.bind(this)(vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
+                window.$store.commit('graph/thing');
+              }
+            }
           } else {
-            destination[key] = smarts.cloneUnlessOtherwiseSpecified(source[key], options);
+            if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
+              this.$set(destination, key, smarts.cloneUnlessOtherwiseSpecified(source[key], options));
+
+              if (typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
+                window.$store.commit('graph/thing');
+              }
+            } else {
+              destination[key] = smarts.cloneUnlessOtherwiseSpecified(source[key], options);
+
+              if (smarts.getsmart.bind(this)(vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
+                window.$store.commit('graph/thing');
+              }
+            }
           }
         });
       }
