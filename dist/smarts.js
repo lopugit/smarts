@@ -1509,10 +1509,19 @@ module.exports = ({
       // we separate the real logic out into an inner function.
 
       function deepGetByArrayUnbound(obj, propsArray, defaultValue) {
-        // If we have reached an undefined/null property
+        // This case getting to the last property but it not being ultimately defined
+        // Not just having a value of undefined
+        if (propsArray.length > 0 && context && typeof obj == 'object' && obj !== null && !(propsArray[0] in obj)) {
+          return {
+            value: defaultValue,
+            undefined: true
+          };
+        } // If we have reached an undefined/null property
         // then stop executing and return the default value.
         // If no default was provided it will be undefined.
-        if (!propsArray || typeof obj == 'undefined' || obj == null) {
+
+
+        if (propsArray.length > 0 && (typeof obj == 'undefined' || obj == null)) {
           if (context) {
             return {
               value: defaultValue,
