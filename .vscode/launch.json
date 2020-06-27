@@ -106,6 +106,24 @@
 		{
 			"type": "node",
 			"request": "launch",
+			"name": "parsePropertyPath Tests",
+			"program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+			"args": [
+				"-u",
+				"bdd",
+				"--timeout",
+				"999999",
+				"--colors",
+				"${workspaceFolder}/test/tests/functions/parsePropertyPath.js"
+			],
+			"internalConsoleOptions": "openOnSessionStart",
+			"skipFiles": [
+				// "<node_internals>/**"
+			]
+		},
+		{
+			"type": "node",
+			"request": "launch",
 			"name": "Parse Tests",
 			"program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
 			"args": [
