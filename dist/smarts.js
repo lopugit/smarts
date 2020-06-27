@@ -1577,7 +1577,7 @@ module.exports = ({
     },
 
     parsePropertyPath(path = "") {
-      let array = [""];
+      let array = [];
       let readingArrayBasedPath = false;
       let i = 0;
       let push = false;
@@ -1600,6 +1600,7 @@ module.exports = ({
             push = true;
             i += 1;
           } else {
+            if (i == 0) array.push("");
             array[array.length - 1] += path[i];
           }
 
