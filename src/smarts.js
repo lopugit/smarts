@@ -1813,6 +1813,16 @@ module.exports = ({
 				return deepSetByArray(obj[propsArray[0]], remainingProps, value)
 			}
 		},
+		pushSmart(array, value){
+			if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
+				array.push(value)
+				if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
+					window.$store.commit('graph/thing')
+				}
+			} else {
+				array.push(value)
+			}
+		},
 		gosmart(obj, property, value, context) {
 			// stands for get or set smart
 			var get = smarts.getsmart.bind(this)(obj, property, value, true)
