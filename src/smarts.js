@@ -1685,7 +1685,7 @@ module.exports = ({
 						array[array.length-1] += path[i]
 					}
 				} else if(path[i] == '.'){
-					push = true
+					if(!pushed) push = true
 				} 
 				// we found the start of an array delimited path
 				else if(path[i] == '[' && path[i+1] == "\"") {

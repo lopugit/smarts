@@ -36,7 +36,7 @@ describe("Function smarts.parsePropertyPath tests", ()=>{
 		expect(escaped.length).to.equal(3)
 		
 	})
-	test("should parse a property path with singular escaped property path", ()=>{
+	test("should parse a property path with two escaped property path", ()=>{
 
 		let path = "test1[\"test2\"][\"thing\"]"
 
@@ -48,6 +48,21 @@ describe("Function smarts.parsePropertyPath tests", ()=>{
 		}
 		
 		expect(escaped[2]).to.equal("thing")
+		expect(escaped.length).to.equal(3)
+		
+	})
+	test("should parse a property path with singular escaped property path followed by a dot delimited path", ()=>{
+
+		let path = "test1[\"thing\"].test2"
+
+		try {
+			escaped = smarts.parsePropertyPath(path)
+		} catch(e){
+			console.error(e)
+			err = e
+		}
+		
+		expect(escaped[2]).to.equal("test2")
 		expect(escaped.length).to.equal(3)
 		
 	})
