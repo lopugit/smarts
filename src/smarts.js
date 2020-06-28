@@ -1814,7 +1814,7 @@ module.exports = ({
 			}
 		},
 		pushSmart(array, value){
-			if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
+			if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && array) {
 				array.push(value)
 				if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
 					window.$store.commit('graph/thing')
