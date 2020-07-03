@@ -1628,11 +1628,15 @@ module.exports = ({
         // If we have reached an undefined/null property
         // then stop executing and return the default value.
         // If no default was provided it will be undefined.
-        if (propsArray.length > 0 && ( typeof obj == 'undefined' || obj == null ) ) {
+        if (( typeof obj == 'undefined' || obj == null ) ) {
           if (context) {
+						let undef = true
+						if(propsArray.length === 0){
+							undef = false
+						}
             return {
               value: defaultValue,
-              undefined: true
+              undefined: undef
 							};
           } else {
             return defaultValue;
@@ -1812,6 +1816,27 @@ module.exports = ({
 				}
 				return deepSetByArray(obj[propsArray[0]], remainingProps, value)
 			}
+		},
+		deletesmart(obj, property){
+			if (!property && typeof obj == 'string') {
+				property = obj.split(".")
+				try {
+					obj = eval(property[0])
+				} catch (err) {
+					// console.error(err)
+					obj = property[0]
+				}
+				property = property.slice(1, property.length)
+			}
+			// If the property list is in dot notation, convert to array
+			if (typeof property == "string") {
+				property = smarts.parsePropertyPath(property)
+			}
+			let parentPathArray = property.slice(0, property.length-1)
+			let path = property[property.length-1]
+			let parentObj = smarts.getsmart(obj, parentPathArray, {})
+
+			delete parentObj[path]
 		},
 		pushSmart(array, value){
 			if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && array) {
