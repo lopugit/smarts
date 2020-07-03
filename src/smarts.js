@@ -972,14 +972,14 @@ module.exports = ({
 				...opts
 			})
 			Object.keys(newProps).forEach(key=>{
-				if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj1) {
+				if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj1) {
 					this.$set(obj1, key, newProps[key])
 					if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
 						window.$store.commit('graph/thing')
 					}
 				} else {
 					obj1[key] = newProps[key]
-					if(smarts.getsmart.bind(this)(vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
+					if(smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
 						window.$store.commit('graph/thing')
 					}
 				}
@@ -1050,7 +1050,7 @@ module.exports = ({
 			keys = ['uuid', '_id', 'id'],
 			keymatchtype,
 			defaultValue = undefined,
-			vue = vue
+			vue = local.vue
 		} = {}) {
 			if (typeof list == 'object' && smarts.thingIn({
 					option,
@@ -1079,7 +1079,7 @@ module.exports = ({
 			push,
 			strings,
 			targets,
-			vue = vue
+			vue = local.vue
 		} = {}) {
 			let index = smarts.thingIndex({
 				option,
@@ -1135,7 +1135,7 @@ module.exports = ({
 			keymatchtype,
 			push,
 			async,
-			vue = vue
+			vue = local.vue
 		} = {}) {
 			if (options && options instanceof Array && list) {
 				for (let option of options) {
@@ -1204,7 +1204,7 @@ module.exports = ({
 			keymatchtype,
 			strings,
 			retIndex,
-			vue = vue
+			vue = local.vue
 		} = {}) {
 			if (typeof option === 'object') {
 				obj = true
@@ -1287,7 +1287,7 @@ module.exports = ({
 			obj,
 			keys = ['uuid', '_id', 'id'],
 			keymatchtype,
-			vue = vue
+			vue = local.vue
 		} = {}) {
 			if(!(options instanceof Array)) return true
 			for (let option of options) {
@@ -1332,7 +1332,7 @@ module.exports = ({
 			obj,
 			keys = ['uuid', '_id', 'id'],
 			keymatchtype,
-			vue = vue
+			vue = local.vue
 		} = {}) {
 			if(!(options instanceof Array)) return false
 			for (let option of options) {
@@ -1373,7 +1373,7 @@ module.exports = ({
 			keys = ['uuid', '_id', 'id'],
 			keymatchtype,
 			strings,
-			vue = vue
+			vue = local.vue
 		} = {}) {
 			if (typeof option === 'object') {
 				obj = true
@@ -1426,7 +1426,7 @@ module.exports = ({
 			obj,
 			keys = ['uuid', '_id', 'id'],
 			keymatchtype,
-			vue = vue
+			vue = local.vue
 		} = {}) {
 			if (typeof list == 'object' && !smarts.thingIn({option, list, obj, keys, keymatchtype})) {
 				if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) || smarts.getsmart.bind(this)(local.vue, 'store', false)) {
@@ -1451,7 +1451,7 @@ module.exports = ({
 			obj,
 			keys = ['uuid', '_id', 'id'],
 			keymatchtype,
-			vue = vue
+			vue = local.vue
 		} = {}) {
 			if(!(options instanceof Array)) return
 			for (let option of options) {
@@ -1474,7 +1474,7 @@ module.exports = ({
 			obj = true,
 			keys = ['uuid', '_id', 'id'],
 			keymatchtype,
-			vue = vue
+			vue = local.vue
 		} = {}) {
 			if (typeof list == 'object' && smarts.thingIn({
 					option,
@@ -1509,7 +1509,7 @@ module.exports = ({
 			obj = true,
 			keys = ['uuid', '_id', 'id'],
 			keymatchtype,
-			vue = vue
+			vue = local.vue
 		} = {}) {
 			if(!(options instanceof Array)) return
 			for (let option of options) {
@@ -1529,7 +1529,7 @@ module.exports = ({
 			obj = true,
 			keys = ['uuid', '_id', 'id'],
 			keymatchtype,
-			vue = vue
+			vue = local.vue
 		} = {}) {
 			if (smarts.optIn(option, list, obj, keys, keymatchtype)) {
 				smarts.popOpt(option, list, obj, keys, keymatchtype)
@@ -1549,7 +1549,7 @@ module.exports = ({
 			obj = true,
 			keys = ['uuid', '_id', 'id'],
 			keymatchtype,
-			vue = vue
+			vue = local.vue
 		} = {}) {
 			if(!(options instanceof Array)) return
 			for (let option in options) {
@@ -1748,14 +1748,14 @@ module.exports = ({
 			if (property) {
 				return deepSetByArray(obj, property, value)
 			} else {
-				if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
+				if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
 					this.$set(obj, undefined, value)
 					if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
 						window.$store.commit('graph/thing')
 					}
 				} else {
 					obj = value
-					if(smarts.getsmart.bind(this)(vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
+					if(smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
 						window.$store.commit('graph/thing')
 					}
 				}
@@ -1777,14 +1777,14 @@ module.exports = ({
 				// If the path array has only 1 more element, we've reached
 				// the intended property and set its value
 				if (propsArray.length == 1) {
-					if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
+					if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
 						this.$set(obj, propsArray[0], value)
 						if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
 							window.$store.commit('graph/thing')
 						}
 					} else {
 						obj[propsArray[0]] = value
-						if(smarts.getsmart.bind(this)(vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
+						if(smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
 							window.$store.commit('graph/thing')
 						}
 					}
@@ -1802,14 +1802,14 @@ module.exports = ({
 				// check if next prop is 
 				if (typeof obj[propsArray[0]] !== 'object') {
 					// If we have reached an undefined/null property
-					if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
+					if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
 						this.$set(obj, propsArray[0], {})
 						if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
 							window.$store.commit('graph/thing')
 						}
 					} else {
 						obj[propsArray[0]] = {}
-						if(smarts.getsmart.bind(this)(vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
+						if(smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
 							window.$store.commit('graph/thing')
 						}
 					}
@@ -1838,16 +1838,17 @@ module.exports = ({
 
 			delete parentObj[path]
 
-			if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
-				window.$store.commit('graph/thing')
-			} else if(smarts.getsmart.bind(this)(vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
-				window.$store.commit('graph/thing')
+			if(typeof window !== 'undefined'){
+				if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
+					window.$store.commit('graph/thing')
+				} else if(smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
+					window.$store.commit('graph/thing')
+				}
 			}
-
 
 		},
 		pushSmart(array, value){
-			if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && array) {
+			if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && array) {
 				array.push(value)
 				if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
 					window.$store.commit('graph/thing')
@@ -2012,7 +2013,7 @@ module.exports = ({
 			keymatchtype,
 			strings,
 			defaultValue = undefined,
-			vue = vue
+			vue = local.vue
 		} = {}) {
 			var index = smarts.thingIn({
 				...arguments[0],
@@ -2107,14 +2108,14 @@ module.exports = ({
 			var destination = {}
 			if (options.isMergeableObject(target)) {
 				smarts.getKeys(target).forEach(function(key) {
-					if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
+					if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
 						this.$set(destination, key, smarts.cloneUnlessOtherwiseSpecified(target[key], options))
 						if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
 							window.$store.commit('graph/thing')
 						}
 					} else {
 						destination[key] = smarts.cloneUnlessOtherwiseSpecified(target[key], options)
-						if(smarts.getsmart.bind(this)(vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
+						if(smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
 							window.$store.commit('graph/thing')
 						}
 					}
@@ -2129,26 +2130,26 @@ module.exports = ({
 					}
 
 					if (smarts.propertyIsOnObject(target, key) && options.isMergeableObject(source[key])) {
-						if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
+						if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
 							this.$set(destination, key, smarts.getMergeFunction(key, options)(target[key], source[key], options, known))
 							if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
 								window.$store.commit('graph/thing')
 							}
 						} else {
 							destination[key] = smarts.getMergeFunction(key, options)(target[key], source[key], options, known)
-							if(smarts.getsmart.bind(this)(vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
+							if(smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
 								window.$store.commit('graph/thing')
 							}
 						}
 					} else {
-						if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
+						if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
 							this.$set(destination, key, smarts.cloneUnlessOtherwiseSpecified(source[key], options))
 							if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
 								window.$store.commit('graph/thing')
 							}
 						} else {
 							destination[key] = smarts.cloneUnlessOtherwiseSpecified(source[key], options)
-							if(smarts.getsmart.bind(this)(vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
+							if(smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
 								window.$store.commit('graph/thing')
 							}
 						}
