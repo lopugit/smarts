@@ -1537,11 +1537,17 @@ module.exports = ({
         // If no default was provided it will be undefined.
 
 
-        if (propsArray.length > 0 && (typeof obj == 'undefined' || obj == null)) {
+        if (typeof obj == 'undefined' || obj == null) {
           if (context) {
+            let undef = true;
+
+            if (propsArray.length === 0) {
+              undef = false;
+            }
+
             return {
               value: defaultValue,
-              undefined: true
+              undefined: undef
             };
           } else {
             return defaultValue;
@@ -1731,6 +1737,37 @@ module.exports = ({
         }
 
         return deepSetByArray(obj[propsArray[0]], remainingProps, value);
+      }
+    },
+
+    deletesmart(obj, property) {
+      if (!property && typeof obj == 'string') {
+        property = obj.split(".");
+
+        try {
+          obj = eval(property[0]);
+        } catch (err) {
+          // console.error(err)
+          obj = property[0];
+        }
+
+        property = property.slice(1, property.length);
+      } // If the property list is in dot notation, convert to array
+
+
+      if (typeof property == "string") {
+        property = smarts.parsePropertyPath(property);
+      }
+
+      let parentPathArray = property.slice(0, property.length - 1);
+      let path = property[property.length - 1];
+      let parentObj = smarts.getsmart(obj, parentPathArray, {});
+      delete parentObj[path];
+
+      if (typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
+        window.$store.commit('graph/thing');
+      } else if (smarts.getsmart.bind(this)(vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
+        window.$store.commit('graph/thing');
       }
     },
 
