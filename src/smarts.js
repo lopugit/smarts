@@ -1837,6 +1837,14 @@ module.exports = ({
 			let parentObj = smarts.getsmart(obj, parentPathArray, {})
 
 			delete parentObj[path]
+
+			if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
+				window.$store.commit('graph/thing')
+			} else if(smarts.getsmart.bind(this)(vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
+				window.$store.commit('graph/thing')
+			}
+
+
 		},
 		pushSmart(array, value){
 			if (smarts.getsmart.bind(this)(vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && array) {
