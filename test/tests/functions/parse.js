@@ -20,6 +20,6 @@ describe("Function smarts.parse tests", ()=>{
 		}
 		
 		expect(err).to.equal(false)
-		
+		expect(obj.self).to.equal(obj)
 	})
 })
