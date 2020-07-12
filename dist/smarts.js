@@ -1575,6 +1575,18 @@ module.exports = ({
     },
 
     escapePropertyPath(path = "") {
+      for (let i in path) {
+        i = +i;
+        let a = path[i] == '[' && path[i + 1] == "\"" && (path[i + 1] !== "\\" || i === path.length - 1);
+        let b = path[i] == "\"" && path[i + 1] == "]" && (path[i - 1] !== "\\" || i === 0);
+        let offset = 0;
+        if (a) offset = 1;
+
+        if (a || b) {
+          path = path.slice(0, i + offset) + "\\" + path.slice(i + offset, path.length);
+        }
+      }
+
       return "[\"" + path + "\"]";
     },
 
@@ -1582,6 +1594,9 @@ module.exports = ({
       return smarts.escapePropertyPath(path);
     },
 
+    // TODO
+    // Make parsing use \" or \'
+    // Currently only uses \"
     parsePropertyPath(path = "") {
       let array = [];
       let readingArrayBasedPath = false;
@@ -1590,19 +1605,29 @@ module.exports = ({
       let pushed = false;
 
       while (i < path.length) {
+        let arrayPathStart = path[i] == '[' && path[i + 1] == "\"";
+        let escapedStart = !(path[i + 1] !== "\\" || i === 0);
+
         if (readingArrayBasedPath) {
           // we found the end of an array delimited path
-          if (path[i] == "\"" && path[i + 1] == "]") {
+          let arrayPathEnd = path[i] == "\"" && path[i + 1] == "]";
+          let escapedEnd = !(path[i - 1] !== "\\" || i == 0);
+
+          if (arrayPathEnd && !escapedEnd) {
             i += 1;
             readingArrayBasedPath = false;
             if (!pushed) push = true;
           } else {
-            array[array.length - 1] += path[i];
+            // if the path includes an "escaped" array based path begin or end value
+            // do not push the escape character
+            if (path[i] == "\\" && path[i + 1] == "\"" && path[i + 2] == "]" || path[i - 1] == "[" && path[i] == "\\" && path[i + 1] == "\"") {} else {
+              array[array.length - 1] += path[i];
+            }
           }
         } else if (path[i] == '.') {
           if (!pushed) push = true;
         } // we found the start of an array delimited path
-        else if (path[i] == '[' && path[i + 1] == "\"") {
+        else if (arrayPathStart && !escapedStart) {
             readingArrayBasedPath = true;
             if (!pushed) push = true;
             i += 1;
@@ -1623,6 +1648,20 @@ module.exports = ({
       }
 
       return array;
+    },
+
+    parsePropertyArray(pathArray) {
+      let path = "";
+
+      if (pathArray instanceof Array) {
+        pathArray.forEach(subPath => {
+          path += smarts.epp(subPath);
+        });
+      } else if (typeof pathArray === 'string') {
+        return path;
+      }
+
+      return path;
     },
 
     setsmart(obj, property, value, context) {
