@@ -12,11 +12,22 @@ module.exports = function({node, vue, objList, stringList, that}={}){
 	} else if (vue){
 			var smartsJuice = require('./smarts')({objList, stringList, vue})
 			var smarts = {
-					data() {
-							return {}
-					},
-					methods: smartsJuice
+				data() {
+						return {}
+				},
+				methods: {},
+				computed: {}
 			}
+			let keys = Object.keys(smartsJuice)
+			keys.forEach(key=>{
+				if(typeof smartsJuice[key] == 'function'){
+					smarts.methods[key] = smartsJuice[key]
+				}
+				if(smartsJuice[key] instanceof Object){
+					if(typeof smartsJuice[key].get == 'function' || typeof smartsJuice[key].set == 'function')
+					smarts.computed[key] = smartsJuice[key]
+				}
+			})
 	} else {
 			var smarts = require('./smarts')({objList, stringList})
 	}
