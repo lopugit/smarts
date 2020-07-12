@@ -1756,6 +1756,25 @@ module.exports = ({
 
 			return path
 		},
+		pathAsArray: {
+			get(){
+				if(typeof this.path == 'string'){
+					return this.parsePropertyPath(this.path)
+				} else {
+					return this.path
+				}
+			}
+		},
+		pathAsString: {
+			get(){
+				if(typeof this.path == 'string'){
+					return this.path
+				} else {
+					let ret = this.parsePropertyArray(this.path)
+					return ret
+				}
+			}
+		},
 		setsmart(obj, property, value, context) {
 			if (!property && typeof obj == 'string') {
 				property = obj.split(".")
