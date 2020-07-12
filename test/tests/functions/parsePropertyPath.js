@@ -11,14 +11,14 @@ describe("Function smarts.parsePropertyPath tests", ()=>{
 		let path = "[\"thing\"]"
 
 		try {
-			escaped = smarts.parsePropertyPath(path)
+			parsed = smarts.parsePropertyPath(path)
 		} catch(e){
 			console.error(e)
 			err = e
 		}
 		
-		expect(escaped[0]).to.equal("thing")
-		expect(escaped.length).to.equal(1)
+		expect(parsed[0]).to.equal("thing")
+		expect(parsed.length).to.equal(1)
 		
 	})
 	test("should parse a property path with standard paths and ending singular escaped property path", ()=>{
@@ -26,14 +26,14 @@ describe("Function smarts.parsePropertyPath tests", ()=>{
 		let path = "test1.test2[\"thing\"]"
 
 		try {
-			escaped = smarts.parsePropertyPath(path)
+			parsed = smarts.parsePropertyPath(path)
 		} catch(e){
 			console.error(e)
 			err = e
 		}
 		
-		expect(escaped[2]).to.equal("thing")
-		expect(escaped.length).to.equal(3)
+		expect(parsed[2]).to.equal("thing")
+		expect(parsed.length).to.equal(3)
 		
 	})
 	test("should parse a property path with two escaped property path", ()=>{
@@ -41,14 +41,14 @@ describe("Function smarts.parsePropertyPath tests", ()=>{
 		let path = "test1[\"test2\"][\"thing\"]"
 
 		try {
-			escaped = smarts.parsePropertyPath(path)
+			parsed = smarts.parsePropertyPath(path)
 		} catch(e){
 			console.error(e)
 			err = e
 		}
 		
-		expect(escaped[2]).to.equal("thing")
-		expect(escaped.length).to.equal(3)
+		expect(parsed[2]).to.equal("thing")
+		expect(parsed.length).to.equal(3)
 		
 	})
 	test("should parse a property path with singular escaped property path followed by a dot delimited path", ()=>{
@@ -56,14 +56,59 @@ describe("Function smarts.parsePropertyPath tests", ()=>{
 		let path = "test1[\"thing\"].test2"
 
 		try {
-			escaped = smarts.parsePropertyPath(path)
+			parsed = smarts.parsePropertyPath(path)
 		} catch(e){
 			console.error(e)
 			err = e
 		}
 		
-		expect(escaped[2]).to.equal("test2")
-		expect(escaped.length).to.equal(3)
+		expect(parsed[2]).to.equal("test2")
+		expect(parsed.length).to.equal(3)
+		
+	})
+	test("should parse a property path with an escaped array based path", ()=>{
+
+		let path = "[\"[\\\"thing\\\"]\"]"
+
+		try {
+			parsed = smarts.parsePropertyPath(path)
+		} catch(e){
+			console.error(e)
+			err = e
+		}
+		
+		expect(parsed[0]).to.equal("[\"thing\"]")
+		expect(parsed.length).to.equal(1)
+		
+	})
+	test("should parse a property path with an escaped array based path beginning only", ()=>{
+
+		let path = "[\"[\\\"thing\"]"
+
+		try {
+			parsed = smarts.parsePropertyPath(path)
+		} catch(e){
+			console.error(e)
+			err = e
+		}
+		
+		expect(parsed[0]).to.equal("[\"thing")
+		expect(parsed.length).to.equal(1)
+		
+	})
+	test("should parse a property path with an escaped array based path end only", ()=>{
+
+		let path = "[\"thing\\\"]\"]"
+
+		try {
+			parsed = smarts.parsePropertyPath(path)
+		} catch(e){
+			console.error(e)
+			err = e
+		}
+		
+		expect(parsed[0]).to.equal("thing\"]")
+		expect(parsed.length).to.equal(1)
 		
 	})
 })

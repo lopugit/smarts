@@ -13,7 +13,6 @@ describe("Function smarts.getsmart tests", ()=>{
 				foo: 'bar'
 			}
 		}
-
 		expect(smarts.getsmart(object, 'property', null)).to.equal(object.property)
 	})
 	test("should return deep properties", ()=>{

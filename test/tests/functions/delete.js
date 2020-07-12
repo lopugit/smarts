@@ -4,7 +4,7 @@ let mlog = require('mocha-logger');
 let test = it
 let fs = require('fs')
 
-describe("Function smarts.getsmart tests", ()=>{
+describe("Function smarts.deletesmart tests", ()=>{
 
 	test("should delete shallow property", ()=>{
 
