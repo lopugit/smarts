@@ -28,8 +28,19 @@ module.exports = function ({
         return {};
       },
 
-      methods: smartsJuice
+      methods: {},
+      computed: {}
     };
+    let keys = Object.keys(smartsJuice);
+    keys.forEach(key => {
+      if (typeof smartsJuice[key] == 'function') {
+        smarts.methods[key] = smartsJuice[key];
+      }
+
+      if (smartsJuice[key] instanceof Object) {
+        if (typeof smartsJuice[key].get == 'function' || typeof smartsJuice[key].set == 'function') smarts.computed[key] = smartsJuice[key];
+      }
+    });
   } else {
     var smarts = require('./smarts')({
       objList,
