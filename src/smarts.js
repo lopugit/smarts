@@ -1770,8 +1770,8 @@ module.exports = ({
 
 			return path
 		},
-		ppa(path=""){
-			return this.parsePropertyArray(path)
+		ppa(pathArray){
+			return this.parsePropertyArray(pathArray)
 		},
 		setsmart(obj, property, value, context) {
 			if (!property && typeof obj == 'string') {
