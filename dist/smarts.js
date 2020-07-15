@@ -1660,6 +1660,10 @@ module.exports = ({
       return array;
     },
 
+    ppp(path = "") {
+      return this.parsePropertyPath(path);
+    },
+
     parsePropertyArray(pathArray) {
       let path = "";
 
@@ -1672,6 +1676,10 @@ module.exports = ({
       }
 
       return path;
+    },
+
+    ppa(path = "") {
+      return this.parsePropertyArray(path);
     },
 
     setsmart(obj, property, value, context) {
