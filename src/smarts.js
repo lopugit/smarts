@@ -1706,7 +1706,6 @@ module.exports = ({
 				let arrayPathStart = path[i] == '[' && path[i+1] == "\""
 				let escapedStart = !(path[i+1] !== "\\" || i === 0)
 
-
 				if(readingArrayBasedPath){
 
 					// we found the end of an array delimited path
@@ -1755,6 +1754,9 @@ module.exports = ({
 			return array
 
 		},
+		ppp(path=""){
+			return this.parsePropertyPath(path)
+		},
 		parsePropertyArray(pathArray){
 			let path = ""
 
@@ -1767,6 +1769,9 @@ module.exports = ({
 			}
 
 			return path
+		},
+		ppa(path=""){
+			return this.parsePropertyArray(path)
 		},
 		setsmart(obj, property, value, context) {
 			if (!property && typeof obj == 'string') {
