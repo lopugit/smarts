@@ -1575,19 +1575,29 @@ module.exports = ({
     },
 
     escapePropertyPath(path = "") {
+      let newPath = "";
+
       for (let i in path) {
         i = +i;
-        let a = path[i] == '[' && path[i + 1] == "\"" && (path[i + 1] !== "\\" || i === path.length - 1);
-        let b = path[i] == "\"" && path[i + 1] == "]" && (path[i - 1] !== "\\" || i === 0);
-        let offset = 0;
-        if (a) offset = 1;
+        let char = path[i];
 
-        if (a || b) {
-          path = path.slice(0, i + offset) + "\\" + path.slice(i + offset, path.length);
+        if (i > 0 && i < path.length - 1) {
+          let prevChar = path[i - 1];
+          let nextChar = path[i + 1];
+          let openingArrayPath = char === '"' && prevChar === "[" // && (nextChar !== "\\" || i === path.length-1)
+          ;
+          let closingArrayPath = char === '"' && nextChar === "]" && prevChar !== "\\";
+          let offset = 0; // if(openingArrayPath) offset = 1
+
+          if (openingArrayPath || closingArrayPath) {
+            newPath += "\\"; // path = path.slice(0,i+offset)+"\\"+path.slice(i+offset,path.length)
+          }
         }
+
+        newPath += char;
       }
 
-      return "[\"" + path + "\"]";
+      return "[\"" + newPath + "\"]";
     },
 
     epp(path = "") {
