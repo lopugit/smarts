@@ -1773,6 +1773,23 @@ module.exports = ({
 		ppa(pathArray){
 			return this.parsePropertyArray(pathArray)
 		},
+		pathToArray(path) {
+			if(typeof path == 'string'){
+				return smarts.parsePropertyPath(path)
+			} else {
+				return path
+			}
+		},
+		pathToString(path) {
+			if(typeof path == 'string'){
+				let ret = smarts.parsePropertyPath(path)
+				ret = smarts.parsePropertyArray(ret)
+				return ret
+			} else {
+				let ret = smarts.parsePropertyArray(path)
+				return ret
+			}
+		},
 		setsmart(obj, property, value, context) {
 			if (!property && typeof obj == 'string') {
 				property = obj.split(".")
