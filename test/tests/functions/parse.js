@@ -22,4 +22,22 @@ describe("Function smarts.parse tests", ()=>{
 		expect(err).to.equal(false)
 		expect(obj.self).to.equal(obj)
 	})
+
+	test("Should parse value that was undefined", ()=>{
+		
+		let string = '[{"property":"1"},{"type":"2","$js":"2"},"undefined"]'
+		let obj = { property: '' }
+		let err = false
+		
+		try {
+			obj = smarts.parse(string)
+		} catch(e){
+			console.error(e)
+			err = e
+		}
+		
+		expect(err).to.equal(false)
+		expect(obj.property).to.equal(undefined)
+		
+	})
 })
