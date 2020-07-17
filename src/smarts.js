@@ -118,7 +118,7 @@ module.exports = ({
 				if(ret.value.$js == "function () { [native code] }") return
 				if(typeof known == "undefined") smarts.setKnown(opts.known, opts.input, ret)
 			} else if(
-				ret.value == Infinity
+				ret.value === Infinity
 				&& typeof ret.value != 'string'
 			){
 				let known = opts.known.get(ret.key)
@@ -132,6 +132,16 @@ module.exports = ({
 					key: val
 				}
 				if(typeof known == "undefined") smarts.setKnown(opts.known, opts.input, ret)
+			} else if (
+				typeof ret.value === 'undefined'
+			) {
+				ret = {
+					value: {
+						type: 'undefined',
+						$js: 'undefined'
+					},
+					key: val
+				}
 			}
 			return ret
 		},
