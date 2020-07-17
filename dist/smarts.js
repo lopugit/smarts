@@ -2070,7 +2070,7 @@ module.exports = ({
 
 
         for (var p in obj2) {
-          if (typeof obj1[p] == 'undefined') return false;
+          if (!(p in obj1)) return false;
         }
 
         return true;
