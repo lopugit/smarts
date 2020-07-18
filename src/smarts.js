@@ -185,9 +185,115 @@ module.exports = ({
 				: opts.value
 
 			opts.replaceMode = true
-			let ret = smarts.revive(opts.input, opts.output, tmp, opts.parser, opts)
+			let ret = smarts.revive(opts.input, new Map, tmp, opts.parser, opts)
 			ret = opts.parser('', tmp, opts)
 			return ret
+		},
+		parser(opts){
+			return function(key, val){
+				if (
+					val.$js
+					&& opts.replaceMode
+				) {
+					let ret = opts.input[opts.output.get(val)]
+					if(typeof ret == val.type) return ret
+					let uuid = smarts.jsUUID()
+					var fn
+					var scopedEval
+					if(val.$scopedEval && typeof val.$scopedEval == 'function'){
+						scopedEval = val.$scopedEval
+					} else {
+						var fns = smarts.createScopedEval(uuid)
+
+						fn = eval(`(${fns})`)
+						var input = {val, smarts}
+						try{
+							scopedEval = fn(input)
+						} catch(err){
+							console.log(err)
+						}
+
+					}
+
+					ret = scopedEval({val})
+					try {
+						Object.defineProperty(ret, '$scopes', {
+							value: val.$scopes,
+							enumerable: true
+						})
+					} catch(err){
+						if(opts.verbose) console.error(err)
+					}
+					try {
+						Object.defineProperty(ret, '$context', {
+							value: val.$context,
+							enumerable: true
+						})
+					} catch(err){
+						if(opts.verbose) console.error(err)
+					}
+					try {
+						Object.defineProperty(ret, '$scopedEval', {
+							value: scopedEval,
+							enumerable: true
+						})
+					} catch(err){
+						if(opts.verbose) console.error(err)
+					}
+					opts.input[opts.output.get(val)] = ret
+					return ret
+				} else if(opts.replaceMode){
+					return val
+				}
+				return smarts.Primitives(key, val)
+			}
+		},			
+		revive(input, parsed, output, parser, opts) {
+			return Object.keys(output).reduce(
+				(output, key)=>{
+					var value = output[key]
+					// if the value hasn't been revived yet
+					if (value instanceof String) {
+						var tmp = input[value]
+						if (typeof tmp === 'object' && !parsed.get(tmp)) {
+							parsed.set(tmp, value)
+							output[key] = smarts.primitives(parser(key, smarts.revive(input, parsed, tmp, parser, opts)))
+						} else {
+							try {
+								output[key] = smarts.primitives(parser(key, tmp))
+							} catch(err){
+								delete output[key]
+							}
+						}
+					} else {
+						try {
+							if(opts.replaceMode){
+								// output[key] = smarts.primitives(parser(key, smarts.revive(input, parsed, value, parser, opts)))
+								value = parser(key, value)
+								if (
+									typeof value === 'object' 
+									&& !parsed.get(value)
+								) {
+									parsed.set(value, value)
+									output[key] = smarts.primitives(parser(key, smarts.revive(input, parsed, value, parser, opts)))
+								} else {
+									try {
+										output[key] = smarts.primitives(value)
+									} catch(err){
+										delete output[key]
+									}
+								}
+							} else {
+								output[key] = smarts.primitives(parser(key, value))
+							}
+						} catch(err){
+							delete output[key]
+						}
+					}
+					return output
+				},
+				output
+			)
 		},
 		createScopedEval(uuid){
 			let ret =  /*javascript*/`
@@ -342,112 +448,6 @@ module.exports = ({
 				}
 			`
 			return ret
-		},
-		parser(opts){
-			return function(key, val){
-				if (
-					val.$js
-					&& opts.replaceMode
-				) {
-					let ret = opts.input[opts.output.get(val)]
-					if(typeof ret == val.type) return ret
-					let uuid = smarts.jsUUID()
-					var fn
-					var scopedEval
-					if(val.$scopedEval && typeof val.$scopedEval == 'function'){
-						scopedEval = val.$scopedEval
-					} else {
-						var fns = smarts.createScopedEval(uuid)
-
-						fn = eval(`(${fns})`)
-						var input = {val, smarts}
-						try{
-							scopedEval = fn(input)
-						} catch(err){
-							console.log(err)
-						}
-
-					}
-
-					ret = scopedEval({val})
-					try {
-						Object.defineProperty(ret, '$scopes', {
-							value: val.$scopes,
-							enumerable: true
-						})
-					} catch(err){
-						if(opts.verbose) console.error(err)
-					}
-					try {
-						Object.defineProperty(ret, '$context', {
-							value: val.$context,
-							enumerable: true
-						})
-					} catch(err){
-						if(opts.verbose) console.error(err)
-					}
-					try {
-						Object.defineProperty(ret, '$scopedEval', {
-							value: scopedEval,
-							enumerable: true
-						})
-					} catch(err){
-						if(opts.verbose) console.error(err)
-					}
-					opts.input[opts.output.get(val)] = ret
-					return ret
-				} else if(opts.replaceMode){
-					return val
-				}
-				return smarts.Primitives(key, val)
-			}
-		},			
-		revive(input, parsed, output, parser, opts) {
-			return Object.keys(output).reduce(
-				(output, key)=>{
-					var value = output[key]
-					// if the value hasn't been revived yet
-					if (value instanceof String) {
-						var tmp = input[value]
-						if (typeof tmp === 'object' && !parsed.get(tmp)) {
-							parsed.set(tmp, value)
-							output[key] = smarts.primitives(parser(key, smarts.revive(input, parsed, tmp, parser, opts)))
-						} else {
-							try {
-								output[key] = smarts.primitives(parser(key, tmp))
-							} catch(err){
-								delete output[key]
-							}
-						}
-					} else {
-						try {
-							if(opts.replaceMode){
-								// output[key] = smarts.primitives(parser(key, smarts.revive(input, parsed, value, parser, opts)))
-								value = parser(key, value)
-								if (
-									typeof value === 'object' 
-									&& !parsed.get(value)
-								) {
-									parsed.set(value, value)
-									output[key] = smarts.primitives(parser(key, smarts.revive(input, parsed, value, parser, opts)))
-								} else {
-									try {
-										output[key] = smarts.primitives(value)
-									} catch(err){
-										delete output[key]
-									}
-								}
-							} else {
-								output[key] = smarts.primitives(parser(key, value))
-							}
-						} catch(err){
-							delete output[key]
-						}
-					}
-					return output
-				},
-				output
-			)
 		},
 		jsUUID(prefix='uuid'){
 			return prefix+smarts.uuid().replace(/-/g,'')
