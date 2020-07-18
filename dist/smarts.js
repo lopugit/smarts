@@ -1535,7 +1535,7 @@ module.exports = ({
       function deepGetByArrayUnbound(obj, propsArray, defaultValue) {
         // This case getting to the last property but it not being ultimately defined
         // Not just having a value of undefined
-        if (propsArray.length > 0 && context && typeof obj == 'object' && obj !== null && !(propsArray[0] in obj)) {
+        if (propsArray.length > 0 && context && typeof obj == 'object' && obj !== null && !(smarts.ee(propsArray[0]) in obj)) {
           return {
             value: defaultValue,
             undefined: true
@@ -1576,13 +1576,22 @@ module.exports = ({
         } // Prepare our found property and path array for recursion
 
 
-        var nextObj = obj[propsArray[0]];
+        var nextObj = obj[smarts.ee(propsArray[0])];
         var remainingProps = propsArray.slice(1);
         return deepGetByArray(nextObj, remainingProps, defaultValue);
       }
     },
 
     escapePropertyPath(path = "") {
+      let newPath = smarts.escapeEscapes(path);
+      return "[\"" + newPath + "\"]";
+    },
+
+    epp(path = "") {
+      return smarts.escapePropertyPath(path);
+    },
+
+    escapeEscapes(path = "") {
       let newPath = "";
 
       for (let i in path) {
@@ -1605,11 +1614,11 @@ module.exports = ({
         newPath += char;
       }
 
-      return "[\"" + newPath + "\"]";
+      return newPath;
     },
 
-    epp(path = "") {
-      return smarts.escapePropertyPath(path);
+    ee(path = "") {
+      return smarts.escapeEscapes(path);
     },
 
     // TODO
@@ -1777,13 +1786,13 @@ module.exports = ({
         // the intended property and set its value
         if (propsArray.length == 1) {
           if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
-            this.$set(obj, propsArray[0], value);
+            this.$set(obj, smarts.ee(propsArray[0]), value);
 
             if (typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
               window.$store.commit('graph/thing');
             }
           } else {
-            obj[propsArray[0]] = value;
+            obj[smarts.ee(propsArray[0])] = value;
 
             if (smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
               window.$store.commit('graph/thing');
@@ -1792,27 +1801,27 @@ module.exports = ({
 
           if (context) {
             return {
-              value: obj[propsArray[0]],
+              value: obj[smarts.ee(propsArray[0])],
               undefined: false
             };
           } else {
-            return obj[propsArray[0]];
+            return obj[smarts.ee(propsArray[0])];
           }
         } // Prepare our path array for recursion
 
 
         var remainingProps = propsArray.slice(1); // check if next prop is 
 
-        if (typeof obj[propsArray[0]] !== 'object') {
+        if (typeof obj[smarts.ee(propsArray[0])] !== 'object') {
           // If we have reached an undefined/null property
           if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
-            this.$set(obj, propsArray[0], {});
+            this.$set(obj, smarts.ee(propsArray[0]), {});
 
             if (typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
               window.$store.commit('graph/thing');
             }
           } else {
-            obj[propsArray[0]] = {};
+            obj[smarts.ee(propsArray[0])] = {};
 
             if (smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
               window.$store.commit('graph/thing');
@@ -1820,7 +1829,7 @@ module.exports = ({
           }
         }
 
-        return deepSetByArray(obj[propsArray[0]], remainingProps, value);
+        return deepSetByArray(obj[smarts.ee(propsArray[0])], remainingProps, value);
       }
     },
 

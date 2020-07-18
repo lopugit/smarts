@@ -89,4 +89,36 @@ describe("Function smarts.gosmart tests", ()=>{
 			expect(object.property.deep.foo).to.equal(newValue)
 		})
 	})
+	describe("should overwrite properties with values that do not match given schema", ()=>{
+		test("basic top level property get with schema test", ()=>{
+			let object = {
+				property: 'test'
+			}
+			let newValue = {}
+			smarts.gosmart(object, 'property', newValue, false, true)
+			expect(typeof object.property).to.equal('object')
+		})
+		test("nested property get with schema test", ()=>{
+			let object = {
+				nested: {
+					property: 'test'
+				}
+			}
+			let newValue = {}
+			smarts.gosmart(object, 'nested.property', newValue, false, true)
+			expect(typeof object.nested.property).to.equal('object')
+		})
+		test("nested property get with schema test", ()=>{
+			let object = {
+				nested: {
+					nested: {
+						property: 'test'
+					}
+				}
+			}
+			let newValue = {}
+			smarts.gosmart(object, 'nested.nested.property', newValue, false, true)
+			expect(typeof object.nested.nested.property).to.equal('object')
+		})
+	})
 })
