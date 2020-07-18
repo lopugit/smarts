@@ -1580,7 +1580,7 @@ module.exports = ({
 			// 	}
 			// },
 		},
-		getsmart(obj, property, defaultValue, context) {
+		getsmart(obj, property, defaultValue, context, schema) {
 
 			if (!property && obj && typeof obj == 'string') {
 				property = obj.split(".")
@@ -1638,7 +1638,7 @@ module.exports = ({
         // If we have reached an undefined/null property
         // then stop executing and return the default value.
         // If no default was provided it will be undefined.
-        if (( typeof obj == 'undefined' || obj == null ) ) {
+        if (( typeof obj == 'undefined' || obj == null ) || (schema && obj.constructor.name !== schema) ) {
           if (context) {
 						let undef = true
 						if(propsArray.length === 0){
@@ -1950,9 +1950,15 @@ module.exports = ({
 				array.push(value)
 			}
 		},
-		gosmart(obj, property, value, context) {
+		gosmart(obj, property, value, context, schema) {
 			// stands for get or set smart
-			var get = smarts.getsmart.bind(this)(obj, property, value, true)
+			var get = smarts.getsmart.bind(this)(
+				obj, 
+				property, 
+				value, 
+				true, 
+				schema ? smarts.absoluteType.bind(this)(value) : false
+			)
 			if (get.undefined) {
 				get = smarts.setsmart.bind(this)(obj, property, get.value, context)
 			}
@@ -1960,8 +1966,22 @@ module.exports = ({
 			if (context) {
 				return get
 			} else {
+				// sort of unneccessary to use getsmart but /shrug/
 				return smarts.getsmart.bind(this)(get, 'value', get)
 			}
+		},
+		gosmarter(obj, property, value, context, schema=true){
+			return smarts.gosmart.bind(this)(obj, property, value, context, schema)
+		},
+		absoluteType(value){
+			let type
+			try {
+				type = this.value.constructor.name
+			} catch(e){
+				if(typeof this.value === 'undefined') type = 'undefined'
+				if(this.value === null) type = 'null'
+			}
+			return type
 		},
 		vgosmart(obj, property, value, context) {
 			// stands for v-model get or set smart
