@@ -1646,7 +1646,9 @@ module.exports = ({
 						}
             return {
               value: defaultValue,
-              undefined: undef
+              undefined: undef,
+							schema: (schema && obj.constructor.name === schema)
+
 							};
           } else {
             return defaultValue;
@@ -1959,7 +1961,7 @@ module.exports = ({
 				true, 
 				schema ? smarts.absoluteType.bind(this)(value) : false
 			)
-			if (get.undefined) {
+			if (get.undefined || (schema && get.schema === false)) {
 				get = smarts.setsmart.bind(this)(obj, property, get.value, context)
 			}
 			// return value from property path, either gotten or smartly set
