@@ -103,4 +103,15 @@ describe("Function smarts.getsmart tests", ()=>{
 		let gotten = smarts.getsmart(object, ['property','property','property','test'], undefined)
 		expect(gotten).to.equal(test)
 	})
+	test("should be able to access an escaped escaped path based property", ()=>{
+
+		let test = {}
+
+		let object = {
+			"[\\\"foo\\\"]": 'bar'
+		}
+		let gotten = smarts.getsmart(object, smarts.epp(`[\"foo\"]`), undefined)
+		let expected = object["[\\\"foo\\\"]"]
+		expect(gotten).to.equal(expected)
+	})
 })
