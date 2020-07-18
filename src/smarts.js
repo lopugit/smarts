@@ -1834,7 +1834,7 @@ module.exports = ({
 			}
 
 			// if no obj make obj
-			if(!obj) obj = {}
+			if(!obj || (typeof obj !== 'object' && typeof obj !== 'function')) obj = {}
 
 			let deepSetByArray = deepSetByArrayUnbound.bind(this)
 			
@@ -1892,7 +1892,7 @@ module.exports = ({
 				}
 				// Prepare our path array for recursion
 				var remainingProps = propsArray.slice(1)
-				// check if next prop is 
+				// check if next prop is object
 				if (typeof obj[smarts.ee(propsArray[0])] !== 'object') {
 					// If we have reached an undefined/null property
 					if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
