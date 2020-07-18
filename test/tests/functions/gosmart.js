@@ -108,12 +108,21 @@ describe("Function smarts.gosmart tests", ()=>{
 			smarts.gosmart(object, 'nested.property', newValue, false, true)
 			expect(typeof object.nested.property).to.equal('object')
 		})
-		test("nested property get with schema test", ()=>{
+		test("nested nested property get with schema test", ()=>{
 			let object = {
 				nested: {
 					nested: {
 						property: 'test'
 					}
+				}
+			}
+			let newValue = {}
+			smarts.gosmart(object, 'nested.nested.property', newValue, false, true)
+			expect(typeof object.nested.nested.property).to.equal('object')
+		})
+		test("A non existant nested nested property get with schema test", ()=>{
+			let object = {
+				nested: {
 				}
 			}
 			let newValue = {}

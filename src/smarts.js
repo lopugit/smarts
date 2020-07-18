@@ -1978,10 +1978,10 @@ module.exports = ({
 		absoluteType(value){
 			let type
 			try {
-				type = this.value.constructor.name
+				type = value.constructor.name
 			} catch(e){
-				if(typeof this.value === 'undefined') type = 'undefined'
-				if(this.value === null) type = 'null'
+				if(typeof value === 'undefined') type = 'undefined'
+				if(value === null) type = 'null'
 			}
 			return type
 		},
