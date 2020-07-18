@@ -206,43 +206,8 @@ module.exports = ({
       let isObject = typeof opts.value === 'object' && opts.value;
       var tmp = isObject ? smarts.revive(opts.input, opts.output, opts.value, opts.parser, opts) : opts.value;
       opts.replaceMode = true;
-      let ret = smarts.revive(opts.input, opts.output, tmp, opts.parser, opts);
+      let ret = smarts.revive(opts.input, new Map(), tmp, opts.parser, opts);
       ret = opts.parser('', tmp, opts);
-      return ret;
-    },
-
-    createScopedEval(uuid) {
-      let ret =
-      /*javascript*/
-      "\n\t\t\t\tfunction createScopedEval(".concat(uuid, "){\n\t\t\t\t\t\n\t\t\t\t\t// scopeCode\n\t\t\t\t\t").concat(uuid, ".scopeCode = ").concat(uuid, ".scopeCode || ").concat(uuid, ".smarts.getBabel().template.ast('try{}catch(err){console.log(err)}')\n\t\t\t\t\t").concat(uuid, ".previousScopeCode = ").concat(uuid, ".currentScopeCode || ").concat(uuid, ".scopeCode\n\t\t\t\t\t").concat(uuid, ".currentScopeCode = ").concat(uuid, ".scopeCode.block.body.length ? ").concat(uuid, ".smarts.getBabel().template.ast('try{}catch(err){console.log(err)}') : ").concat(uuid, ".scopeCode\n\t\t\t\t\tif(").concat(uuid, ".previousScopeCode != ").concat(uuid, ".currentScopeCode){\n\t\t\t\t\t\t").concat(uuid, ".previousScopeCode.block.body.push(\n\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode\n\t\t\t\t\t\t)\n\t\t\t\t\t}\n\t\t\t\t\t").concat(uuid, ".closureIndex = ").concat(uuid, ".closureIndex || 0\n\t\t\t\t\t").concat(uuid, ".closure = ").concat(uuid, ".smarts.getsmart.bind(this)(").concat(uuid, ", ",
-      /*javascript*/
-      "`val.$scopes.${".concat(uuid, ".closureIndex}`"), ", {})\n\t\t\t\t\t").concat(uuid, ".variableKeys = Object.keys(").concat(uuid, ".closure)\n\t\t\t\t\t").concat(uuid, ".variableMap = ").concat(uuid, ".smarts.getsmart.bind(this)(").concat(uuid, ", ",
-      /*javascript*/
-      "`val.$context.$variableMaps.${".concat(uuid, ".closureIndex}`"), ", [])\n\t\t\t\t\t").concat(uuid, ".allowedIdentifiers = ['let','var','const']\n\t\t\t\t\t").concat(uuid, ".variableKeys.forEach((key)=>{\n\t\t\t\t\t\tif(\n\t\t\t\t\t\t\ttypeof ").concat(uuid, ".variableMap[key] == 'string' \n\t\t\t\t\t\t\t&& ").concat(uuid, ".allowedIdentifiers.indexOf(").concat(uuid, ".variableMap[key]) >= 0\n\t\t\t\t\t\t){\n\t\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t\t\t",
-      /*javascript*/
-      "`\n\t\t\t\t\t\t\t\t\t\t\t${".concat(uuid, ".variableMap[key]} ${key} = ").concat(uuid, ".val.$scopes[${").concat(uuid, ".closureIndex}]['${key}']\n\t\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t}catch(err){console.log(1,err)}\n\t\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t\t\t",
-      /*javascript*/
-      "`\n\t\t\t\t\t\t\t\t\t\t\tObject.defineProperty(\n\t\t\t\t\t\t\t\t\t\t\t\t".concat(uuid, ".val.$scopes[${").concat(uuid, ".closureIndex}],\n\t\t\t\t\t\t\t\t\t\t\t\t${smarts.stringify(key)},\n\t\t\t\t\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\t\t\t\t\tget(){\n\t\t\t\t\t\t\t\t\t\t\t\t\t\treturn ${key}\n\t\t\t\t\t\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t\t\t\t\t\t\tset(val){\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t${key} = val\n\t\t\t\t\t\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t\t\t\t\t\t\tenumerable: true\n\t\t\t\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t}catch(err){console.log(2,err)}\n\t\t\t\t\t\t}\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t})\n\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t").concat(uuid, ".closureIndex++\n\t\t\t\t\tif(").concat(uuid, ".closureIndex >= ").concat(uuid, ".smarts.getsmart.bind(this)(").concat(uuid, ", 'val.$scopes.length', -1)){\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t\t",
-      /*javascript*/
-      "`\n\t\t\t\t\t\t\t\t\t\treturn ${".concat(uuid, ".smarts.scopedEval('").concat(uuid, "')}\n\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t)\n\t\t\t\t\t\t}catch(err){console.log(3,err)}\n\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t").concat(uuid, ".wrapper = ").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t",
-      /*javascript*/
-      "`\n\t\t\t\t\t\t\t\t\tfunction anonymous(){}\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t`", "\n\t\t\t\t\t\t\t)\n\t\t\t\t\t\t}catch(err){console.log(4,err)}\n\t\t\t\t\t\t// console.log(").concat(uuid, ".wrapper)\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\t").concat(uuid, ".wrapper.body.body.push(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\t").concat(uuid, ".scopeCode = ").concat(uuid, ".wrapper\n\t\t\t\t\t\t").concat(uuid, ".scopeCode = ").concat(uuid, ".smarts.getBabel().generator(\n\t\t\t\t\t\t\t").concat(uuid, ".scopeCode\n\t\t\t\t\t\t).code\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\t").concat(uuid, ".scopeCode = eval(\"(\"+").concat(uuid, ".scopeCode+\")\")\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode.toString())\n\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\t").concat(uuid, ".val.$scopedEval = ").concat(uuid, ".scopeCode()\n\t\t\t\t\t\t}catch(err){console.log(5,err)}\n\t\t\t\t\t\t// console.log(").concat(uuid, ".val.$scopedEval)\n\t\t\t\t\t\t// return ").concat(uuid, ".scopeCode.toString()\n\t\t\t\t\t\treturn ").concat(uuid, ".val.$scopedEval\n\t\t\t\t\t} else {\n\t\t\t\t\t\treturn eval(",
-      /*javascript*/
-      "`(${".concat(uuid, ".smarts.createScopedEval('").concat(uuid, "')})`"), ")(").concat(uuid, ")\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t");
-      return ret;
-    },
-
-    defineVariable(uuid) {
-      return (
-        /*javascript*/
-        "\n\t\t\t\t".concat(uuid.variableType, "\t").concat(uuid.variableKey, " = ").concat(uuid, ".$scope[").concat(uuid, ".variableKey]\n\t\t\t\tObject.defineProperty(\n\t\t\t\t\t").concat(uuid, ".$scope, \n\t\t\t\t\t").concat(uuid, ".variableKey, \n\t\t\t\t\t{\n\t\t\t\t\t\tget(){\n\t\t\t\t\t\t\treturn ").concat(uuid.variableKey, "\n\t\t\t\t\t\t},\n\t\t\t\t\t\tset(val){\n\t\t\t\t\t\t\t").concat(uuid.variableKey, " = val\n\t\t\t\t\t\t},\n\t\t\t\t\t\tenumerable: true\n\t\t\t\t\t}\n\t\t\t\t)\n\t\t\t")
-      );
-    },
-
-    scopedEval(uuid) {
-      let ret =
-      /*javascript*/
-      "function scopedEval(".concat(uuid, "){\n\t\t\t\t\tif(typeof ").concat(uuid, " == 'string'){\n\t\t\t\t\t\t").concat(uuid, " = {\n\t\t\t\t\t\t\tval: {\n\t\t\t\t\t\t\t\t$js: ").concat(uuid, "\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t} else if(typeof ").concat(uuid, " == 'function' && typeof ").concat(uuid, ".toString == 'function'){\n\t\t\t\t\t\t").concat(uuid, " = {\n\t\t\t\t\t\t\tval: {\n\t\t\t\t\t\t\t\t$js: ").concat(uuid, ".toString()\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\ttry {\n\t\t\t\t\t\t").concat(uuid, ".ret = eval('('+").concat(uuid, ".val.$js+')')\n\t\t\t\t\t} catch(err1){\n\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\t").concat(uuid, ".ret = eval('({'+").concat(uuid, ".val.$js+'})')\n\t\t\t\t\t\t\t").concat(uuid, ".keys = Object.keys(").concat(uuid, ".ret)\n\t\t\t\t\t\t\t").concat(uuid, ".ret = ").concat(uuid, ".ret[").concat(uuid, ".keys[0]]\n\t\t\t\t\t\t} catch(err2){\n\t\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\t\t").concat(uuid, ".ret = eval('({b:'+ ").concat(uuid, ".val.$js +'})').b\n\t\t\t\t\t\t\t} catch(err3){\n\t\t\t\t\t\t\t\tconsole.error(err1)\n\t\t\t\t\t\t\t\tconsole.error(err2)\n\t\t\t\t\t\t\t\tconsole.error(err3)\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\treturn ").concat(uuid, ".ret\n\t\t\t\t}\n\t\t\t");
       return ret;
     },
 
@@ -356,6 +321,41 @@ module.exports = ({
 
         return output;
       }, output);
+    },
+
+    createScopedEval(uuid) {
+      let ret =
+      /*javascript*/
+      "\n\t\t\t\tfunction createScopedEval(".concat(uuid, "){\n\t\t\t\t\t\n\t\t\t\t\t// scopeCode\n\t\t\t\t\t").concat(uuid, ".scopeCode = ").concat(uuid, ".scopeCode || ").concat(uuid, ".smarts.getBabel().template.ast('try{}catch(err){console.log(err)}')\n\t\t\t\t\t").concat(uuid, ".previousScopeCode = ").concat(uuid, ".currentScopeCode || ").concat(uuid, ".scopeCode\n\t\t\t\t\t").concat(uuid, ".currentScopeCode = ").concat(uuid, ".scopeCode.block.body.length ? ").concat(uuid, ".smarts.getBabel().template.ast('try{}catch(err){console.log(err)}') : ").concat(uuid, ".scopeCode\n\t\t\t\t\tif(").concat(uuid, ".previousScopeCode != ").concat(uuid, ".currentScopeCode){\n\t\t\t\t\t\t").concat(uuid, ".previousScopeCode.block.body.push(\n\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode\n\t\t\t\t\t\t)\n\t\t\t\t\t}\n\t\t\t\t\t").concat(uuid, ".closureIndex = ").concat(uuid, ".closureIndex || 0\n\t\t\t\t\t").concat(uuid, ".closure = ").concat(uuid, ".smarts.getsmart.bind(this)(").concat(uuid, ", ",
+      /*javascript*/
+      "`val.$scopes.${".concat(uuid, ".closureIndex}`"), ", {})\n\t\t\t\t\t").concat(uuid, ".variableKeys = Object.keys(").concat(uuid, ".closure)\n\t\t\t\t\t").concat(uuid, ".variableMap = ").concat(uuid, ".smarts.getsmart.bind(this)(").concat(uuid, ", ",
+      /*javascript*/
+      "`val.$context.$variableMaps.${".concat(uuid, ".closureIndex}`"), ", [])\n\t\t\t\t\t").concat(uuid, ".allowedIdentifiers = ['let','var','const']\n\t\t\t\t\t").concat(uuid, ".variableKeys.forEach((key)=>{\n\t\t\t\t\t\tif(\n\t\t\t\t\t\t\ttypeof ").concat(uuid, ".variableMap[key] == 'string' \n\t\t\t\t\t\t\t&& ").concat(uuid, ".allowedIdentifiers.indexOf(").concat(uuid, ".variableMap[key]) >= 0\n\t\t\t\t\t\t){\n\t\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t\t\t",
+      /*javascript*/
+      "`\n\t\t\t\t\t\t\t\t\t\t\t${".concat(uuid, ".variableMap[key]} ${key} = ").concat(uuid, ".val.$scopes[${").concat(uuid, ".closureIndex}]['${key}']\n\t\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t}catch(err){console.log(1,err)}\n\t\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t\t\t",
+      /*javascript*/
+      "`\n\t\t\t\t\t\t\t\t\t\t\tObject.defineProperty(\n\t\t\t\t\t\t\t\t\t\t\t\t".concat(uuid, ".val.$scopes[${").concat(uuid, ".closureIndex}],\n\t\t\t\t\t\t\t\t\t\t\t\t${smarts.stringify(key)},\n\t\t\t\t\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\t\t\t\t\tget(){\n\t\t\t\t\t\t\t\t\t\t\t\t\t\treturn ${key}\n\t\t\t\t\t\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t\t\t\t\t\t\tset(val){\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t${key} = val\n\t\t\t\t\t\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t\t\t\t\t\t\tenumerable: true\n\t\t\t\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t}catch(err){console.log(2,err)}\n\t\t\t\t\t\t}\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t})\n\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t").concat(uuid, ".closureIndex++\n\t\t\t\t\tif(").concat(uuid, ".closureIndex >= ").concat(uuid, ".smarts.getsmart.bind(this)(").concat(uuid, ", 'val.$scopes.length', -1)){\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t\t",
+      /*javascript*/
+      "`\n\t\t\t\t\t\t\t\t\t\treturn ${".concat(uuid, ".smarts.scopedEval('").concat(uuid, "')}\n\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t)\n\t\t\t\t\t\t}catch(err){console.log(3,err)}\n\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t").concat(uuid, ".wrapper = ").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t",
+      /*javascript*/
+      "`\n\t\t\t\t\t\t\t\t\tfunction anonymous(){}\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t`", "\n\t\t\t\t\t\t\t)\n\t\t\t\t\t\t}catch(err){console.log(4,err)}\n\t\t\t\t\t\t// console.log(").concat(uuid, ".wrapper)\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\t").concat(uuid, ".wrapper.body.body.push(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\t").concat(uuid, ".scopeCode = ").concat(uuid, ".wrapper\n\t\t\t\t\t\t").concat(uuid, ".scopeCode = ").concat(uuid, ".smarts.getBabel().generator(\n\t\t\t\t\t\t\t").concat(uuid, ".scopeCode\n\t\t\t\t\t\t).code\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\t").concat(uuid, ".scopeCode = eval(\"(\"+").concat(uuid, ".scopeCode+\")\")\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode.toString())\n\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\t").concat(uuid, ".val.$scopedEval = ").concat(uuid, ".scopeCode()\n\t\t\t\t\t\t}catch(err){console.log(5,err)}\n\t\t\t\t\t\t// console.log(").concat(uuid, ".val.$scopedEval)\n\t\t\t\t\t\t// return ").concat(uuid, ".scopeCode.toString()\n\t\t\t\t\t\treturn ").concat(uuid, ".val.$scopedEval\n\t\t\t\t\t} else {\n\t\t\t\t\t\treturn eval(",
+      /*javascript*/
+      "`(${".concat(uuid, ".smarts.createScopedEval('").concat(uuid, "')})`"), ")(").concat(uuid, ")\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t");
+      return ret;
+    },
+
+    defineVariable(uuid) {
+      return (
+        /*javascript*/
+        "\n\t\t\t\t".concat(uuid.variableType, "\t").concat(uuid.variableKey, " = ").concat(uuid, ".$scope[").concat(uuid, ".variableKey]\n\t\t\t\tObject.defineProperty(\n\t\t\t\t\t").concat(uuid, ".$scope, \n\t\t\t\t\t").concat(uuid, ".variableKey, \n\t\t\t\t\t{\n\t\t\t\t\t\tget(){\n\t\t\t\t\t\t\treturn ").concat(uuid.variableKey, "\n\t\t\t\t\t\t},\n\t\t\t\t\t\tset(val){\n\t\t\t\t\t\t\t").concat(uuid.variableKey, " = val\n\t\t\t\t\t\t},\n\t\t\t\t\t\tenumerable: true\n\t\t\t\t\t}\n\t\t\t\t)\n\t\t\t")
+      );
+    },
+
+    scopedEval(uuid) {
+      let ret =
+      /*javascript*/
+      "function scopedEval(".concat(uuid, "){\n\t\t\t\t\tif(typeof ").concat(uuid, " == 'string'){\n\t\t\t\t\t\t").concat(uuid, " = {\n\t\t\t\t\t\t\tval: {\n\t\t\t\t\t\t\t\t$js: ").concat(uuid, "\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t} else if(typeof ").concat(uuid, " == 'function' && typeof ").concat(uuid, ".toString == 'function'){\n\t\t\t\t\t\t").concat(uuid, " = {\n\t\t\t\t\t\t\tval: {\n\t\t\t\t\t\t\t\t$js: ").concat(uuid, ".toString()\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\ttry {\n\t\t\t\t\t\t").concat(uuid, ".ret = eval('('+").concat(uuid, ".val.$js+')')\n\t\t\t\t\t} catch(err1){\n\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\t").concat(uuid, ".ret = eval('({'+").concat(uuid, ".val.$js+'})')\n\t\t\t\t\t\t\t").concat(uuid, ".keys = Object.keys(").concat(uuid, ".ret)\n\t\t\t\t\t\t\t").concat(uuid, ".ret = ").concat(uuid, ".ret[").concat(uuid, ".keys[0]]\n\t\t\t\t\t\t} catch(err2){\n\t\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\t\t").concat(uuid, ".ret = eval('({b:'+ ").concat(uuid, ".val.$js +'})').b\n\t\t\t\t\t\t\t} catch(err3){\n\t\t\t\t\t\t\t\tconsole.error(err1)\n\t\t\t\t\t\t\t\tconsole.error(err2)\n\t\t\t\t\t\t\t\tconsole.error(err3)\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\treturn ").concat(uuid, ".ret\n\t\t\t\t}\n\t\t\t");
+      return ret;
     },
 
     jsUUID(prefix = 'uuid') {
