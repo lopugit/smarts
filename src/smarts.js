@@ -977,7 +977,6 @@ module.exports = ({
 			
 			// base case non-valueect value
 			if(smarts.basic(value1) || smarts.basic(value2)){
-				value1 = value2
 				return value1
 			}
 			
