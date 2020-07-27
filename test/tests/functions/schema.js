@@ -43,13 +43,14 @@ describe("Function smarts.schema Parsing tests", ()=>{
 		let schema = {
 			property: [1]
 		}
+
 		let object = {
 			property: [2]
 		}
 
 		smarts.schema(object, schema)
 		
-		expect(object.property.indexOf(1) == 0).to.equal(false)
+		expect(object.property.indexOf(1)).to.equal(-1)
 	})
 	test("schema should not merge arrays, especially with functions in them", ()=>{
 
@@ -62,7 +63,7 @@ describe("Function smarts.schema Parsing tests", ()=>{
 
 		smarts.schema(object, schema)
 		
-		expect(object.property.indexOf(1) == 0).to.equal(false)
+		expect(object.property.indexOf(1)).to.equal(-1)
 	})
 	test("schema should add new scoped functions", ()=>{
 
