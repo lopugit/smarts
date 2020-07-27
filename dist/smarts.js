@@ -4,8 +4,6 @@ babel.generator = require('@babel/generator').default;
 
 let uuid = require('uuid/v4');
 
-let defaultIsMergeableObject = require('is-mergeable-object');
-
 module.exports = ({
   objList,
   stringList,
@@ -752,73 +750,107 @@ module.exports = ({
       return smarts.parse(smarts.stringify(obj));
     },
 
+    clone(obj, opts = {}) {
+      return smarts.dupe(obj, opts);
+    },
+
     schema(obj1, obj2, opts = {}) {
       if (!opts.noSchemaClone) {
-        obj2 = smarts.dupe(obj2, opts);
+        obj2 = smarts.clone(obj2, opts);
       }
 
-      return smarts.create(obj1, obj2, {
-        clone: false,
-        ...opts
+      return smarts.merge(obj1, obj2, { ...opts
       });
     },
 
     create(obj1, obj2, opts) {
-      /**
-      	Object.assign just puts the properties of the object returned by merge() 
-      	back into obj1 because merge() is not in-place
-      	we use merge(obj2, obj1) so that obj1 properties are preferenced
-       */
-      return Object.assign(obj1, smarts.deepmerge(obj2, obj1, {
-        arrayMerge: function (store, saved) {
-          return saved;
-        },
-        clone: true,
-        // this clones properties and values // the return is always a cloned root object
-        ...opts
-      }));
-    },
-
-    merge(obj1, obj2, opts) {
-      if (obj1 instanceof Array && typeof obj2 instanceof Array) {
-        return smarts.arrayMerge(obj1, obj2, opts);
-      }
-
-      if (typeof obj1 !== 'object') {
-        obj1 = {};
-      }
-
-      if (typeof obj2 !== 'object') {
-        obj2 = {};
-      }
-
-      let newProps = smarts.deepmerge(obj1, obj2, {
-        arrayMerge: function (store, saved) {
-          return saved;
-        },
+      let ret = smarts.merge(obj1, obj2, {
         clone: true,
         ...opts
       });
-      Object.keys(newProps).forEach(key => {
-        if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj1) {
-          this.$set(obj1, key, newProps[key]);
+      return ret;
+    },
+
+    merge(value1, value2, opts = {}, seen = new Map()) {
+      if (seen.has(value1)) return seen.get(value1);
+
+      if (value1 instanceof Array && value2 instanceof Array) {
+        return value1;
+      }
+
+      if (opts.clone) {
+        value1 = smarts.clone(value1);
+        value2 = smarts.clone(value2);
+      } // base case non-valueect value
+
+
+      if (smarts.basic(value1) || smarts.basic(value2)) {
+        value1 = value2;
+        return value1;
+      }
+
+      let props = Object.keys(value2);
+      props.forEach(prop => {
+        let propertyValue1 = value1[prop];
+
+        if (prop in value1 && smarts.basic(propertyValue1) && !opts.overwrite) {
+          return;
+        }
+
+        let propertyValue2 = value2[prop];
+        seen.set(value1, value1);
+
+        if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && value1) {
+          let newVal = smarts.merge.bind(this)(propertyValue1, propertyValue2, { ...opts,
+            ...{
+              clone: false
+            }
+          }, seen);
+          this.$set(value1, prop, newVal);
 
           if (typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('graph/thing');
           }
         } else {
-          obj1[key] = newProps[key];
+          let newVal = smarts.merge.bind(this)(propertyValue1, propertyValue2, { ...opts,
+            ...{
+              clone: false
+            }
+          }, seen);
+          value1[prop] = newVal;
 
           if (smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('graph/thing');
           }
         }
       });
-      return obj1;
+      return value1; // let newProps = smarts.merge(obj1, obj2, {
+      // 	arrayMerge: function (store, saved) { return saved },
+      // 	clone: true,
+      // 	...opts
+      // })
+      // Object.keys(newProps).forEach(key=>{
+      // 	if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj1) {
+      // 		this.$set(obj1, key, newProps[key])
+      // 		if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
+      // 			window.$store.commit('graph/thing')
+      // 		}
+      // 	} else {
+      // 		obj1[key] = newProps[key]
+      // 		if(smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
+      // 			window.$store.commit('graph/thing')
+      // 		}
+      // 	}
+      // })
+    },
+
+    basic(value) {
+      let ret = !(typeof value == 'object' || typeof value == 'array') || value === null;
+      return ret;
     },
 
     mergeArray(obj1, obj2, opts) {
-      return smarts.deepmerge(obj1, obj2, {
+      return smarts.merge(obj1, obj2, {
         arrayMerge: function (store, saved) {
           return saved;
         },
@@ -2113,146 +2145,13 @@ module.exports = ({
       }
     },
 
-    emptyTarget(val) {
-      return Array.isArray(val) ? [] : {};
-    },
-
-    cloneUnlessOtherwiseSpecified(value, options, known) {
-      return options.clone !== false && options.isMergeableObject(value) ? smarts.parse(smarts.stringify(value)) : value;
-    },
-
-    defaultArrayMerge(target, source, options, known) {
-      if (known.has(source)) return target;
-      known.add(source);
-      target.concat(source).map(function (element) {
-        return smarts.cloneUnlessOtherwiseSpecified(element, options);
-      });
-    },
-
-    getMergeFunction(key, options) {
-      if (!options.customMerge) {
-        return smarts.deepmerge;
-      }
-
-      var customMerge = options.customMerge(key);
-      return typeof customMerge === 'function' ? customMerge : smarts.deepmerge;
-    },
-
-    getEnumerableOwnPropertySymbols(target) {
-      return Object.getOwnPropertySymbols ? Object.getOwnPropertySymbols(target).filter(function (symbol) {
-        return target.propertyIsEnumerable(symbol);
-      }) : [];
-    },
-
-    getKeys(target) {
-      return Object.keys(target).concat(smarts.getEnumerableOwnPropertySymbols(target));
-    },
-
-    propertyIsOnObject(object, property) {
-      try {
-        return property in object;
-      } catch (_) {
-        return false;
-      }
-    },
-
-    // Protects from prototype poisoning and unexpected merging up the prototype chain.
-    propertyIsUnsafe(target, key) {
-      return smarts.propertyIsOnObject(target, key) // Properties are safe to merge if they don't exist in the target yet,
-      && !(Object.hasOwnProperty.call(target, key) // unsafe if they exist up the prototype chain,
-      && Object.propertyIsEnumerable.call(target, key)); // and also unsafe if they're nonenumerable.
-    },
-
-    mergeObject(target, source, options, known) {
-      var destination = {};
-
-      if (options.isMergeableObject(target)) {
-        smarts.getKeys(target).forEach(function (key) {
-          if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
-            this.$set(destination, key, smarts.cloneUnlessOtherwiseSpecified(target[key], options));
-
-            if (typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
-              window.$store.commit('graph/thing');
-            }
-          } else {
-            destination[key] = smarts.cloneUnlessOtherwiseSpecified(target[key], options);
-
-            if (smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
-              window.$store.commit('graph/thing');
-            }
-          }
-        });
-      }
-
-      if (!known.has(source)) {
-        known.add(source);
-        smarts.getKeys(source).forEach(function (key) {
-          if (smarts.propertyIsUnsafe(target, key)) {
-            return;
-          }
-
-          if (smarts.propertyIsOnObject(target, key) && options.isMergeableObject(source[key])) {
-            if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
-              this.$set(destination, key, smarts.getMergeFunction(key, options)(target[key], source[key], options, known));
-
-              if (typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
-                window.$store.commit('graph/thing');
-              }
-            } else {
-              destination[key] = smarts.getMergeFunction(key, options)(target[key], source[key], options, known);
-
-              if (smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
-                window.$store.commit('graph/thing');
-              }
-            }
-          } else {
-            if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
-              this.$set(destination, key, smarts.cloneUnlessOtherwiseSpecified(source[key], options));
-
-              if (typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
-                window.$store.commit('graph/thing');
-              }
-            } else {
-              destination[key] = smarts.cloneUnlessOtherwiseSpecified(source[key], options);
-
-              if (smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
-                window.$store.commit('graph/thing');
-              }
-            }
-          }
-        });
-      }
-
-      return destination;
-    },
-
-    deepmerge(target, source, options, known = new Set()) {
-      options = options || {};
-      options.arrayMerge = options.arrayMerge || smarts.defaultArrayMerge;
-      options.isMergeableObject = options.isMergeableObject || defaultIsMergeableObject; // smarts.cloneUnlessOtherwiseSpecified is added to `options` so that custom arrayMerge()
-      // implementations can use it. The caller may not replace it.
-
-      options.cloneUnlessOtherwiseSpecified = smarts.cloneUnlessOtherwiseSpecified;
-      var sourceIsArray = Array.isArray(source);
-      var targetIsArray = Array.isArray(target);
-      var sourceAndTargetTypesMatch = sourceIsArray === targetIsArray;
-
-      if (!sourceAndTargetTypesMatch) {
-        return smarts.cloneUnlessOtherwiseSpecified(source, options, known);
-      } else if (sourceIsArray) {
-        return options.arrayMerge(target, source, options, known);
-      } else {
-        return smarts.mergeObject(target, source, options, known);
-      }
-    },
-
-    deepmergeAll(array, options) {
+    mergeall(array, options) {
       if (!Array.isArray(array)) {
         throw new Error('first argument should be an array');
       }
 
       return array.reduce(function (prev, next) {
-        return smarts.deepmerge(prev, next, options);
+        return smarts.merge(prev, next, options);
       }, {});
     }
 
