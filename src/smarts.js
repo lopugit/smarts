@@ -1,7 +1,6 @@
 let babel = require('@babel/core')
 babel.generator = require('@babel/generator').default
 let uuid = require('uuid/v4')
-let defaultIsMergeableObject = require('is-mergeable-object')
 
 module.exports = ({
 	objList,
