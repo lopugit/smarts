@@ -78,6 +78,29 @@ describe("Function smarts.merge tests", ()=>{
 		expect(err).to.equal(false)
 		
 	})
+	test("obj2 basic values should not merge with obj1 object value", ()=>{
+
+		let obj1 = {
+			foo: {}
+		}
+
+		let obj2 = {
+			foo: 'bar2'
+		}
+
+		let err = false
+
+		try {
+			smarts.merge(obj1, obj2)
+		} catch(e){
+			console.error(e)
+			err = e
+		}
+		
+		expect(obj1.foo).to.not.equal('bar2')
+		expect(err).to.equal(false)
+		
+	})
 	test("obj1 objects should only have obj2 properties added, not overwritten in any case", ()=>{
 
 		let obj1 = {
