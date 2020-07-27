@@ -1555,7 +1555,8 @@ module.exports = ({
 
             return {
               value: defaultValue,
-              undefined: undef
+              undefined: undef,
+              schema: schema && obj.constructor.name === schema
             };
           } else {
             return defaultValue;
@@ -1882,7 +1883,7 @@ module.exports = ({
       // stands for get or set smart
       var get = smarts.getsmart.bind(this)(obj, property, value, true, schema ? smarts.absoluteType.bind(this)(value) : false);
 
-      if (get.undefined) {
+      if (get.undefined || schema && get.schema === false) {
         get = smarts.setsmart.bind(this)(obj, property, get.value, context);
       } // return value from property path, either gotten or smartly set
 
@@ -1903,10 +1904,10 @@ module.exports = ({
       let type;
 
       try {
-        type = this.value.constructor.name;
+        type = value.constructor.name;
       } catch (e) {
-        if (typeof this.value === 'undefined') type = 'undefined';
-        if (this.value === null) type = 'null';
+        if (typeof value === 'undefined') type = 'undefined';
+        if (value === null) type = 'null';
       }
 
       return type;

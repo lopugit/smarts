@@ -1,5 +1,5 @@
-let uuidc68bf1bd709c4c08acae3d8f5b73e60b = {
-  $$uuid: 'uuidc68bf1bd709c4c08acae3d8f5b73e60b',
+let uuid8efc72ad548844ff857f7bd778c9825f = {
+  $$uuid: 'uuid8efc72ad548844ff857f7bd778c9825f',
   $closure: {},
   $variableMap: {},
   $functionScoper: func => {
@@ -10,17 +10,17 @@ let uuidc68bf1bd709c4c08acae3d8f5b73e60b = {
         }
 
         return arr2;
-      }(typeof uuidc68bf1bd709c4c08acae3d8f5b73e60b != 'undefined' ? uuidc68bf1bd709c4c08acae3d8f5b73e60b.$scopes : []),
+      }(typeof uuid8efc72ad548844ff857f7bd778c9825f != 'undefined' ? uuid8efc72ad548844ff857f7bd778c9825f.$scopes : []),
       enumerable: true
     });
     Object.defineProperty(func, '$context', {
-      value: uuidc68bf1bd709c4c08acae3d8f5b73e60b
+      value: uuid8efc72ad548844ff857f7bd778c9825f
     });
     return func;
   },
   $add: (type, name, value) => {
-    uuidc68bf1bd709c4c08acae3d8f5b73e60b.$closure[name] = value;
-    uuidc68bf1bd709c4c08acae3d8f5b73e60b.$variableMap[name] = type;
+    uuid8efc72ad548844ff857f7bd778c9825f.$closure[name] = value;
+    uuid8efc72ad548844ff857f7bd778c9825f.$variableMap[name] = type;
   },
   $scopes: function (arr) {
     for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
@@ -40,52 +40,52 @@ let uuidc68bf1bd709c4c08acae3d8f5b73e60b = {
   $contextsList: [],
   $parentContexts: [],
   $contextStatus: "var",
-  $mode: (eval("var uuidc68bf1bd709c4c08acae3d8f5b73e60b1 = null"), typeof uuidc68bf1bd709c4c08acae3d8f5b73e60b1 === "undefined") ? "strict" : "non-strict"
+  $mode: (eval("var uuid8efc72ad548844ff857f7bd778c9825f1 = null"), typeof uuid8efc72ad548844ff857f7bd778c9825f1 === "undefined") ? "strict" : "non-strict"
 };
-Object.defineProperty(uuidc68bf1bd709c4c08acae3d8f5b73e60b.$closure, ["uuidc68bf1bd709c4c08acae3d8f5b73e60b"], {
+Object.defineProperty(uuid8efc72ad548844ff857f7bd778c9825f.$closure, ["uuid8efc72ad548844ff857f7bd778c9825f"], {
   get: function get() {
-    return uuidc68bf1bd709c4c08acae3d8f5b73e60b;
+    return uuid8efc72ad548844ff857f7bd778c9825f;
   },
   set: function set(val) {
-    uuidc68bf1bd709c4c08acae3d8f5b73e60b = val;
+    uuid8efc72ad548844ff857f7bd778c9825f = val;
   },
   enumerable: true
-}) && (uuidc68bf1bd709c4c08acae3d8f5b73e60b.$variableMap["uuidc68bf1bd709c4c08acae3d8f5b73e60b"] = "let");
-uuidc68bf1bd709c4c08acae3d8f5b73e60b.$functionScoper = uuidc68bf1bd709c4c08acae3d8f5b73e60b.$functionScoper(uuidc68bf1bd709c4c08acae3d8f5b73e60b.$functionScoper);
-uuidc68bf1bd709c4c08acae3d8f5b73e60b.$scopes.splice(0, 0, uuidc68bf1bd709c4c08acae3d8f5b73e60b.$closure);
-uuidc68bf1bd709c4c08acae3d8f5b73e60b.$variableMaps.splice(0, 0, uuidc68bf1bd709c4c08acae3d8f5b73e60b.$variableMap);
+}) && (uuid8efc72ad548844ff857f7bd778c9825f.$variableMap["uuid8efc72ad548844ff857f7bd778c9825f"] = "let");
+uuid8efc72ad548844ff857f7bd778c9825f.$functionScoper = uuid8efc72ad548844ff857f7bd778c9825f.$functionScoper(uuid8efc72ad548844ff857f7bd778c9825f.$functionScoper);
+uuid8efc72ad548844ff857f7bd778c9825f.$scopes.splice(0, 0, uuid8efc72ad548844ff857f7bd778c9825f.$closure);
+uuid8efc72ad548844ff857f7bd778c9825f.$variableMaps.splice(0, 0, uuid8efc72ad548844ff857f7bd778c9825f.$variableMap);
 var globalThis = globalThis || global || window || {};
-uuidc68bf1bd709c4c08acae3d8f5b73e60b.$contextStatus = uuidc68bf1bd709c4c08acae3d8f5b73e60b.$mode == 'strict' ? '' : 'var';
+uuid8efc72ad548844ff857f7bd778c9825f.$contextStatus = uuid8efc72ad548844ff857f7bd778c9825f.$mode == 'strict' ? '' : 'var';
 
 try {
-  eval("".concat(uuidc68bf1bd709c4c08acae3d8f5b73e60b.$contextStatus, " $context = $context || uuidc68bf1bd709c4c08acae3d8f5b73e60b"));
+  eval("".concat(uuid8efc72ad548844ff857f7bd778c9825f.$contextStatus, " $context = $context || uuid8efc72ad548844ff857f7bd778c9825f"));
 } catch (err) {
-  uuidc68bf1bd709c4c08acae3d8f5b73e60b.$contextStatus = '';
+  uuid8efc72ad548844ff857f7bd778c9825f.$contextStatus = '';
 }
 
-eval("".concat(uuidc68bf1bd709c4c08acae3d8f5b73e60b.$contextStatus, " $context = $context || uuidc68bf1bd709c4c08acae3d8f5b73e60b"));
+eval("".concat(uuid8efc72ad548844ff857f7bd778c9825f.$contextStatus, " $context = $context || uuid8efc72ad548844ff857f7bd778c9825f"));
 
-if (typeof $context == 'object' && $context != uuidc68bf1bd709c4c08acae3d8f5b73e60b && $context.$contexts instanceof Object) {
-  $context.$contexts[uuidc68bf1bd709c4c08acae3d8f5b73e60b.$$uuid] = $context.$contexts[uuidc68bf1bd709c4c08acae3d8f5b73e60b.$$uuid] || [];
-  uuidc68bf1bd709c4c08acae3d8f5b73e60b.$$instance = $context.$contexts[uuidc68bf1bd709c4c08acae3d8f5b73e60b.$$uuid].push(uuidc68bf1bd709c4c08acae3d8f5b73e60b) - 1;
-  uuidc68bf1bd709c4c08acae3d8f5b73e60b.$parentContexts.push($context);
-  $context.$contextsList.push(uuidc68bf1bd709c4c08acae3d8f5b73e60b);
+if (typeof $context == 'object' && $context != uuid8efc72ad548844ff857f7bd778c9825f && $context.$contexts instanceof Object) {
+  $context.$contexts[uuid8efc72ad548844ff857f7bd778c9825f.$$uuid] = $context.$contexts[uuid8efc72ad548844ff857f7bd778c9825f.$$uuid] || [];
+  uuid8efc72ad548844ff857f7bd778c9825f.$$instance = $context.$contexts[uuid8efc72ad548844ff857f7bd778c9825f.$$uuid].push(uuid8efc72ad548844ff857f7bd778c9825f) - 1;
+  uuid8efc72ad548844ff857f7bd778c9825f.$parentContexts.push($context);
+  $context.$contextsList.push(uuid8efc72ad548844ff857f7bd778c9825f);
 }
 
 if (!globalThis.$contexts) {
   globalThis.$contexts = {};
-  globalThis.$contexts[uuidc68bf1bd709c4c08acae3d8f5b73e60b.$$uuid] = [uuidc68bf1bd709c4c08acae3d8f5b73e60b];
-  globalThis.$contextsList = [uuidc68bf1bd709c4c08acae3d8f5b73e60b];
-  uuidc68bf1bd709c4c08acae3d8f5b73e60b.$$instance = 0;
-} else if (globalThis.uuidc68bf1bd709c4c08acae3d8f5b73e60bs instanceof Object && uuidc68bf1bd709c4c08acae3d8f5b73e60b.$parentContexts.length == 0 && typeof uuidc68bf1bd709c4c08acae3d8f5b73e60b.$$instance == 'undefined') {
-  globalThis.uuidc68bf1bd709c4c08acae3d8f5b73e60bs[uuidc68bf1bd709c4c08acae3d8f5b73e60b.$$uuid] = globalThis.$contexts[uuidc68bf1bd709c4c08acae3d8f5b73e60b.$$uuid] || [];
-  uuidc68bf1bd709c4c08acae3d8f5b73e60b.$$instance = globalThis.$contexts[uuidc68bf1bd709c4c08acae3d8f5b73e60b.$$uuid].push(uuidc68bf1bd709c4c08acae3d8f5b73e60b) - 1;
-  globalThis.$contextsList.push(uuidc68bf1bd709c4c08acae3d8f5b73e60b);
+  globalThis.$contexts[uuid8efc72ad548844ff857f7bd778c9825f.$$uuid] = [uuid8efc72ad548844ff857f7bd778c9825f];
+  globalThis.$contextsList = [uuid8efc72ad548844ff857f7bd778c9825f];
+  uuid8efc72ad548844ff857f7bd778c9825f.$$instance = 0;
+} else if (globalThis.uuid8efc72ad548844ff857f7bd778c9825fs instanceof Object && uuid8efc72ad548844ff857f7bd778c9825f.$parentContexts.length == 0 && typeof uuid8efc72ad548844ff857f7bd778c9825f.$$instance == 'undefined') {
+  globalThis.uuid8efc72ad548844ff857f7bd778c9825fs[uuid8efc72ad548844ff857f7bd778c9825f.$$uuid] = globalThis.$contexts[uuid8efc72ad548844ff857f7bd778c9825f.$$uuid] || [];
+  uuid8efc72ad548844ff857f7bd778c9825f.$$instance = globalThis.$contexts[uuid8efc72ad548844ff857f7bd778c9825f.$$uuid].push(uuid8efc72ad548844ff857f7bd778c9825f) - 1;
+  globalThis.$contextsList.push(uuid8efc72ad548844ff857f7bd778c9825f);
 }
 
 {
-  let $context = uuidc68bf1bd709c4c08acae3d8f5b73e60b;
-  Object.defineProperty(uuidc68bf1bd709c4c08acae3d8f5b73e60b.$closure, ["$context"], {
+  let $context = uuid8efc72ad548844ff857f7bd778c9825f;
+  Object.defineProperty(uuid8efc72ad548844ff857f7bd778c9825f.$closure, ["$context"], {
     get: function get() {
       return $context;
     },
@@ -93,11 +93,11 @@ if (!globalThis.$contexts) {
       $context = val;
     },
     enumerable: true
-  }) && (uuidc68bf1bd709c4c08acae3d8f5b73e60b.$variableMap["$context"] = "let");
+  }) && (uuid8efc72ad548844ff857f7bd778c9825f.$variableMap["$context"] = "let");
 
   let bar = require('../resources/required module.js');
 
-  Object.defineProperty(uuidc68bf1bd709c4c08acae3d8f5b73e60b.$closure, ["bar"], {
+  Object.defineProperty(uuid8efc72ad548844ff857f7bd778c9825f.$closure, ["bar"], {
     get: function get() {
       return bar;
     },
@@ -105,5 +105,5 @@ if (!globalThis.$contexts) {
       bar = val;
     },
     enumerable: true
-  }) && (uuidc68bf1bd709c4c08acae3d8f5b73e60b.$variableMap["bar"] = "let");
+  }) && (uuid8efc72ad548844ff857f7bd778c9825f.$variableMap["bar"] = "let");
 }
