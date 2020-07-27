@@ -776,17 +776,20 @@ module.exports = ({
 
       if (value1 instanceof Array && value2 instanceof Array) {
         return value1;
+      } // base case non-basic value
+
+
+      if (smarts.basic(value1) && !opts.overwrite) {
+        return value1;
+      }
+
+      if (opts.overwrite && smarts.basic(value2)) {
+        return value2;
       }
 
       if (opts.clone) {
         value1 = smarts.clone(value1);
         value2 = smarts.clone(value2);
-      } // base case non-valueect value
-
-
-      if (smarts.basic(value1) || smarts.basic(value2)) {
-        value1 = value2;
-        return value1;
       }
 
       let props = Object.keys(value2);
@@ -799,24 +802,23 @@ module.exports = ({
 
         let propertyValue2 = value2[prop];
         seen.set(value1, value1);
+        let newVal = propertyValue2;
 
-        if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && value1) {
-          let newVal = smarts.merge.bind(this)(propertyValue1, propertyValue2, { ...opts,
+        if (prop in value1) {
+          newVal = smarts.merge.bind(this)(propertyValue1, propertyValue2, { ...opts,
             ...{
               clone: false
             }
           }, seen);
+        }
+
+        if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && value1) {
           this.$set(value1, prop, newVal);
 
           if (typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
             window.$store.commit('graph/thing');
           }
         } else {
-          let newVal = smarts.merge.bind(this)(propertyValue1, propertyValue2, { ...opts,
-            ...{
-              clone: false
-            }
-          }, seen);
           value1[prop] = newVal;
 
           if (smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
@@ -824,39 +826,13 @@ module.exports = ({
           }
         }
       });
-      return value1; // let newProps = smarts.merge(obj1, obj2, {
-      // 	arrayMerge: function (store, saved) { return saved },
-      // 	clone: true,
-      // 	...opts
-      // })
-      // Object.keys(newProps).forEach(key=>{
-      // 	if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj1) {
-      // 		this.$set(obj1, key, newProps[key])
-      // 		if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
-      // 			window.$store.commit('graph/thing')
-      // 		}
-      // 	} else {
-      // 		obj1[key] = newProps[key]
-      // 		if(smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
-      // 			window.$store.commit('graph/thing')
-      // 		}
-      // 	}
-      // })
+      return value1;
     },
 
     basic(value) {
-      let ret = !(typeof value == 'object' || typeof value == 'array') || value === null;
+      let valueType = typeof value;
+      let ret = !(valueType == 'object' || valueType == 'array' || valueType == 'function') || value === null;
       return ret;
-    },
-
-    mergeArray(obj1, obj2, opts) {
-      return smarts.merge(obj1, obj2, {
-        arrayMerge: function (store, saved) {
-          return saved;
-        },
-        clone: true,
-        ...opts
-      });
     },
 
     mod(args, mod) {
