@@ -787,6 +787,10 @@ module.exports = ({
         return value2;
       }
 
+      if (!smarts.basic(value1) && smarts.basic(value2)) {
+        return value1;
+      }
+
       if (opts.clone) {
         value1 = smarts.clone(value1);
         value2 = smarts.clone(value2);
