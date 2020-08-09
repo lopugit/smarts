@@ -29,7 +29,6 @@
   "homepage": "https://github.com/lopugit/smarts#readme",
   "devDependencies": {
     "@babel/cli": "^7.1.2",
-    "@babel/core": "^7.8.4",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-es2015": "^7.0.0-beta.53",
     "chai": "^4.2.0",
@@ -38,6 +37,7 @@
     "mocha-logger": "^1.0.6"
   },
   "dependencies": {
+    "@babel/core": "^7.8.4",
     "@babel/generator": "^7.8.4",
     "@babel/polyfill": "^7.4.4",
     "core-js": "^3.6.4",
