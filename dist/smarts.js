@@ -1738,7 +1738,6 @@ module.exports = ({
         try {
           obj = eval(property[0]);
         } catch (err) {
-          // console.error(err)
           obj = property[0];
         }
 
@@ -1868,7 +1867,12 @@ module.exports = ({
       let parentPathArray = property.slice(0, property.length - 1);
       let path = property[property.length - 1];
       let parentObj = smarts.getsmart(obj, parentPathArray, {});
-      delete parentObj[path];
+
+      if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
+        this.$delete(parentObj, path);
+      } else {
+        delete parentObj[path];
+      }
 
       if (typeof window !== 'undefined') {
         if (typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function') {
