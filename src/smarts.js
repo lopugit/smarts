@@ -74,7 +74,7 @@ module.exports = ({
 			}
 			return '[' + opts.output.join(',') + ']'
 		},
-		replace(key, value){
+		replacer(key, value){
 			if (opts.firstRun) {
 				opts.firstRun = !opts.firstRun
 				return value
