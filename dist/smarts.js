@@ -35,7 +35,6 @@ module.exports = ({
       let schema = {
         stringifier: smarts.stringifier,
 
-        // replace: eval('(function '+smarts.replace.toString().replace()+')'),
         replace(key, value) {
           if (opts.firstRun) {
             opts.firstRun = !opts.firstRun;
@@ -90,7 +89,7 @@ module.exports = ({
       return '[' + opts.output.join(',') + ']';
     },
 
-    replace(key, value) {
+    replacer(key, value) {
       if (opts.firstRun) {
         opts.firstRun = !opts.firstRun;
         return value;
@@ -2072,6 +2071,17 @@ module.exports = ({
 
     domval(thing) {
       return smarts.getsmart.bind(this)(thing, 'properties.description', '');
+    },
+
+    getParent(levels = Infinity) {
+      if (typeof levels == 'string') levels = (levels.match(/\.\./g) || []).length;
+
+      if (levels >= this.pathAsArray.length - 1) {
+        return this.pathAsArray[0];
+      }
+
+      let level = this.pathAsArray.length - 1 - levels;
+      return this.pathAsArray[level];
     },
 
     getThing({
