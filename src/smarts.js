@@ -1027,9 +1027,11 @@ module.exports = ({
 		// transform(value, fn, path, ret={}){
 		// 	return smarts.forEach(value, fn, path, ret)
 		// },
-		deepForEach(value, fn, path, ret={}, seens={originals:[],clones:[]}) {
+		deepForEach(value, fn, path, ret={}, seens={originals:[],clones:[]}, first = true) {
 			path = path || ''
-			value = { '': value }
+			if (first) {
+				value = { '': value }
+			}
 			// if(!(typeof value == 'string' || typeof value == 'boolean' || typeof value == 'number')){
 			// 	seens.originals.push(value)
 			// }
@@ -1051,13 +1053,13 @@ module.exports = ({
 					// Note that we always use obj[key] because it might be mutated by forEach
 					fn(obj[key], key, obj, deepPath, ret, seens)
 					
-					smarts.deepForEach(obj[key], fn, deepPath, ret, seens)
+					smarts.deepForEach(obj[key], fn, deepPath, ret, seens, false)
 				}
 			}
 		},
 		forEachArray(array, fn, path, ret={}, seens) {
 			array.forEach((value, index, arr) => {
-				let primitive = typeof obj[key] == 'string' || typeof obj[key] == 'boolean' || typeof obj[key] == 'number'
+				let primitive = typeof value == 'string' || typeof value == 'boolean' || typeof value == 'number'
 				if(primitive || seens.originals.indexOf(value) < 0){
 					if(!primitive){
 						seens.originals.push(value)
@@ -1067,7 +1069,7 @@ module.exports = ({
 					fn(value, index, arr, deepPath, ret, seens)
 
 					// Note that we use arr[index] because it might be mutated by forEach
-					smarts.deepForEach(arr[index], fn, deepPath, ret, seens)
+					smarts.deepForEach(arr[index], fn, deepPath, ret, seens, false)
 				}
 			})
 		},

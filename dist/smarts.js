@@ -2074,6 +2074,17 @@ module.exports = ({
       return smarts.getsmart.bind(this)(thing, 'properties.description', '');
     },
 
+    getParent(levels = Infinity) {
+      if (typeof levels == 'string') levels = (levels.match(/\.\./g) || []).length;
+
+      if (levels >= this.pathAsArray.length - 1) {
+        return this.pathAsArray[0];
+      }
+
+      let level = this.pathAsArray.length - 1 - levels;
+      return this.pathAsArray[level];
+    },
+
     getThing({
       option,
       list = smarts.getsmart.bind(this)(objList),
