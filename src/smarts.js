@@ -27,7 +27,6 @@ module.exports = ({
 		stringify(value, opts={}) {
 			let schema = {
 				stringifier: smarts.stringifier,
-				// replace: eval('(function '+smarts.replace.toString().replace()+')'),
 				replace(key, value){
 					if (opts.firstRun) {
 						opts.firstRun = !opts.firstRun
@@ -74,7 +73,7 @@ module.exports = ({
 			}
 			return '[' + opts.output.join(',') + ']'
 		},
-		replace(key, value){
+		replacer(key, value){
 			if (opts.firstRun) {
 				opts.firstRun = !opts.firstRun
 				return value

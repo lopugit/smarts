@@ -35,7 +35,6 @@ module.exports = ({
       let schema = {
         stringifier: smarts.stringifier,
 
-        // replace: eval('(function '+smarts.replace.toString().replace()+')'),
         replace(key, value) {
           if (opts.firstRun) {
             opts.firstRun = !opts.firstRun;
@@ -90,7 +89,7 @@ module.exports = ({
       return '[' + opts.output.join(',') + ']';
     },
 
-    replace(key, value) {
+    replacer(key, value) {
       if (opts.firstRun) {
         opts.firstRun = !opts.firstRun;
         return value;
@@ -849,13 +848,17 @@ module.exports = ({
     deepForEach(value, fn, path, ret = {}, seens = {
       originals: [],
       clones: []
-    }) {
+    }, first = true) {
       path = path || '';
-      value = {
-        '': value
-      }; // if(!(typeof value == 'string' || typeof value == 'boolean' || typeof value == 'number')){
+
+      if (first) {
+        value = {
+          '': value
+        };
+      } // if(!(typeof value == 'string' || typeof value == 'boolean' || typeof value == 'number')){
       // 	seens.originals.push(value)
       // }
+
 
       if (Array.isArray(value)) {
         smarts.forEachArray(value, fn, path, ret, seens);
@@ -878,14 +881,14 @@ module.exports = ({
 
 
           fn(obj[key], key, obj, deepPath, ret, seens);
-          smarts.deepForEach(obj[key], fn, deepPath, ret, seens);
+          smarts.deepForEach(obj[key], fn, deepPath, ret, seens, false);
         }
       }
     },
 
     forEachArray(array, fn, path, ret = {}, seens) {
       array.forEach((value, index, arr) => {
-        let primitive = typeof obj[key] == 'string' || typeof obj[key] == 'boolean' || typeof obj[key] == 'number';
+        let primitive = typeof value == 'string' || typeof value == 'boolean' || typeof value == 'number';
 
         if (primitive || seens.originals.indexOf(value) < 0) {
           if (!primitive) {
@@ -895,7 +898,7 @@ module.exports = ({
           const deepPath = "".concat(path, ".").concat(index);
           fn(value, index, arr, deepPath, ret, seens); // Note that we use arr[index] because it might be mutated by forEach
 
-          smarts.deepForEach(arr[index], fn, deepPath, ret, seens);
+          smarts.deepForEach(arr[index], fn, deepPath, ret, seens, false);
         }
       });
     },
