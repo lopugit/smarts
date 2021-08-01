@@ -1991,7 +1991,7 @@ module.exports = ({
 				return get
 			} else {
 				// sort of unneccessary to use getsmart but /shrug/
-				return smarts.getsmart.bind(this)(get, 'value', get)
+				return smarts.getsmart.bind(this)(get, 'value')
 			}
 		},
 		gosmarter(obj, property, value, context, schema=true){
