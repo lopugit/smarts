@@ -49,6 +49,7 @@ function runMochaTests() {
 			}
 		})
 		try {
+			console.log("Running mocha")
 			mocha.run(()=>{
 				res()
 			});
@@ -60,7 +61,7 @@ function runMochaTests() {
 		
 }
 (async function(){
-	// await runMochaTests()
+	await runMochaTests()
 	// global.smartsPath = __dirname+'/../snippets/out/parsedSmartsCode.js'
 	// await runMochaTests()
 })()
