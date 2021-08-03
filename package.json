@@ -4,7 +4,7 @@
   "description": "a smart library for doing smart things",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node test/tests/meta-tester.js",
     "build": "babel src -d dist",
     "commit": "git add . ; git commit -m 'Automated commit'",
     "push": "git push",
@@ -27,22 +27,21 @@
     "url": "https://github.com/lopugit/smarts/issues"
   },
   "homepage": "https://github.com/lopugit/smarts#readme",
-  "devDependencies": {
-    "@babel/cli": "^7.1.2",
-    "@babel/preset-env": "^7.1.0",
-    "@babel/preset-es2015": "^7.0.0-beta.53",
-    "chai": "^4.2.0",
-    "deep-for-each": "^3.0.0",
-    "mocha": "6.2.2",
-    "mocha-logger": "1.0.6"
-  },
   "dependencies": {
-    "@babel/core": "^7.8.4",
+    "@babel/core": "^7.14.8",
     "@babel/generator": "^7.8.4",
     "@babel/polyfill": "^7.4.4",
     "core-js": "^3.6.4",
     "deepmerge": "^3.2.0",
     "is-mergeable-object": "^1.1.1",
     "uuid": "^3.4.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "chai": "^4.2.0",
+    "deep-for-each": "^3.0.0",
+    "mocha": "6.2.2",
+    "mocha-logger": "1.0.6"
   }
 }

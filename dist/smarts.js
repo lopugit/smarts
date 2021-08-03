@@ -221,7 +221,7 @@ module.exports = ({
             scopedEval = val.$scopedEval;
           } else {
             var fns = smarts.createScopedEval(uuid);
-            fn = eval("(".concat(fns, ")"));
+            fn = eval(`(${fns})`);
             var input = {
               val,
               smarts
@@ -323,35 +323,178 @@ module.exports = ({
     createScopedEval(uuid) {
       let ret =
       /*javascript*/
-      "\n\t\t\t\tfunction createScopedEval(".concat(uuid, "){\n\t\t\t\t\t\n\t\t\t\t\t// scopeCode\n\t\t\t\t\t").concat(uuid, ".scopeCode = ").concat(uuid, ".scopeCode || ").concat(uuid, ".smarts.getBabel().template.ast('try{}catch(err){console.log(err)}')\n\t\t\t\t\t").concat(uuid, ".previousScopeCode = ").concat(uuid, ".currentScopeCode || ").concat(uuid, ".scopeCode\n\t\t\t\t\t").concat(uuid, ".currentScopeCode = ").concat(uuid, ".scopeCode.block.body.length ? ").concat(uuid, ".smarts.getBabel().template.ast('try{}catch(err){console.log(err)}') : ").concat(uuid, ".scopeCode\n\t\t\t\t\tif(").concat(uuid, ".previousScopeCode != ").concat(uuid, ".currentScopeCode){\n\t\t\t\t\t\t").concat(uuid, ".previousScopeCode.block.body.push(\n\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode\n\t\t\t\t\t\t)\n\t\t\t\t\t}\n\t\t\t\t\t").concat(uuid, ".closureIndex = ").concat(uuid, ".closureIndex || 0\n\t\t\t\t\t").concat(uuid, ".closure = ").concat(uuid, ".smarts.getsmart.bind(this)(").concat(uuid, ", ",
+      `
+				function createScopedEval(${uuid}){
+					
+					// scopeCode
+					${uuid}.scopeCode = ${uuid}.scopeCode || ${uuid}.smarts.getBabel().template.ast('try{}catch(err){console.log(err)}')
+					${uuid}.previousScopeCode = ${uuid}.currentScopeCode || ${uuid}.scopeCode
+					${uuid}.currentScopeCode = ${uuid}.scopeCode.block.body.length ? ${uuid}.smarts.getBabel().template.ast('try{}catch(err){console.log(err)}') : ${uuid}.scopeCode
+					if(${uuid}.previousScopeCode != ${uuid}.currentScopeCode){
+						${uuid}.previousScopeCode.block.body.push(
+							${uuid}.currentScopeCode
+						)
+					}
+					${uuid}.closureIndex = ${uuid}.closureIndex || 0
+					${uuid}.closure = ${uuid}.smarts.getsmart.bind(this)(${uuid}, ${
       /*javascript*/
-      "`val.$scopes.${".concat(uuid, ".closureIndex}`"), ", {})\n\t\t\t\t\t").concat(uuid, ".variableKeys = Object.keys(").concat(uuid, ".closure)\n\t\t\t\t\t").concat(uuid, ".variableMap = ").concat(uuid, ".smarts.getsmart.bind(this)(").concat(uuid, ", ",
+      `\`val.$scopes.\${${uuid}.closureIndex}\``}, {})
+					${uuid}.variableKeys = Object.keys(${uuid}.closure)
+					${uuid}.variableMap = ${uuid}.smarts.getsmart.bind(this)(${uuid}, ${
       /*javascript*/
-      "`val.$context.$variableMaps.${".concat(uuid, ".closureIndex}`"), ", [])\n\t\t\t\t\t").concat(uuid, ".allowedIdentifiers = ['let','var','const']\n\t\t\t\t\t").concat(uuid, ".variableKeys.forEach((key)=>{\n\t\t\t\t\t\tif(\n\t\t\t\t\t\t\ttypeof ").concat(uuid, ".variableMap[key] == 'string' \n\t\t\t\t\t\t\t&& ").concat(uuid, ".allowedIdentifiers.indexOf(").concat(uuid, ".variableMap[key]) >= 0\n\t\t\t\t\t\t){\n\t\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t\t\t",
+      `\`val.$context.$variableMaps.\${${uuid}.closureIndex}\``}, [])
+					${uuid}.allowedIdentifiers = ['let','var','const']
+					${uuid}.variableKeys.forEach((key)=>{
+						if(
+							typeof ${uuid}.variableMap[key] == 'string' 
+							&& ${uuid}.allowedIdentifiers.indexOf(${uuid}.variableMap[key]) >= 0
+						){
+							try{
+								${uuid}.currentScopeCode.block.body.push(
+									${uuid}.smarts.getBabel().template.ast(
+										${
       /*javascript*/
-      "`\n\t\t\t\t\t\t\t\t\t\t\t${".concat(uuid, ".variableMap[key]} ${key} = ").concat(uuid, ".val.$scopes[${").concat(uuid, ".closureIndex}]['${key}']\n\t\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t}catch(err){console.log(1,err)}\n\t\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t\t\t",
+      `\`
+											\${${uuid}.variableMap[key]} \${key} = ${uuid}.val.$scopes[\${${uuid}.closureIndex}]['\${key}']
+										\``}
+									)
+								)
+							}catch(err){console.log(1,err)}
+							try{
+								${uuid}.currentScopeCode.block.body.push(
+									${uuid}.smarts.getBabel().template.ast(
+										${
       /*javascript*/
-      "`\n\t\t\t\t\t\t\t\t\t\t\tObject.defineProperty(\n\t\t\t\t\t\t\t\t\t\t\t\t".concat(uuid, ".val.$scopes[${").concat(uuid, ".closureIndex}],\n\t\t\t\t\t\t\t\t\t\t\t\t${smarts.stringify(key)},\n\t\t\t\t\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\t\t\t\t\tget(){\n\t\t\t\t\t\t\t\t\t\t\t\t\t\treturn ${key}\n\t\t\t\t\t\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t\t\t\t\t\t\tset(val){\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t${key} = val\n\t\t\t\t\t\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t\t\t\t\t\t\tenumerable: true\n\t\t\t\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t}catch(err){console.log(2,err)}\n\t\t\t\t\t\t}\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t})\n\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t").concat(uuid, ".closureIndex++\n\t\t\t\t\tif(").concat(uuid, ".closureIndex >= ").concat(uuid, ".smarts.getsmart.bind(this)(").concat(uuid, ", 'val.$scopes.length', -1)){\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t").concat(uuid, ".currentScopeCode.block.body.push(\n\t\t\t\t\t\t\t\t").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t\t",
+      `\`
+											Object.defineProperty(
+												${uuid}.val.$scopes[\${${uuid}.closureIndex}],
+												\${smarts.stringify(key)},
+												{
+													get(){
+														return \${key}
+													},
+													set(val){
+														\${key} = val
+													},
+													enumerable: true
+												}
+											)
+										\``}
+									)
+								)
+							}catch(err){console.log(2,err)}
+						}
+						// console.log(${uuid}.scopeCode)
+					})
+					// console.log(${uuid}.scopeCode)
+					${uuid}.closureIndex++
+					if(${uuid}.closureIndex >= ${uuid}.smarts.getsmart.bind(this)(${uuid}, 'val.$scopes.length', -1)){
+						// console.log(${uuid}.scopeCode)
+						try{
+							${uuid}.currentScopeCode.block.body.push(
+								${uuid}.smarts.getBabel().template.ast(
+									${
       /*javascript*/
-      "`\n\t\t\t\t\t\t\t\t\t\treturn ${".concat(uuid, ".smarts.scopedEval('").concat(uuid, "')}\n\t\t\t\t\t\t\t\t\t`"), "\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t)\n\t\t\t\t\t\t}catch(err){console.log(3,err)}\n\t\t\t\t\t\ttry{\n\t\t\t\t\t\t\t").concat(uuid, ".wrapper = ").concat(uuid, ".smarts.getBabel().template.ast(\n\t\t\t\t\t\t\t\t",
+      `\`
+										return \${${uuid}.smarts.scopedEval('${uuid}')}
+									\``}
+								)
+							)
+						}catch(err){console.log(3,err)}
+						try{
+							${uuid}.wrapper = ${uuid}.smarts.getBabel().template.ast(
+								${
       /*javascript*/
-      "`\n\t\t\t\t\t\t\t\t\tfunction anonymous(){}\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t`", "\n\t\t\t\t\t\t\t)\n\t\t\t\t\t\t}catch(err){console.log(4,err)}\n\t\t\t\t\t\t// console.log(").concat(uuid, ".wrapper)\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\t").concat(uuid, ".wrapper.body.body.push(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\t").concat(uuid, ".scopeCode = ").concat(uuid, ".wrapper\n\t\t\t\t\t\t").concat(uuid, ".scopeCode = ").concat(uuid, ".smarts.getBabel().generator(\n\t\t\t\t\t\t\t").concat(uuid, ".scopeCode\n\t\t\t\t\t\t).code\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode)\n\t\t\t\t\t\t").concat(uuid, ".scopeCode = eval(\"(\"+").concat(uuid, ".scopeCode+\")\")\n\t\t\t\t\t\t// console.log(").concat(uuid, ".scopeCode.toString())\n\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\t").concat(uuid, ".val.$scopedEval = ").concat(uuid, ".scopeCode()\n\t\t\t\t\t\t}catch(err){console.log(5,err)}\n\t\t\t\t\t\t// console.log(").concat(uuid, ".val.$scopedEval)\n\t\t\t\t\t\t// return ").concat(uuid, ".scopeCode.toString()\n\t\t\t\t\t\treturn ").concat(uuid, ".val.$scopedEval\n\t\t\t\t\t} else {\n\t\t\t\t\t\treturn eval(",
+      `\`
+									function anonymous(){}							
+								\``}
+							)
+						}catch(err){console.log(4,err)}
+						// console.log(${uuid}.wrapper)
+						// console.log(${uuid}.scopeCode)
+						${uuid}.wrapper.body.body.push(${uuid}.scopeCode)
+						${uuid}.scopeCode = ${uuid}.wrapper
+						${uuid}.scopeCode = ${uuid}.smarts.getBabel().generator(
+							${uuid}.scopeCode
+						).code
+						// console.log(${uuid}.scopeCode)
+						${uuid}.scopeCode = eval("("+${uuid}.scopeCode+")")
+						// console.log(${uuid}.scopeCode.toString())
+						try {
+							${uuid}.val.$scopedEval = ${uuid}.scopeCode()
+						}catch(err){console.log(5,err)}
+						// console.log(${uuid}.val.$scopedEval)
+						// return ${uuid}.scopeCode.toString()
+						return ${uuid}.val.$scopedEval
+					} else {
+						return eval(${
       /*javascript*/
-      "`(${".concat(uuid, ".smarts.createScopedEval('").concat(uuid, "')})`"), ")(").concat(uuid, ")\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t");
+      `\`(\${${uuid}.smarts.createScopedEval('${uuid}')})\``})(${uuid})
+					}
+				}
+			`;
       return ret;
     },
 
     defineVariable(uuid) {
       return (
         /*javascript*/
-        "\n\t\t\t\t".concat(uuid.variableType, "\t").concat(uuid.variableKey, " = ").concat(uuid, ".$scope[").concat(uuid, ".variableKey]\n\t\t\t\tObject.defineProperty(\n\t\t\t\t\t").concat(uuid, ".$scope, \n\t\t\t\t\t").concat(uuid, ".variableKey, \n\t\t\t\t\t{\n\t\t\t\t\t\tget(){\n\t\t\t\t\t\t\treturn ").concat(uuid.variableKey, "\n\t\t\t\t\t\t},\n\t\t\t\t\t\tset(val){\n\t\t\t\t\t\t\t").concat(uuid.variableKey, " = val\n\t\t\t\t\t\t},\n\t\t\t\t\t\tenumerable: true\n\t\t\t\t\t}\n\t\t\t\t)\n\t\t\t")
+        `
+				${uuid.variableType}	${uuid.variableKey} = ${uuid}.$scope[${uuid}.variableKey]
+				Object.defineProperty(
+					${uuid}.$scope, 
+					${uuid}.variableKey, 
+					{
+						get(){
+							return ${uuid.variableKey}
+						},
+						set(val){
+							${uuid.variableKey} = val
+						},
+						enumerable: true
+					}
+				)
+			`
       );
     },
 
     scopedEval(uuid) {
       let ret =
       /*javascript*/
-      "function scopedEval(".concat(uuid, "){\n\t\t\t\t\tif(typeof ").concat(uuid, " == 'string'){\n\t\t\t\t\t\t").concat(uuid, " = {\n\t\t\t\t\t\t\tval: {\n\t\t\t\t\t\t\t\t$js: ").concat(uuid, "\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t} else if(typeof ").concat(uuid, " == 'function' && typeof ").concat(uuid, ".toString == 'function'){\n\t\t\t\t\t\t").concat(uuid, " = {\n\t\t\t\t\t\t\tval: {\n\t\t\t\t\t\t\t\t$js: ").concat(uuid, ".toString()\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\ttry {\n\t\t\t\t\t\t").concat(uuid, ".ret = eval('('+").concat(uuid, ".val.$js+')')\n\t\t\t\t\t} catch(err1){\n\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\t").concat(uuid, ".ret = eval('({'+").concat(uuid, ".val.$js+'})')\n\t\t\t\t\t\t\t").concat(uuid, ".keys = Object.keys(").concat(uuid, ".ret)\n\t\t\t\t\t\t\t").concat(uuid, ".ret = ").concat(uuid, ".ret[").concat(uuid, ".keys[0]]\n\t\t\t\t\t\t} catch(err2){\n\t\t\t\t\t\t\ttry {\n\t\t\t\t\t\t\t\t").concat(uuid, ".ret = eval('({b:'+ ").concat(uuid, ".val.$js +'})').b\n\t\t\t\t\t\t\t} catch(err3){\n\t\t\t\t\t\t\t\tconsole.error(err1)\n\t\t\t\t\t\t\t\tconsole.error(err2)\n\t\t\t\t\t\t\t\tconsole.error(err3)\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\treturn ").concat(uuid, ".ret\n\t\t\t\t}\n\t\t\t");
+      `function scopedEval(${uuid}){
+					if(typeof ${uuid} == 'string'){
+						${uuid} = {
+							val: {
+								$js: ${uuid}
+							}
+						}
+					} else if(typeof ${uuid} == 'function' && typeof ${uuid}.toString == 'function'){
+						${uuid} = {
+							val: {
+								$js: ${uuid}.toString()
+							}
+						}
+					}
+					try {
+						${uuid}.ret = eval('('+${uuid}.val.$js+')')
+					} catch(err1){
+						try {
+							${uuid}.ret = eval('({'+${uuid}.val.$js+'})')
+							${uuid}.keys = Object.keys(${uuid}.ret)
+							${uuid}.ret = ${uuid}.ret[${uuid}.keys[0]]
+						} catch(err2){
+							try {
+								${uuid}.ret = eval('({b:'+ ${uuid}.val.$js +'})').b
+							} catch(err3){
+								console.error(err1)
+								console.error(err2)
+								console.error(err3)
+							}
+						}
+					}
+					return ${uuid}.ret
+				}
+			`;
       return ret;
     },
 
@@ -363,17 +506,108 @@ module.exports = ({
       let uuid = smarts.gosmart.bind(this)(opts, 'path.context.scope.uuid', smarts.jsUUID());
       return eval(
       /*javascript*/
-      "\n\t\t\t\t(\n\t\t\t\t\tfunction(){\n\t\t\t\t\t\t".concat(smarts.contextObject(uuid), "\n\t\t\t\t\t\treturn ").concat(uuid, "\n\t\t\t\t\t}\n\t\t\t\t)()\n\t\t\t"));
+      `
+				(
+					function(){
+						${smarts.contextObject(uuid)}
+						return ${uuid}
+					}
+				)()
+			`);
     },
 
     contextObject(uuid) {
       return (
         /*javascript*/
-        "\n\t\t\t\tlet ".concat(uuid, " = {\n\t\t\t\t\t$$uuid: '").concat(uuid, "',\n\t\t\t\t\t$closure: {},\n\t\t\t\t\t$variableMap: {},\n\t\t\t\t\t$functionScoper: (func)=>{\n\t\t\t\t\t\tObject.defineProperty(\n\t\t\t\t\t\t\tfunc,\n\t\t\t\t\t\t\t'$scopes', \n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\tvalue: (function(arr){\n\t\t\t\t\t\t\t\t\tfor (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { \n\t\t\t\t\t\t\t\t\t\tarr2[i] = arr[i]; \n\t\t\t\t\t\t\t\t\t} \n\t\t\t\t\t\t\t\t\treturn arr2\n\t\t\t\t\t\t\t\t})((typeof ").concat(uuid, " != 'undefined') ? ").concat(uuid, ".$scopes : []),\n\t\t\t\t\t\t\t\tenumerable: true\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t)\n\t\t\t\t\t\tObject.defineProperty(\n\t\t\t\t\t\t\tfunc,\n\t\t\t\t\t\t\t'$context',\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\tvalue: ").concat(uuid, "\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t)\n\t\t\t\t\t\treturn func\n\t\t\t\t\t},\n\t\t\t\t\t$add: (type, name, value)=>{\n\t\t\t\t\t\t").concat(uuid, ".$closure[name] = value\n\t\t\t\t\t\t").concat(uuid, ".$variableMap[name] = type\n\t\t\t\t\t},\n\t\t\t\t\t$scopes: (function(arr){\n\t\t\t\t\t\tfor (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { \n\t\t\t\t\t\t\tarr2[i] = arr[i]; \n\t\t\t\t\t\t} \n\t\t\t\t\t\treturn arr2\n\t\t\t\t\t})((typeof $context == 'object') ? $context.$scopes : []),\n\t\t\t\t\t$variableMaps: (function(arr){\n\t\t\t\t\t\tfor (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { \n\t\t\t\t\t\t\tarr2[i] = arr[i]; \n\t\t\t\t\t\t} \n\t\t\t\t\t\treturn arr2\n\t\t\t\t\t})((typeof $context == 'object') ? $context.$variableMaps : []),\n\t\t\t\t\t$contexts: {},\n\t\t\t\t\t$contextsList: [],\n\t\t\t\t\t$parentContexts: [],\n\t\t\t\t\t$contextStatus: \"var\",\n\t\t\t\t\t$mode: (eval(\"var ").concat(uuid, "1 = null\"), (typeof ").concat(uuid + "1", " === \"undefined\")) ? \"strict\" : \"non-strict\",\n\t\t\t\t}\n\t\t\t\t").concat(uuid, ".$functionScoper = ").concat(uuid, ".$functionScoper(").concat(uuid, ".$functionScoper)\n\t\t\t\t").concat(uuid, ".$scopes.splice(0,0,").concat(uuid, ".$closure)\n\t\t\t\t").concat(uuid, ".$variableMaps.splice(0,0,").concat(uuid, ".$variableMap)\n\t\t\t\tvar globalThis = globalThis || global || window || {}\n\t\t\t\t").concat(uuid, ".$contextStatus = ").concat(uuid, ".$mode == 'strict' ? '' : 'var'\n\t\t\t\ttry { \n\t\t\t\t\teval(",
+        `
+				let ${uuid} = {
+					$$uuid: '${uuid}',
+					$closure: {},
+					$variableMap: {},
+					$functionScoper: (func)=>{
+						Object.defineProperty(
+							func,
+							'$scopes', 
+							{
+								value: (function(arr){
+									for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { 
+										arr2[i] = arr[i]; 
+									} 
+									return arr2
+								})((typeof ${uuid} != 'undefined') ? ${uuid}.$scopes : []),
+								enumerable: true
+							}
+						)
+						Object.defineProperty(
+							func,
+							'$context',
+							{
+								value: ${uuid}
+							}
+						)
+						return func
+					},
+					$add: (type, name, value)=>{
+						${uuid}.$closure[name] = value
+						${uuid}.$variableMap[name] = type
+					},
+					$scopes: (function(arr){
+						for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { 
+							arr2[i] = arr[i]; 
+						} 
+						return arr2
+					})((typeof $context == 'object') ? $context.$scopes : []),
+					$variableMaps: (function(arr){
+						for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { 
+							arr2[i] = arr[i]; 
+						} 
+						return arr2
+					})((typeof $context == 'object') ? $context.$variableMaps : []),
+					$contexts: {},
+					$contextsList: [],
+					$parentContexts: [],
+					$contextStatus: "var",
+					$mode: (eval("var ${uuid}1 = null"), (typeof ${uuid + "1"} === "undefined")) ? "strict" : "non-strict",
+				}
+				${uuid}.$functionScoper = ${uuid}.$functionScoper(${uuid}.$functionScoper)
+				${uuid}.$scopes.splice(0,0,${uuid}.$closure)
+				${uuid}.$variableMaps.splice(0,0,${uuid}.$variableMap)
+				var globalThis = globalThis || global || window || {}
+				${uuid}.$contextStatus = ${uuid}.$mode == 'strict' ? '' : 'var'
+				try { 
+					eval(${
         /*javascript*/
-        "`${".concat(uuid, ".$contextStatus} $context = $context || ").concat(uuid, "`"), ")\n\t\t\t\t} catch(err){\n\t\t\t\t\t").concat(uuid, ".$contextStatus = ''\n\t\t\t\t}\n\t\t\t\teval(",
+        `\`\${${uuid}.$contextStatus} $context = $context || ${uuid}\``})
+				} catch(err){
+					${uuid}.$contextStatus = ''
+				}
+				eval(${
         /*javascript*/
-        "`${".concat(uuid, ".$contextStatus} $context = $context || ").concat(uuid, "`"), ")\n\t\t\t\tif(typeof $context == 'object' && $context != ").concat(uuid, " && $context.$contexts instanceof Object){\n\t\t\t\t\t$context.$contexts[").concat(uuid, ".$$uuid] = $context.$contexts[").concat(uuid, ".$$uuid] || []\n\t\t\t\t\t").concat(uuid, ".$$instance = $context.$contexts[").concat(uuid, ".$$uuid].push(").concat(uuid, ")-1\n\t\t\t\t\t").concat(uuid, ".$parentContexts.push($context)\n\t\t\t\t\t$context.$contextsList.push(").concat(uuid, ")\n\t\t\t\t}\n\t\t\t\tif(!globalThis.$contexts){\n\t\t\t\t\tglobalThis.$contexts = {}\n\t\t\t\t\tglobalThis.$contexts[").concat(uuid, ".$$uuid] = [").concat(uuid, "]\n\t\t\t\t\tglobalThis.$contextsList = [").concat(uuid, "]\n\t\t\t\t\t").concat(uuid, ".$$instance = 0\n\t\t\t\t} else if(\n\t\t\t\t\tglobalThis.").concat(uuid, "s instanceof Object \n\t\t\t\t\t&& ").concat(uuid, ".$parentContexts.length == 0\n\t\t\t\t\t&& typeof ").concat(uuid, ".$$instance == 'undefined'\n\t\t\t\t){\n\t\t\t\t\tglobalThis.").concat(uuid, "s[").concat(uuid, ".$$uuid] = globalThis.$contexts[").concat(uuid, ".$$uuid] || []\n\t\t\t\t\t").concat(uuid, ".$$instance = globalThis.$contexts[").concat(uuid, ".$$uuid].push(").concat(uuid, ")-1\n\t\t\t\t\tglobalThis.$contextsList.push(").concat(uuid, ")\n\t\t\t\t}\n\t\t\t\t{\n\t\t\t\t\tlet $context = ").concat(uuid, "\n\t\t\t\t}\n\t\t\t")
+        `\`\${${uuid}.$contextStatus} $context = $context || ${uuid}\``})
+				if(typeof $context == 'object' && $context != ${uuid} && $context.$contexts instanceof Object){
+					$context.$contexts[${uuid}.$$uuid] = $context.$contexts[${uuid}.$$uuid] || []
+					${uuid}.$$instance = $context.$contexts[${uuid}.$$uuid].push(${uuid})-1
+					${uuid}.$parentContexts.push($context)
+					$context.$contextsList.push(${uuid})
+				}
+				if(!globalThis.$contexts){
+					globalThis.$contexts = {}
+					globalThis.$contexts[${uuid}.$$uuid] = [${uuid}]
+					globalThis.$contextsList = [${uuid}]
+					${uuid}.$$instance = 0
+				} else if(
+					globalThis.${uuid}s instanceof Object 
+					&& ${uuid}.$parentContexts.length == 0
+					&& typeof ${uuid}.$$instance == 'undefined'
+				){
+					globalThis.${uuid}s[${uuid}.$$uuid] = globalThis.$contexts[${uuid}.$$uuid] || []
+					${uuid}.$$instance = globalThis.$contexts[${uuid}.$$uuid].push(${uuid})-1
+					globalThis.$contextsList.push(${uuid})
+				}
+				{
+					let $context = ${uuid}
+				}
+			`
       );
     },
 
@@ -383,7 +617,9 @@ module.exports = ({
       });
       let node = opts.aster(
       /*javascript*/
-      "\n\t\t\t\t".concat(smarts.contextObject(opts.uuid), "\n\t\t\t"));
+      `
+				${smarts.contextObject(opts.uuid)}
+			`);
       node[0].declarations[0].contextDeclaration = true; // so the $functionScoper function doesn't get wrapped or have $context inserted
 
       let property3 = node[0].declarations[0].init.properties[3];
@@ -455,7 +691,12 @@ module.exports = ({
     createInlineContext(opts) {
       let wrapperString =
       /*javascript*/
-      "\n\t\t\t\tfor(let ".concat(opts.uuid, " = function(){\n\t\t\t\t\t// node goes here\n\t\t\t\t\treturn ").concat(opts.uuid, "\n\t\t\t\t}() ; a<1;a++){}\n\t\t\t");
+      `
+				for(let ${opts.uuid} = function(){
+					// node goes here
+					return ${opts.uuid}
+				}() ; a<1;a++){}
+			`;
       let inlineContextNode = opts.aster(wrapperString).init.declarations[0];
       let contextBody = smarts.createContext({ ...opts,
         wrapBody: false
@@ -482,14 +723,33 @@ module.exports = ({
     scopeVarCode(opts) {
       let ret =
       /*javascript*/
-      "\n\t\t\t\tObject.defineProperty(\n\t\t\t\t\t".concat(opts.uuid, ".$closure,\n\t\t\t\t\t").concat(smarts.stringify(opts.key), ",\n\t\t\t\t\t{\n\t\t\t\t\t\tget(){\n\t\t\t\t\t\t\treturn ").concat(opts.key, "\n\t\t\t\t\t\t},\n\t\t\t\t\t\tset(val){\n\t\t\t\t\t\t\t").concat(opts.key, " = val\n\t\t\t\t\t\t},\n\t\t\t\t\t\tenumerable: true\n\t\t\t\t\t}\n\t\t\t\t) &&\n\t\t\t\t(").concat(opts.uuid, ".$variableMap[\"").concat(opts.key, "\"] = \"").concat(opts.type, "\")\n\t\t\t");
+      `
+				Object.defineProperty(
+					${opts.uuid}.$closure,
+					${smarts.stringify(opts.key)},
+					{
+						get(){
+							return ${opts.key}
+						},
+						set(val){
+							${opts.key} = val
+						},
+						enumerable: true
+					}
+				) &&
+				(${opts.uuid}.$variableMap["${opts.key}"] = "${opts.type}")
+			`;
       return ret;
     },
 
     scopeVarInlineCode(opts) {
       let ret =
       /*javascript*/
-      "\n\t\t\t\tlet ".concat(smarts.jsUUID(), " = (\n\t\t\t\t\t").concat(smarts.scopeVarCode(opts), "\n\t\t\t\t)\n\t\t\t");
+      `
+				let ${smarts.jsUUID()} = (
+					${smarts.scopeVarCode(opts)}
+				)
+			`;
       return ret;
     },
 
@@ -524,7 +784,9 @@ module.exports = ({
     functionWrapper(uuid, path, aster) {
       let wrapper = aster(
       /*javascript*/
-      "\n\t\t\t\t".concat(uuid, ".$functionScoper()\n\t\t\t"));
+      `
+				${uuid}.$functionScoper()
+			`);
       wrapper.expression.arguments.push(path.node);
       return wrapper;
     },
@@ -585,7 +847,11 @@ module.exports = ({
           let name = path.node.key.name;
           let replacement = aster(
           /*javascript*/
-          "\n\t\t\t\t\t\tlet a = {\n\t\t\t\t\t\t\t".concat(name, ": function ").concat(name, "(){}\n\t\t\t\t\t\t}\n\t\t\t\t\t"));
+          `
+						let a = {
+							${name}: function ${name}(){}
+						}
+					`);
           replacement = replacement.declarations[0].init.properties[0];
           replacement.value.body = path.node.body;
           replacement.value.params = path.node.params;
@@ -617,7 +883,9 @@ module.exports = ({
                   });
                   let newNode = aster(
                   /*javascript*/
-                  "\n\t\t\t\t\t\t\t\t\t\t".concat(uuid, ".$functionScoper(").concat(path.node.id.name, ")\n\t\t\t\t\t\t\t\t\t"));
+                  `
+										${uuid}.$functionScoper(${path.node.id.name})
+									`);
                   node.body.splice(1, 0, newNode);
                   throw new Error('break foreach');
                 }
@@ -633,9 +901,7 @@ module.exports = ({
 
             if ( // this is for inline let and const declarations in normal
             // js blocks
-            (parentPath.node.kind == "let" || parentPath.node.kind == "const") && // we check the length of declarations because we only have to do inline replacement
-            // if there's a chance another declaration might use a former one
-            parentPath.node.declarations.length > 1 && !(parentPath.parentPath.node.type == 'ForInStatement' || parentPath.parentPath.node.type == 'ForOfStatement' || parentPath.parentPath.node.type == 'ForStatement')) {
+            (parentPath.node.kind == "let" || parentPath.node.kind == "const") && parentPath.node.declarations.length > 1 && !(parentPath.parentPath.node.type == 'ForInStatement' || parentPath.parentPath.node.type == 'ForOfStatement' || parentPath.parentPath.node.type == 'ForStatement')) {
               let uuid = smarts.getPathUUID({
                 path
               });
@@ -652,8 +918,7 @@ module.exports = ({
                 parentPath.node.declarations.splice(indexInParent + 1, 0, newDeclaration);
               }
             } else if ( // 
-            (parentPath.node.kind == "let" || parentPath.node.kind == "var" || parentPath.node.kind == "const") && // only do this for singular declarations
-            parentPath.node.declarations.length < 2 // and check if variable is declared inside a ForX statement
+            (parentPath.node.kind == "let" || parentPath.node.kind == "var" || parentPath.node.kind == "const") && parentPath.node.declarations.length < 2 // and check if variable is declared inside a ForX statement
             && (parentPath.parentPath.node.type == 'ForInStatement' || parentPath.parentPath.node.type == 'ForOfStatement' || parentPath.parentPath.node.type == "ForStatement")) {
               let uuid = smarts.getPathUUID({
                 path
@@ -670,9 +935,7 @@ module.exports = ({
                 parentPath.parentPath.node.body.body.splice(0, 0, newNode);
               }
             } else if ( // this is a special case for when ForStatements get their own scope
-            (parentPath.node.kind == "let" || parentPath.node.kind == "const") && // we check the length of declarations because we only have to do inline replacement
-            // if there's a chance another declaration might use a former one
-            parentPath.node.declarations.length > 1 && parentPath.parentPath.node.type == 'ForStatement') {
+            (parentPath.node.kind == "let" || parentPath.node.kind == "const") && parentPath.node.declarations.length > 1 && parentPath.parentPath.node.type == 'ForStatement') {
               // if the first declaration isn't our context declaration, insert one
               let uuid = smarts.gosmart.bind(this)(path, 'scope.uuid', smarts.jsUUID());
 
@@ -871,7 +1134,7 @@ module.exports = ({
 
     forEachObject(obj, fn, path, ret, seens) {
       for (const key in obj) {
-        const deepPath = path ? "".concat(path, ".").concat(key) : key;
+        const deepPath = path ? `${path}.${key}` : key;
         let primitive = typeof obj[key] == 'string' || typeof obj[key] == 'boolean' || typeof obj[key] == 'number';
 
         if (primitive || seens.originals.indexOf(obj[key]) < 0) {
@@ -895,7 +1158,7 @@ module.exports = ({
             seens.originals.push(value);
           }
 
-          const deepPath = "".concat(path, ".").concat(index);
+          const deepPath = `${path}.${index}`;
           fn(value, index, arr, deepPath, ret, seens); // Note that we use arr[index] because it might be mutated by forEach
 
           smarts.deepForEach(arr[index], fn, deepPath, ret, seens, false);
@@ -1671,13 +1934,13 @@ module.exports = ({
           if (!pushed) push = true;
         } // we found the start of an array delimited path
         else if (arrayPathStart && !escapedStart) {
-            readingArrayBasedPath = true;
-            if (!pushed) push = true;
-            i += 1;
-          } else {
-            if (i == 0) array.push("");
-            array[array.length - 1] += path[i];
-          }
+          readingArrayBasedPath = true;
+          if (!pushed) push = true;
+          i += 1;
+        } else {
+          if (i == 0) array.push("");
+          array[array.length - 1] += path[i];
+        }
 
         i++;
 
@@ -1904,14 +2167,14 @@ module.exports = ({
 
       if (get.undefined || schema && get.schema === false) {
         get = smarts.setsmart.bind(this)(obj, property, get.value, context);
-      } // return value from property path, either gotten or smartly set
 
-
-      if (context) {
-        return get;
+        if (context) {
+          return get;
+        } else {
+          return get;
+        }
       } else {
-        // sort of unneccessary to use getsmart but /shrug/
-        return smarts.getsmart.bind(this)(get, 'value');
+        return get.value;
       }
     },
 
@@ -2057,14 +2320,14 @@ module.exports = ({
             //   } 
             // } 
             else if (i == list.length - 1) {
-                if (returnExistant && smarts.getsmart.bind(this)(list, 'mapped.' + returnExistant, false) || !returnExistant) {
-                  resolve(true);
-                } else if (returnExistant) {
-                  resolve(false);
-                } else {
-                  resolve();
-                }
+              if (returnExistant && smarts.getsmart.bind(this)(list, 'mapped.' + returnExistant, false) || !returnExistant) {
+                resolve(true);
+              } else if (returnExistant) {
+                resolve(false);
+              } else {
+                resolve();
               }
+            }
           } // if(list.mapped && !list.mapped['agora-client-mapped']){
           //   this.$set(list.mapped, 'agora-client-mapped', true)
           // }

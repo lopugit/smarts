@@ -16,15 +16,15 @@ module.exports = ({
 	}
 	
 	var smarts = {
-		getBabel(){ return babel },
+		getBabel (){ return babel },
 		uuid,
-		pause(value, opts){
+		pause (value, opts){
 			return smarts.stringify(value, opts)
 		},
-		save(value, opts){
+		save (value, opts){
 			return smarts.stringify(value, opts)
 		},
-		stringify(value, opts={}) {
+		stringify (value, opts={}) {
 			let schema = {
 				stringifier: smarts.stringifier,
 				replace(key, value){
@@ -73,7 +73,7 @@ module.exports = ({
 			}
 			return '[' + opts.output.join(',') + ']'
 		},
-		replacer(key, value){
+		replacer (key, value){
 			if (opts.firstRun) {
 				opts.firstRun = !opts.firstRun
 				return value
@@ -91,12 +91,12 @@ module.exports = ({
 			}
 			return after.value
 		},
-		setKnown(known, input, virtual) {
+		setKnown (known, input, virtual) {
 			var index = String(input.push(virtual.value) - 1)
 			known.set(virtual.key, index)
 			return index
 		},
-		stringifier(key, val, opts){
+		stringifier (key, val, opts){
 			let ret = {value: val, key: val}
 			if (
 				val instanceof Function 
@@ -143,19 +143,19 @@ module.exports = ({
 			}
 			return ret
 		},
-		primitives(value) {
+		primitives (value) {
 			return value instanceof String ? String(value) : value
 		},
-		Primitives(key, value) {
+		Primitives (key, value) {
 			return typeof value === "string" ? new String(value) : value
 		},
-		play(text, opts){
+		play (text, opts){
 			return smarts.parse(text, opts)
 		},
-		load(text, opts){
+		load (text, opts){
 			return smarts.parse(text, opts)
 		},
-		parse(text, opts={}) {
+		parse (text, opts={}) {
 			let schema = {
 				// parser: eval('(function '+smarts.parser+')'),
 				parser: smarts.parser(opts),
@@ -187,7 +187,7 @@ module.exports = ({
 			ret = opts.parser('', tmp, opts)
 			return ret
 		},
-		parser(opts){
+		parser (opts){
 			return function(key, val){
 				if (
 					val.$js
@@ -246,7 +246,7 @@ module.exports = ({
 				return smarts.Primitives(key, val)
 			}
 		},			
-		revive(input, parsed, output, parser, opts) {
+		revive (input, parsed, output, parser, opts) {
 			return Object.keys(output).reduce(
 				(output, key)=>{
 					var value = output[key]
@@ -293,7 +293,7 @@ module.exports = ({
 				output
 			)
 		},
-		createScopedEval(uuid){
+		createScopedEval (uuid){
 			let ret =  /*javascript*/`
 				function createScopedEval(${uuid}){
 					
@@ -392,7 +392,7 @@ module.exports = ({
 			`
 			return ret
 		},
-		defineVariable(uuid){
+		defineVariable (uuid){
 			return /*javascript*/`
 				${uuid.variableType}	${uuid.variableKey} = ${uuid}.$scope[${uuid}.variableKey]
 				Object.defineProperty(
@@ -410,7 +410,7 @@ module.exports = ({
 				)
 			`
 		},
-		scopedEval(uuid){
+		scopedEval (uuid){
 			let ret = /*javascript*/`function scopedEval(${uuid}){
 					if(typeof ${uuid} == 'string'){
 						${uuid} = {
@@ -447,10 +447,10 @@ module.exports = ({
 			`
 			return ret
 		},
-		jsUUID(prefix='uuid'){
+		jsUUID (prefix='uuid'){
 			return prefix+smarts.uuid().replace(/-/g,'')
 		},
-		context(opts){
+		context (opts){
 			let uuid = smarts.gosmart.bind(this)(opts, 'path.context.scope.uuid', smarts.jsUUID())
 			return eval(/*javascript*/`
 				(
@@ -461,7 +461,7 @@ module.exports = ({
 				)()
 			`)
 		},
-		contextObject(uuid){
+		contextObject (uuid){
 			return /*javascript*/`
 				let ${uuid} = {
 					$$uuid: '${uuid}',
@@ -548,7 +548,7 @@ module.exports = ({
 				}
 			`
 		},
-		createContext(opts){
+		createContext (opts){
 			smarts.schema(opts, {
 				wrapBody: true
 			})
@@ -618,7 +618,7 @@ module.exports = ({
 			// wrapper.body.splice(1,0,addContextToScopeNode)	
 			return node
 		},
-		createInlineContext(opts){
+		createInlineContext (opts){
 			let wrapperString = /*javascript*/`
 				for(let ${opts.uuid} = function(){
 					// node goes here
@@ -631,7 +631,7 @@ module.exports = ({
 			inlineContextNode.contextDeclaration = true
 			return inlineContextNode
 		},
-		addBindingsToContext(opts){
+		addBindingsToContext (opts){
 			for(let key in opts.path.scope.bindings){
 				let binding = opts.path.scope.bindings[key]
 				if(binding.kind == 'var'){
@@ -644,7 +644,7 @@ module.exports = ({
 				}
 			}
 		},
-		scopeVarCode(opts){
+		scopeVarCode (opts){
 			let ret = /*javascript*/`
 				Object.defineProperty(
 					${opts.uuid}.$closure,
@@ -663,7 +663,7 @@ module.exports = ({
 			`
 			return ret
 		},
-		scopeVarInlineCode(opts){
+		scopeVarInlineCode (opts){
 			let ret = /*javascript*/`
 				let ${smarts.jsUUID()} = (
 					${smarts.scopeVarCode(opts)}
@@ -697,14 +697,14 @@ module.exports = ({
 			if(opts.inline) return node.declarations[0]
 			return node
 		},
-		functionWrapper(uuid, path, aster){
+		functionWrapper (uuid, path, aster){
 			let wrapper = aster(/*javascript*/`
 				${uuid}.$functionScoper()
 			`)
 			wrapper.expression.arguments.push(path.node)
 			return wrapper
 		},
-		bodyInsert(index, body, aster, ...things){
+		bodyInsert (index, body, aster, ...things){
 			body.splice(
 				index,
 				0,
@@ -712,7 +712,7 @@ module.exports = ({
 			)
 			return things.length
 		},
-		initBlock(path, aster){
+		initBlock (path, aster){
 			if(!path.node.scopeInitialized){
 				path.node.scopeInitialized = true
 				let uuid = smarts.getPathUUID({path})
@@ -720,29 +720,29 @@ module.exports = ({
 				path.node.body = contextNode
 			}
 		},
-		getNodeUUID(opts){
+		getNodeUUID (opts){
 			if(opts.node && opts.node.type != 'BlockStatement' && opts.node.type != 'Program') return smarts.getNodeUUID({...opts, node: opts.node.body || opts.node.block})
 			return smarts.gosmart.bind(this)(opts.node, 'uuid', smarts.jsUUID())
 		},
-		getPathUUID(opts){
+		getPathUUID (opts){
 			if(opts.path.context.scope.path.node.inheritScope || opts.path.scope.path.node.inheritScope) return smarts.getPathUUID({...opts, path: opts.path.parentPath})
 			return smarts.getNodeUUID({...opts, node: opts.path.context.scope.path.node})
 		},
-		babelPlugin(babel){
+		babelPlugin (babel){
 			const t = babel.types
 			const aster = babel.template.ast
 
 			let metaVisitor = {
-				Program(path){
+				Program (path){
 					smarts.initBlock(path,aster)
 				},
-				BlockStatement(path){
+				BlockStatement (path){
 					smarts.initBlock(path,aster)
 				},
-				ForInStatement(path){
+				ForInStatement (path){
 					path = path
 				},
-				ObjectMethod(path){
+				ObjectMethod (path){
 					let name = path.node.key.name
 					let replacement = aster(/*javascript*/`
 						let a = {
@@ -756,7 +756,7 @@ module.exports = ({
 						replacement
 					)
 				},
-				Function(path){
+				Function (path){
 					if(
 						path.type != 'FunctionDeclaration' 
 						&& !path.node.scoperWrapped 
@@ -771,7 +771,7 @@ module.exports = ({
 						)
 					}
 				},
-				FunctionDeclaration(path){
+				FunctionDeclaration (path){
 					if(!path.node.scoped){
 						path.node.scoped = true
 						parentBlock = path.scope.parent
@@ -791,7 +791,7 @@ module.exports = ({
 						} catch(err){}
 					}
 				},
-				VariableDeclarator(path){
+				VariableDeclarator (path){
 					if(!path.node.inScope){
 						path.node.inScope = true
 						let parentPath = smarts.getsmart.bind(this)(path, 'parentPath', undefined)
@@ -928,7 +928,7 @@ module.exports = ({
 			}
 			return ret
 		},
-		transform(src, opts={}){
+		transform (src, opts={}){
 			return smarts.getBabel().transform(
 				src, 
 				{
@@ -937,13 +937,13 @@ module.exports = ({
 				}
 			)
 		},
-		dupe(obj, opts={}){
+		dupe (obj, opts={}){
 			return smarts.parse(smarts.stringify(obj))
 		},
-		clone(obj, opts={}){
+		clone (obj, opts={}){
 			return smarts.dupe(obj, opts)
 		},
-		schema(obj1, obj2, opts={}){
+		schema (obj1, obj2, opts={}){
 			if(!opts.noSchemaClone){
 				obj2 = smarts.clone(obj2, opts)
 			}
@@ -951,7 +951,7 @@ module.exports = ({
 				...opts
 			})
 		},
-		create(obj1, obj2, opts){
+		create (obj1, obj2, opts){
 
 			let ret = smarts.merge(obj1, obj2, {
 				clone: true, 
@@ -960,7 +960,7 @@ module.exports = ({
 
 			return ret
 		},
-		merge(value1, value2, opts={}, seen=new Map){
+		merge (value1, value2, opts={}, seen=new Map){
 
 			if(seen.has(value1)) return seen.get(value1)
 			
@@ -1015,18 +1015,18 @@ module.exports = ({
 			return value1
 
 		},
-		basic(value){
+		basic (value){
 			let valueType = typeof value
 			let ret = !(valueType == 'object' || valueType == 'array' || valueType == 'function' ) || (value === null)
 			return ret
 		},
-		mod(args, mod){
+		mod (args, mod){
 			return mod(args) || args
 		},
 		// transform(value, fn, path, ret={}){
 		// 	return smarts.forEach(value, fn, path, ret)
 		// },
-		deepForEach(value, fn, path, ret={}, seens={originals:[],clones:[]}, first = true) {
+		deepForEach (value, fn, path, ret={}, seens={originals:[],clones:[]}, first = true) {
 			path = path || ''
 			if (first) {
 				value = { '': value }
@@ -1041,7 +1041,7 @@ module.exports = ({
 			}
 			return ret['']
 		},	
-		forEachObject(obj, fn, path, ret, seens) {
+		forEachObject (obj, fn, path, ret, seens) {
 			for (const key in obj) {
 				const deepPath = path ? `${path}.${key}` : key
 				let primitive = typeof obj[key] == 'string' || typeof obj[key] == 'boolean' || typeof obj[key] == 'number'
@@ -1056,7 +1056,7 @@ module.exports = ({
 				}
 			}
 		},
-		forEachArray(array, fn, path, ret={}, seens) {
+		forEachArray (array, fn, path, ret={}, seens) {
 			array.forEach((value, index, arr) => {
 				let primitive = typeof value == 'string' || typeof value == 'boolean' || typeof value == 'number'
 				if(primitive || seens.originals.indexOf(value) < 0){
@@ -1072,7 +1072,7 @@ module.exports = ({
 				}
 			})
 		},
-		popThing({
+		popThing ({
 			option,
 			list = smarts.getsmart.bind(this)(stringList),
 			obj = true,
@@ -1099,7 +1099,7 @@ module.exports = ({
 				return defaultValue
 			}
 		},
-		setThing({
+		setThing ({
 			option,
 			list = smarts.getsmart.bind(this)(objList),
 			obj = true,
@@ -1156,7 +1156,7 @@ module.exports = ({
 			}
 			return index
 		},
-		setThings({
+		setThings ({
 			options,
 			list = smarts.getsmart.bind(this)(objList),
 			obj = true,
@@ -1193,7 +1193,7 @@ module.exports = ({
 			}
 			return list
 		},
-		optIn(option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype, index) {
+		optIn (option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype, index) {
 			if (typeof option === 'object') {
 				obj = true
 			}
@@ -1225,7 +1225,7 @@ module.exports = ({
 			}
 			return index ? -1 : false
 		},
-		thingIn({
+		thingIn ({
 			option,
 			list = smarts.getsmart.bind(this)(objList),
 			obj = true,
@@ -1290,7 +1290,7 @@ module.exports = ({
 				return false
 			}
 		},
-		optsIn(options, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+		optsIn (options, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
 			if(!(options instanceof Array)) return true
 			for (let option of options) {
 				// if(typeof option === 'object'){
@@ -1310,7 +1310,7 @@ module.exports = ({
 			}
 			return true
 		},
-		thingsIn({
+		thingsIn ({
 			options,
 			list = smarts.getsmart.bind(this)(stringList),
 			obj,
@@ -1337,7 +1337,7 @@ module.exports = ({
 			}
 			return true
 		},
-		anyOptsIn(options, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+		anyOptsIn (options, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
 			if(!(options instanceof Array)) return false
 			for (let option of options) {
 				// if(typeof option === 'object'){
@@ -1355,7 +1355,7 @@ module.exports = ({
 			}
 			return false
 		},
-		anyThingsIn({
+		anyThingsIn ({
 			options,
 			list = smarts.getsmart.bind(this)(stringList),
 			obj,
@@ -1380,7 +1380,7 @@ module.exports = ({
 			}
 			return false
 		},
-		optIndex(option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+		optIndex (option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
 			if (typeof option === 'object') {
 				obj = true
 			}
@@ -1395,7 +1395,7 @@ module.exports = ({
 			}
 			return -1
 		},
-		thingIndex({
+		thingIndex ({
 			option,
 			list,
 			obj,
@@ -1423,7 +1423,7 @@ module.exports = ({
 			}
 			return -1
 		},
-		pushOpt(option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype, index) {
+		pushOpt (option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype, index) {
 			if (typeof list == 'object' && !smarts.optIn(option, list, obj, keys, keymatchtype)) {
 				if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) || smarts.getsmart.bind(this)(local.vue, 'store', false)) {
 					list.splice(list.length, 0, option)
@@ -1436,7 +1436,7 @@ module.exports = ({
 			}
 			return index ? smarts.optIn(option, list, obj, keys, keymatchtype, index) : smarts.optIn(option, list, obj, keys, keymatchtype, index)
 		},
-		addOpt(option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype, index) {
+		addOpt (option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype, index) {
 			if (typeof list == 'object') {
 				if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) || smarts.getsmart.bind(this)(local.vue, 'store', false)) {
 					list.splice(list.length, 0, option)
@@ -1449,7 +1449,7 @@ module.exports = ({
 			}
 			return index ? smarts.optIn(option, list, obj, keys, keymatchtype, index) : smarts.optIn(option, list, obj, keys, keymatchtype, index)
 		},
-		pushThing({
+		pushThing ({
 			option,
 			list = smarts.getsmart.bind(this)(stringList),
 			obj,
@@ -1468,13 +1468,13 @@ module.exports = ({
 				}
 			}
 		},
-		pushOpts(options, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+		pushOpts (options, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
 			if(!(options instanceof Array)) return
 			for (let option of options) {
 				smarts.pushOpt(option, list, obj, keys, keymatchtype)
 			}
 		},
-		pushThings({
+		pushThings ({
 			options,
 			list = smarts.getsmart.bind(this)(stringList),
 			obj,
@@ -1487,7 +1487,7 @@ module.exports = ({
 				smarts.pushThing({option, list, obj, keys, keymatchtype})
 			}
 		},
-		popOpt(option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+		popOpt (option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
 			if (typeof list == 'object' && smarts.optIn(option, list, obj, keys, keymatchtype)) {
 				list.splice(smarts.optIndex(option, list, obj, keys, keymatchtype), 1)
 				if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) || smarts.getsmart.bind(this)(local.vue, 'store', false)) {
@@ -1497,7 +1497,7 @@ module.exports = ({
 				}      
 			}
 		},
-		popThing({
+		popThing ({
 			option,
 			list = smarts.getsmart.bind(this)(stringList),
 			obj = true,
@@ -1526,13 +1526,13 @@ module.exports = ({
 				} 
 			}
 		},
-		popOpts(options, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+		popOpts (options, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
 			if(!(options instanceof Array)) return
 			for (let option of options) {
 				smarts.popOpt(option, list, obj, keys, keymatchtype)
 			}
 		},
-		popThings({
+		popThings ({
 			options,
 			list = smarts.getsmart.bind(this)(stringList),
 			obj = true,
@@ -1545,14 +1545,14 @@ module.exports = ({
 				smarts.popOpt(option, list, obj, keys, keymatchtype)
 			}
 		},
-		toggleOpt(option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+		toggleOpt (option, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
 			if (smarts.optIn(option, list, obj, keys, keymatchtype)) {
 				smarts.popOpt(option, list, obj, keys, keymatchtype)
 			} else {
 				smarts.pushOpt(option, list, obj, keys, keymatchtype)
 			}
 		},
-		toggleThing({
+		toggleThing ({
 			option,
 			list = smarts.getsmart.bind(this)(stringList),
 			obj = true,
@@ -1566,13 +1566,13 @@ module.exports = ({
 				smarts.pushOpt(option, list, obj, keys, keymatchtype)
 			}
 		},
-		toggleOpts(options, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+		toggleOpts (options, list = smarts.getsmart.bind(this)(stringList), obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
 			if(!(options instanceof Array)) return
 			for (let option in options) {
 				smarts.toggleOpt(option, list, obj, keys, keymatchtype)
 			}
 		},
-		toggleThings({
+		toggleThings ({
 			options,
 			list = smarts.getsmart.bind(this)(stringList),
 			obj = true,
@@ -1590,7 +1590,7 @@ module.exports = ({
 			}
 		},
 		// no use right now
-		ratchetOpt(option, list, obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
+		ratchetOpt (option, list, obj, keys = ['uuid', '_id', 'id'], keymatchtype) {
 			// find(obj, property, equals){
 			// 	if(smarts.getsmart.bind(this)(obj, 'constructor', undefined) == Array){
 			// 		for(var i=0; i<obj.length; i++){
@@ -1599,7 +1599,7 @@ module.exports = ({
 			// 	}
 			// },
 		},
-		getsmart(obj, property, defaultValue, context, schema) {
+		getsmart (obj, property, defaultValue, context, schema) {
 
 			if (!property && obj && typeof obj == 'string') {
 				property = obj.split(".")
@@ -1693,14 +1693,14 @@ module.exports = ({
         return deepGetByArray(nextObj, remainingProps, defaultValue);
       }
 		},
-		escapePropertyPath(path=""){
+		escapePropertyPath (path=""){
 			let newPath = smarts.escapeEscapes(path)
 			return "[\""+newPath+"\"]"
 		},
-		epp(path=""){
+		epp (path=""){
 			return smarts.escapePropertyPath(path)
 		},
-		escapeEscapes(path=""){
+		escapeEscapes (path=""){
 			let newPath = ""
 			for(let i in path){
 				i = +i
@@ -1731,7 +1731,7 @@ module.exports = ({
 		// TODO
 		// Make parsing use \" or \'
 		// Currently only uses \"
-		parsePropertyPath(path=""){
+		parsePropertyPath (path=""){
 
 			let array = []
 
@@ -1792,10 +1792,10 @@ module.exports = ({
 			return array
 
 		},
-		ppp(path=""){
+		ppp (path=""){
 			return this.parsePropertyPath(path)
 		},
-		parsePropertyArray(pathArray){
+		parsePropertyArray (pathArray){
 			let path = ""
 
 			if(pathArray instanceof Array){
@@ -1808,17 +1808,17 @@ module.exports = ({
 
 			return path
 		},
-		ppa(pathArray){
+		ppa (pathArray){
 			return this.parsePropertyArray(pathArray)
 		},
-		pathToArray(path) {
+		pathToArray (path) {
 			if(typeof path == 'string'){
 				return smarts.parsePropertyPath(path)
 			} else {
 				return path
 			}
 		},
-		pathToString(path) {
+		pathToString (path) {
 			if(typeof path == 'string'){
 				let ret = smarts.parsePropertyPath(path)
 				ret = smarts.parsePropertyArray(ret)
@@ -1828,7 +1828,7 @@ module.exports = ({
 				return ret
 			}
 		},
-		setsmart(obj, property, value, context) {
+		setsmart (obj, property, value, context) {
 			if (!property && typeof obj == 'string') {
 				property = obj.split(".")
 				try {
@@ -1930,7 +1930,7 @@ module.exports = ({
 				return deepSetByArray(obj[smarts.ee(propsArray[0])], remainingProps, value)
 			}
 		},
-		deletesmart(obj, property){
+		deletesmart (obj, property){
 			if (!property && typeof obj == 'string') {
 				property = obj.split(".")
 				try {
@@ -1964,7 +1964,7 @@ module.exports = ({
 			}
 
 		},
-		pushSmart(array, value){
+		pushSmart (array, value){
 			if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && array) {
 				array.push(value)
 				if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
@@ -1974,7 +1974,7 @@ module.exports = ({
 				array.push(value)
 			}
 		},
-		gosmart(obj, property, value, context, schema) {
+		gosmart (obj, property, value, context, schema) {
 			// stands for get or set smart
 			var get = smarts.getsmart.bind(this)(
 				obj, 
@@ -1985,19 +1985,19 @@ module.exports = ({
 			)
 			if (get.undefined || (schema && get.schema === false)) {
 				get = smarts.setsmart.bind(this)(obj, property, get.value, context)
-			}
-			// return value from property path, either gotten or smartly set
-			if (context) {
-				return get
+				if(context){
+					return get
+				} else {
+					return get
+				}
 			} else {
-				// sort of unneccessary to use getsmart but /shrug/
-				return smarts.getsmart.bind(this)(get, 'value')
+				return get.value
 			}
 		},
-		gosmarter(obj, property, value, context, schema=true){
+		gosmarter (obj, property, value, context, schema=true){
 			return smarts.gosmart.bind(this)(obj, property, value, context, schema)
 		},
-		absoluteType(value){
+		absoluteType (value){
 			let type
 			try {
 				type = value.constructor.name
@@ -2007,7 +2007,7 @@ module.exports = ({
 			}
 			return type
 		},
-		vgosmart(obj, property, value, context) {
+		vgosmart (obj, property, value, context) {
 			// stands for v-model get or set smart
 			// return value from property path, either gotten or smartly set
 			return {
@@ -2027,7 +2027,7 @@ module.exports = ({
 				}
 			}
 		},
-		getsmartval(obj, property, defaultValue) {
+		getsmartval (obj, property, defaultValue) {
 			// get the value of a property path based off its type
 			let target = smarts.getsmart.bind(this)(obj, property, defaultValue)
 			if (target && target.type) {
@@ -2041,13 +2041,13 @@ module.exports = ({
 			}
 			return defaultValue
 		},
-		safestring(something) {
+		safestring (something) {
 			return smarts.jsmart.stringify(something || '')
 		},
-		safeparse(something) {
+		safeparse (something) {
 			return smarts.jsmart.parse(something || '')
 		},
-		flatten(arrays, func=(i)=>i) {
+		flatten (arrays, func=(i)=>i) {
 			const flat = [];
 
 			arrays.forEach(array => {
@@ -2060,7 +2060,7 @@ module.exports = ({
 
 			return flat;
 		},
-		mapsmart(list, keyProperty = 'title', returnExistant, populate) {
+		mapsmart (list, keyProperty = 'title', returnExistant, populate) {
 			return new Promise((resolve, reject) => {
 				if (!keyProperty) {
 					reject()
@@ -2139,10 +2139,10 @@ module.exports = ({
 				}
 			})
 		},
-		domval(thing) {
+		domval (thing) {
 			return smarts.getsmart.bind(this)(thing, 'properties.description', '')
 		},
-		getParent(levels=Infinity){
+		getParent (levels=Infinity){
 
 			if(typeof levels == 'string') levels = (levels.match(/\.\./g) || []).length
 
@@ -2155,7 +2155,7 @@ module.exports = ({
 			return this.pathAsArray[level]
 
 		},		
-		getThing({
+		getThing ({
 			option,
 			list = smarts.getsmart.bind(this)(objList),
 			obj = true,
@@ -2175,7 +2175,7 @@ module.exports = ({
 				return defaultValue
 			}
 		},
-		equal(obj1, obj2, seen=[]){
+		equal (obj1, obj2, seen=[]){
 			if((obj1 && obj2) && (typeof obj1 == 'object') && (typeof obj2 == 'object')){
 				seen.push(obj1, obj2)
 				//Loop through properties in object 1
@@ -2209,7 +2209,7 @@ module.exports = ({
 				return true
 			}
 		},
-		mergeall(array, options) {
+		mergeall (array, options) {
 			if (!Array.isArray(array)) {
 				throw new Error('first argument should be an array')
 			}
