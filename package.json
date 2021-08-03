@@ -1,6 +1,6 @@
 {
   "name": "smarts",
-  "version": "1.0.236",
+  "version": "1.0.237",
   "description": "a smart library for doing smart things",
   "main": "dist/index.js",
   "scripts": {
