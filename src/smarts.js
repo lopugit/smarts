@@ -1,5 +1,7 @@
 let babel = require('@babel/core')
+let t = require('@babel/types')
 babel.generator = require('@babel/generator').default
+babel.babylon = require('@babel/parser')
 let uuid = require('uuid/v4')
 
 module.exports = ({
@@ -23,6 +25,51 @@ module.exports = ({
 		},
 		save (value, opts){
 			return smarts.stringify(value, opts)
+		},
+		stringify2 (value, opts = { declarations: [], uuid: "obj", keys: { obj: 1 } }, seen = []) {
+			if (typeof value === "object") {
+				let properties = smarts.createObjectProperties(value, opts)
+				let declaration = t.variableDeclaration("let", [
+					t.variableDeclarator(
+						t.identifier(opts.uuid),
+						t.objectExpression(properties)
+					)
+				])
+				opts.declarations.unshift(declaration)
+				let i = 0
+				for (let key of Object.keys(value)) {
+					let uuid = properties[i].value.name
+					smarts.stringify2(value[key], { ...opts, uuid }, seen)
+					i++
+				}
+			} else if (typeof value === "string") {
+				let declaration = t.variableDeclaration("let", [
+					t.variableDeclarator(
+						t.identifier(opts.uuid),
+						t.stringLiteral(value)
+					)
+				])
+				opts.declarations.unshift(declaration)
+			}
+			let program = t.program(opts.declarations)
+			return program
+		},
+		createObjectProperties (value, opts) {
+			let properties = []
+			for (let key of Object.keys(value)) {
+				let identifierNum = opts.keys[key]++
+				let identifier = key
+				if (identifierNum > 1) identifier += identifierNum
+				properties.push(
+					t.objectProperty(
+						t.identifier(key),
+						t.identifier(identifier),
+						false,
+						key == identifier
+					)
+				)
+			}
+			return properties
 		},
 		stringify (value, opts={}) {
 			let schema = {

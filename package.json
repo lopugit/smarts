@@ -31,6 +31,7 @@
     "@babel/core": "^7.14.8",
     "@babel/generator": "^7.8.4",
     "@babel/polyfill": "^7.4.4",
+    "@babel/types": "^7.15.0",
     "core-js": "^3.6.4",
     "deepmerge": "^3.2.0",
     "is-mergeable-object": "^1.1.1",
@@ -39,6 +40,7 @@
   "devDependencies": {
     "@babel/cli": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
+    "babel-literal-to-ast": "^2.1.0",
     "chai": "^4.2.0",
     "deep-for-each": "^3.0.0",
     "mocha": "6.2.2",
