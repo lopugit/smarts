@@ -8,66 +8,121 @@ describe("Function smarts.stringify2 tests", ()=>{
 
 	test("should stringify2 properties with value of undefined", ()=>{
 
-		let test = {}
-
 		let foo = {
-			bar: 'fiz'
+			baz: 'fiz'
 		}
 
 		let obj = {
-			foo
-		}
-		let stringified = smarts.stringify2(obj)
-		let expected = `
-			let foo = {
-				bar: 'fiz'
-			}
-
-			let obj = {
+			foo,
+			bar: {
 				foo
 			}
-		`
-		let expectedStringified = smarts.getBabel().babylon.parse(expected)
-		fs.writeFileSync("test/tests/functions/stringify2.target.json", JSON.stringify(expectedStringified, null, 2))
-		fs.writeFileSync("test/tests/functions/stringify2.target.regenerated.js", smarts.getBabel().generator(expectedStringified).code)
-		fs.writeFileSync("test/tests/functions/stringify2.actual.json", JSON.stringify(stringified, null, 2))
-		fs.writeFileSync("test/tests/functions/stringify2.actual.regenerated.js", smarts.getBabel().generator(stringified).code)
+		}
+		let stringified = smarts.stringify2(obj, {
+			wrapInFunction: true
+		})
+		let expected = `;(function () {
+	let baz = "fiz"
+	let foo = {
+		baz,
+	}
+	let bar = {
+		foo,
+	}
+	let obj = {
+		foo,
+		bar,
+	}
+	return obj
+})()
+`
+		// let expectedAst = smarts.getBabel().template.ast(expected)
+		// let expectedStringified = smarts.getBabel().t.program(expectedAst)
+		// fs.writeFileSync("test/tests/functions/stringify2.target.json", JSON.stringify(expectedStringified, null, 2))
+		// fs.writeFileSync("test/tests/functions/stringify2.target.regenerated.js", smarts.getBabel().prettier.format(smarts.getBabel().generator(expectedStringified).code, { semi: false, parser: "babel"}))
+		// fs.writeFileSync("test/tests/functions/stringify2.actual.json", JSON.stringify(stringified, null, 2))
+		// fs.writeFileSync("test/tests/functions/stringify2.actual.regenerated.js", stringified)
 		expect(stringified).to.equal(expected)
 	})
 
-	// test("should stringify2 properties with value of undefined", ()=>{
+	test("should stringify2 properties with value of undefined", ()=>{
 
-	// 	let test = {}
+		let foo = {
+			baz: 'fiz'
+		}
 
-	// 	let foo = {
-	// 		bar: 'fiz'
-	// 	}
+		let obj = {
+			foo,
+			bar: {
+				foo
+			}
+		}
+		let stringified = smarts.stringify2(obj, {
+			wrapInFunction: false,
+			moduleExport: true
+		})
+		let expected = `let baz = "fiz"
+let foo = {
+	baz,
+}
+let bar = {
+	foo,
+}
+let obj = {
+	foo,
+	bar,
+}
+module.exports = obj
+`
+		// let expectedAst = smarts.getBabel().template.ast(expected)
+		// let expectedStringified = smarts.getBabel().t.program(expectedAst)
+		// fs.writeFileSync("test/tests/functions/stringify2.target.json", JSON.stringify(expectedStringified, null, 2))
+		// fs.writeFileSync("test/tests/functions/stringify2.target.regenerated.js", smarts.getBabel().prettier.format(smarts.getBabel().generator(expectedStringified).code, { semi: false, parser: "babel"}))
+		// fs.writeFileSync("test/tests/functions/stringify2.actual.json", JSON.stringify(stringified, null, 2))
+		// fs.writeFileSync("test/tests/functions/stringify2.actual.regenerated.js", stringified)
+		expect(stringified).to.equal(expected)
+	})
 
-	// 	let obj = {
-	// 		foo,
-	// 		baz: {
-	// 			waz: 'haz',
-	// 			foo
-	// 		}
-	// 	}
-	// 	let stringified = smarts.stringify2(obj)
-	// 	let expected = `
-	// 		let foo = {
-	// 			bar: 'fiz'
-	// 		}
+	test("should stringify2 properties with value of undefined", ()=>{
 
-	// 		let obj = {
-	// 			foo,
-	// 			baz: {
-	// 				waz: 'haz',
-	// 				foo
-	// 			}
-	// 		}
-	// 	`
-	// 	fs.writeFileSync("test/tests/functions/stringify2.target.json", JSON.stringify(smarts.getBabel().template.ast(expected), null, 2))
-	// 	fs.writeFileSync("test/tests/functions/stringify2.actual.json", JSON.stringify(stringified, null, 2))
-	// 	fs.writeFileSync("test/tests/functions/stringify2.regenerated.json", smarts.getBabel().generator(stringified).code)
-	// 	expect(stringified).to.equal(expected)
-	// })
+		let foo = {
+			baz: 'fiz'
+		}
+
+		let obj = {
+			foo,
+			bar: {
+				foo
+			}
+		}
+
+		obj.test = obj
+		
+		let stringified = smarts.stringify2(obj, {
+			wrapInFunction: false,
+			moduleExport: true
+		})
+		let expected = `let baz = "fiz"
+let foo = {
+	baz,
+}
+let bar = {
+	foo,
+}
+let obj = {
+	foo,
+	bar,
+}
+obj.test = obj
+module.exports = obj
+`
+		let expectedAst = smarts.getBabel().template.ast(expected)
+		let expectedStringified = smarts.getBabel().t.program(expectedAst)
+		fs.writeFileSync("test/tests/functions/stringify2.target.json", JSON.stringify(expectedStringified, null, 2))
+		fs.writeFileSync("test/tests/functions/stringify2.target.regenerated.js", smarts.getBabel().prettier.format(smarts.getBabel().generator(expectedStringified).code, { semi: false, parser: "babel"}))
+		fs.writeFileSync("test/tests/functions/stringify2.actual.json", JSON.stringify(stringified, null, 2))
+		fs.writeFileSync("test/tests/functions/stringify2.actual.regenerated.js", stringified)
+		expect(stringified).to.equal(expected)
+	})
 
 })

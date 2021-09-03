@@ -1,7 +1,13 @@
-let bar = "fiz";
+let baz = "fiz"
 let foo = {
-  bar
-};
+	baz,
+}
+let bar = {
+	foo,
+}
 let obj = {
-  foo
-};
+	foo,
+	bar,
+	test,
+}
+module.exports = obj

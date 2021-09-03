@@ -1,13 +1,12 @@
-let baz = "fiz"
+let bar2 = "far"
 let foo = {
-  baz,
+	bar: bar2,
 }
 let bar = {
-  foo,
+	foo,
 }
 let obj = {
-  foo,
-  bar,
+	foo,
+	bar,
 }
-obj.test = obj
 module.exports = obj
