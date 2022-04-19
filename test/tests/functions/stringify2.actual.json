@@ -1,1 +1,0 @@
-"let baz = \"fiz\"\nlet foo = {\n\tbaz,\n}\nlet bar = {\n\tfoo,\n}\nlet obj = {\n\tfoo,\n\tbar,\n\ttest,\n}\nmodule.exports = obj\n"

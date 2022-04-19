@@ -4,9 +4,9 @@ let mlog = require('mocha-logger');
 let test = it
 let fs = require('fs')
 
-describe("Function smarts.stringify2 tests", ()=>{
+describe("Function smarts.toJavascript tests", ()=>{
 
-	test("should stringify2 properties with value of undefined", ()=>{
+	test("should toJavascript properties with value of undefined", ()=>{
 
 		let foo = {
 			baz: 'fiz'
@@ -18,7 +18,7 @@ describe("Function smarts.stringify2 tests", ()=>{
 				foo
 			}
 		}
-		let stringified = smarts.stringify2(obj, {
+		let stringified = smarts.toJavascript(obj, {
 			wrapInFunction: true
 		})
 		let expected = `;(function () {
@@ -38,14 +38,14 @@ describe("Function smarts.stringify2 tests", ()=>{
 `
 		// let expectedAst = smarts.getBabel().template.ast(expected)
 		// let expectedStringified = smarts.getBabel().t.program(expectedAst)
-		// fs.writeFileSync("test/tests/functions/stringify2.target.json", JSON.stringify(expectedStringified, null, 2))
-		// fs.writeFileSync("test/tests/functions/stringify2.target.regenerated.js", smarts.getBabel().prettier.format(smarts.getBabel().generator(expectedStringified).code, { semi: false, parser: "babel"}))
-		// fs.writeFileSync("test/tests/functions/stringify2.actual.json", JSON.stringify(stringified, null, 2))
-		// fs.writeFileSync("test/tests/functions/stringify2.actual.regenerated.js", stringified)
+		// fs.writeFileSync("tmp/tests/toJavascript.target.json", JSON.stringify(expectedStringified, null, 2))
+		// fs.writeFileSync("tmp/tests/toJavascript.target.regenerated.js", smarts.getBabel().prettier.format(smarts.getBabel().generator(expectedStringified).code, { semi: false, parser: "babel"}))
+		// fs.writeFileSync("tmp/tests/toJavascript.actual.json", JSON.stringify(stringified, null, 2))
+		// fs.writeFileSync("tmp/tests/toJavascript.actual.regenerated.js", stringified)
 		expect(stringified).to.equal(expected)
 	})
 
-	test("should stringify2 properties with value of undefined", ()=>{
+	test("should toJavascript properties with value of undefined", ()=>{
 
 		let foo = {
 			baz: 'fiz'
@@ -57,7 +57,7 @@ describe("Function smarts.stringify2 tests", ()=>{
 				foo
 			}
 		}
-		let stringified = smarts.stringify2(obj, {
+		let stringified = smarts.toJavascript(obj, {
 			wrapInFunction: false,
 			moduleExport: true
 		})
@@ -76,14 +76,14 @@ module.exports = obj
 `
 		// let expectedAst = smarts.getBabel().template.ast(expected)
 		// let expectedStringified = smarts.getBabel().t.program(expectedAst)
-		// fs.writeFileSync("test/tests/functions/stringify2.target.json", JSON.stringify(expectedStringified, null, 2))
-		// fs.writeFileSync("test/tests/functions/stringify2.target.regenerated.js", smarts.getBabel().prettier.format(smarts.getBabel().generator(expectedStringified).code, { semi: false, parser: "babel"}))
-		// fs.writeFileSync("test/tests/functions/stringify2.actual.json", JSON.stringify(stringified, null, 2))
-		// fs.writeFileSync("test/tests/functions/stringify2.actual.regenerated.js", stringified)
+		// fs.writeFileSync("tmp/tests/toJavascript.target.json", JSON.stringify(expectedStringified, null, 2))
+		// fs.writeFileSync("tmp/tests/toJavascript.target.regenerated.js", smarts.getBabel().prettier.format(smarts.getBabel().generator(expectedStringified).code, { semi: false, parser: "babel"}))
+		// fs.writeFileSync("tmp/tests/toJavascript.actual.json", JSON.stringify(stringified, null, 2))
+		// fs.writeFileSync("tmp/tests/toJavascript.actual.regenerated.js", stringified)
 		expect(stringified).to.equal(expected)
 	})
 
-	test("should stringify2 properties with value of undefined", ()=>{
+	test("should toJavascript properties with value of undefined", ()=>{
 
 		let foo = {
 			baz: 'fiz'
@@ -97,8 +97,8 @@ module.exports = obj
 		}
 
 		obj.test = obj
-		
-		let stringified = smarts.stringify2(obj, {
+
+		let stringified = smarts.toJavascript(obj, {
 			wrapInFunction: false,
 			moduleExport: true
 		})
@@ -116,12 +116,84 @@ let obj = {
 obj.test = obj
 module.exports = obj
 `
+		expect(stringified).to.equal(expected)
+	})
+
+	test("should toJavascript properties with value of undefined", ()=>{
+
+		let foo = {
+			baz: 'fiz'
+		}
+
+		let obj = {
+			foo,
+			bar: {
+				foo
+			}
+		}
+
+		obj.bar.faz = obj.bar
+		
+		let stringified = smarts.toJavascript(obj, {
+			wrapInFunction: false,
+			moduleExport: true
+		})
+		let expected = `let baz = "fiz"
+let foo = {
+	baz,
+}
+let bar = {
+	foo,
+}
+let obj = {
+	foo,
+	bar,
+}
+bar.faz = bar
+module.exports = obj
+`
+		expect(stringified).to.equal(expected)
+	})
+
+	test("should toJavascript properties with value of undefined", ()=>{
+
+		let foo = {
+			baz: 'fiz'
+		}
+
+		let obj = {
+			foo,
+			bar: {
+				foo
+			}
+		}
+
+		obj.bar.obj = obj
+		
+		let stringified = smarts.toJavascript(obj, {
+			wrapInFunction: false,
+			moduleExport: true
+		})
+		let expected = `let baz = "fiz"
+let foo = {
+	baz,
+}
+let bar = {
+	foo,
+}
+let obj = {
+	foo,
+	bar,
+}
+bar.faz = bar
+module.exports = obj
+`
 		let expectedAst = smarts.getBabel().template.ast(expected)
 		let expectedStringified = smarts.getBabel().t.program(expectedAst)
-		fs.writeFileSync("test/tests/functions/stringify2.target.json", JSON.stringify(expectedStringified, null, 2))
-		fs.writeFileSync("test/tests/functions/stringify2.target.regenerated.js", smarts.getBabel().prettier.format(smarts.getBabel().generator(expectedStringified).code, { semi: false, parser: "babel"}))
-		fs.writeFileSync("test/tests/functions/stringify2.actual.json", JSON.stringify(stringified, null, 2))
-		fs.writeFileSync("test/tests/functions/stringify2.actual.regenerated.js", stringified)
+		fs.writeFileSync("tmp/tests/toJavascript.target.json", JSON.stringify(expectedStringified, null, 2))
+		fs.writeFileSync("tmp/tests/toJavascript.target.regenerated.js", smarts.getBabel().prettier.format(smarts.getBabel().generator(expectedStringified).code, { semi: false, parser: "babel"}))
+		fs.writeFileSync("tmp/tests/toJavascript.actual.json", JSON.stringify(stringified, null, 2))
+		fs.writeFileSync("tmp/tests/toJavascript.actual.regenerated.js", stringified)
 		expect(stringified).to.equal(expected)
 	})
 

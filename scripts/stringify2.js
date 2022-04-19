@@ -16,15 +16,15 @@ obj.obj = obj
 obj.test = obj
 
 fs.writeFileSync(
-	'./scripts/stringify2.module.output.js', 
-	smarts.stringify2(obj, {
+	'./scripts/toJavascript.module.output.js', 
+	smarts.toJavascript(obj, {
 		moduleExport: true
 	})
 )
 
 fs.writeFileSync(
-	'./scripts/stringify2.eval.output.js', 
-	smarts.stringify2(obj, {
+	'./scripts/toJavascript.eval.output.js', 
+	smarts.toJavascript(obj, {
 		wrapInFunction: true
 	})
 )
