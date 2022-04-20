@@ -208,7 +208,7 @@ module.exports = ({
 		},
 		serialize(value, opts={}) {
 			opts.strictFunctions = false
-			smarts.stringify(value, opts)
+			return smarts.stringify(value, opts)
 		},
 		stringify (value, opts={}) {
 			let schema = {
@@ -339,6 +339,10 @@ module.exports = ({
 			return smarts.parse(text, opts)
 		},
 		load (text, opts){
+			return smarts.parse(text, opts)
+		},
+		initialize(text, opts={}) {
+			opts.strictFunctions = false
 			return smarts.parse(text, opts)
 		},
 		parse (text, opts={}) {

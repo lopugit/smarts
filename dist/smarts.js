@@ -173,7 +173,7 @@ module.exports = ({
 
     serialize(value, opts = {}) {
       opts.strictFunctions = false;
-      smarts.stringify(value, opts);
+      return smarts.stringify(value, opts);
     },
 
     stringify(value, opts = {}) {
@@ -320,6 +320,11 @@ module.exports = ({
     },
 
     load(text, opts) {
+      return smarts.parse(text, opts);
+    },
+
+    initialize(text, opts = {}) {
+      opts.strictFunctions = false;
       return smarts.parse(text, opts);
     },
 
