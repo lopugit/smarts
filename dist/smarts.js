@@ -330,6 +330,7 @@ module.exports = ({
         parser: smarts.parser(opts),
         value: {},
         strictFunctions: true,
+        noFunctions: false,
         firstPass: true,
         output: new Map()
       };
@@ -356,7 +357,7 @@ module.exports = ({
 
     parser(opts) {
       return function (key, val) {
-        if (val.$js && opts.replaceMode) {
+        if (val.$js && opts.replaceMode && !opts.noFunctions) {
           let ret = opts.input[opts.output.get(val)];
           if (typeof ret == val.type) return ret;
           let uuid = smarts.jsUUID();

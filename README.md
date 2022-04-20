@@ -63,6 +63,9 @@ smarts.thingIn({ value: 'foo' }, [{ value: 'foo' }]) // true
 ```
 
 # Change Log
+## [1.0.241]
+### Added
+- smarts.parse now has opts.noFunctions which will retain fn.$js property instead of automatically parsing
 ## [1.0.240]
 ### Changed
 - smarts.load now defaults to opts.strictFunctions = false
