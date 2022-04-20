@@ -206,7 +206,7 @@ module.exports = ({
 			}
 			return properties
 		},
-		serialize(value, opts={}) {
+		serialize (value, opts={}) {
 			opts.strictFunctions = false
 			return smarts.stringify(value, opts)
 		},
@@ -296,6 +296,7 @@ module.exports = ({
 						$js: val.toString(),
 						$scopes: val.$scopes,
 						$context: val.$context,
+						...val
 					},
 					key: val
 				}

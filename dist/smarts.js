@@ -276,7 +276,8 @@ module.exports = ({
             type: 'function',
             $js: val.toString(),
             $scopes: val.$scopes,
-            $context: val.$context
+            $context: val.$context,
+            ...val
           },
           key: val
         };
