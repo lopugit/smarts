@@ -61,3 +61,8 @@ smarts.thingIn({ value: 'foo' }, [{ value: 'foo' }]) // true
     }
 </script>
 ```
+
+# Change Log
+## [1.0.240]
+### Changed
+- smarts.load now defaults to opts.strictFunctions = false

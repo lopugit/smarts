@@ -338,10 +338,7 @@ module.exports = ({
 		play (text, opts){
 			return smarts.parse(text, opts)
 		},
-		load (text, opts){
-			return smarts.parse(text, opts)
-		},
-		initialize(text, opts={}) {
+		load(text, opts={}) {
 			opts.strictFunctions = false
 			return smarts.parse(text, opts)
 		},
