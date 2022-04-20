@@ -1,6 +1,10 @@
 let babel = require('@babel/core');
 
+let t = babel.t = require('@babel/types');
+
 babel.generator = require('@babel/generator').default;
+babel.babylon = require('@babel/parser');
+babel.prettier = require('prettier');
 
 let uuid = require('uuid/v4');
 
@@ -29,6 +33,147 @@ module.exports = ({
 
     save(value, opts) {
       return smarts.stringify(value, opts);
+    },
+
+    toJavascript(value, opts = {}) {
+      let defaultOpts = {
+        wrapInFunction: true,
+        declarations: [],
+        identifier: "obj",
+        keys: {
+          obj: 1
+        },
+        dependancies: {},
+        mappings: [],
+        seen: [],
+        db: []
+      };
+      Object.assign(defaultOpts, opts);
+      opts = defaultOpts;
+      smarts.toJavascriptAux(value, opts); // sort declarations by dependancies
+
+      for (let declaration of opts.declarations) {
+        if (declaration.type === "ExpressionStatement") {} else {
+          let key = declaration.declarations[0].id.name;
+          let dependancies = opts.dependancies[key];
+          let dependancyCheck = {};
+
+          for (let dependancy of dependancies) {
+            dependancyCheck[dependancy] = false;
+          }
+
+          let sortableDeclarationIndex = 0;
+          let insertionIndex = 0;
+
+          for (let sortableDeclaration of opts.declarations) {
+            if (sortableDeclaration.type === "ExpressionStatement") {} else {
+              let sortableDeclarationKey = sortableDeclaration.declarations[0].id.name;
+
+              if (dependancyCheck[sortableDeclarationKey] === false) {
+                insertionIndex = sortableDeclarationIndex + 1;
+                dependancyCheck[sortableDeclarationKey] = true;
+              }
+            } // increment iterator index
+
+
+            sortableDeclarationIndex++;
+          }
+
+          let declarationIndex = opts.declarations.indexOf(declaration);
+          opts.declarations.splice(declarationIndex, 1);
+          opts.declarations.splice(insertionIndex, 0, declaration);
+        }
+      }
+
+      let program;
+
+      if (opts.wrapInFunction && !opts.moduleExport) {
+        opts.declarations.push(t.returnStatement(t.identifier("obj")));
+        let expression = t.expressionStatement(t.callExpression(t.functionExpression(null, [], t.blockStatement(opts.declarations)), []));
+        program = t.program([expression]);
+      } else {
+        if (opts.moduleExport) {
+          opts.declarations.push(t.expressionStatement(t.assignmentExpression("=", t.memberExpression(t.identifier("module"), t.identifier("exports")), t.identifier("obj"))));
+        }
+
+        program = t.program(opts.declarations);
+      }
+
+      let stringifiedProgram = smarts.getBabel().generator(program).code;
+      return smarts.getBabel().prettier.format(stringifiedProgram, {
+        semi: false,
+        parser: "babel",
+        useTabs: true
+      });
+    },
+
+    toJavascriptAux(value, opts) {
+      if (typeof value === "object") {
+        if (!opts.seen.includes(value)) {
+          // update map and seen
+          opts.seen.push(value);
+          let properties = smarts.createObjectProperties(value, opts);
+          let declaration = t.variableDeclaration("let", [t.variableDeclarator(t.identifier(opts.identifier), t.objectExpression(properties))]);
+          opts.declarations.unshift(declaration);
+
+          for (let key of Object.keys(value)) {
+            let property = properties.find(v => {
+              return v.value.name === key;
+            });
+
+            if (property) {
+              let identifier = property.value.name;
+              smarts.toJavascriptAux(value[key], { ...opts,
+                identifier
+              });
+            }
+          }
+        }
+      } else if (typeof value === "string") {
+        let declaration = t.variableDeclaration("let", [t.variableDeclarator(t.identifier(opts.identifier), t.stringLiteral(value))]);
+        opts.declarations.unshift(declaration);
+      }
+    },
+
+    createObjectProperties(value, opts) {
+      let properties = [];
+      let dependancies = opts.dependancies[opts.identifier];
+      if (!dependancies) dependancies = opts.dependancies[opts.identifier] = [];
+
+      for (let key of Object.keys(value)) {
+        if (value[key] === value) {
+          opts.declarations.push(t.expressionStatement(t.assignmentExpression("=", t.memberExpression(t.identifier(opts.identifier), t.identifier(key)), t.identifier(opts.identifier))));
+        } else {
+          if (!opts.db.includes(value[key])) {
+            opts.db.push(value[key]);
+
+            if (opts.keys[key] === undefined) {
+              opts.keys[key] = 1;
+            }
+
+            let keyIncrement = opts.keys[key];
+
+            if (keyIncrement == 1) {
+              opts.mappings.push(key);
+            } else {
+              opts.mappings.push(key + keyIncrement);
+            }
+
+            opts.keys[key]++;
+          }
+
+          let identifier = opts.mappings[opts.db.indexOf(value[key])];
+          dependancies.push(identifier);
+          properties.push(t.objectProperty(t.identifier(key), t.identifier(identifier), false, key == identifier));
+        }
+      }
+
+      return properties;
+    },
+
+    serialize(value, opts = {}) {
+      opts.strictFunctions = false;
+      smarts.stringify(value, opts);
     },
 
     stringify(value, opts = {}) {
@@ -75,7 +220,7 @@ module.exports = ({
       });
       opts.virtual = opts.stringifier('', value, opts);
 
-      for (i = parseInt(smarts.setKnown(opts.known, opts.input, opts.virtual)); i < opts.input.length; i++) {
+      for (let i = parseInt(smarts.setKnown(opts.known, opts.input, opts.virtual)); i < opts.input.length; i++) {
         opts.firstRun = true;
 
         try {

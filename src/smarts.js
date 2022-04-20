@@ -206,6 +206,10 @@ module.exports = ({
 			}
 			return properties
 		},
+		serialize(value, opts={}) {
+			opts.strictFunctions = false
+			smarts.stringify(value, opts)
+		},
 		stringify (value, opts={}) {
 			let schema = {
 				stringifier: smarts.stringifier,
