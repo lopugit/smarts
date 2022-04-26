@@ -309,13 +309,13 @@ module.exports = ({
       } else if (ret.value instanceof Array && opts.serializeArrayProps) {
         let known = opts.known.get(ret.key);
         ret = {
-          value: known && ret.value || {
+          value: known || {
             type: 'Array',
             $js: ret.value,
             uuid: ret.value.uuid
-          },
-          key: val
+          }
         };
+        ret.key = known ? val : ret.value;
         if (typeof known == "undefined") smarts.setKnown(opts.known, opts.input, ret);
       }
 
