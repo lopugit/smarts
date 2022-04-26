@@ -63,6 +63,9 @@ smarts.thingIn({ value: 'foo' }, [{ value: 'foo' }]) // true
 ```
 
 # Change Log
+## [1.0.243]
+### Added
+- smarts.stringify now supports serializing array with uuid into special meta-object
 ## [1.0.242]
 ### Added
 - smarts.stringify now spreads any function properties when serializing

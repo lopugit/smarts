@@ -327,6 +327,15 @@ module.exports = ({
 					},
 					key: val
 				}
+			} else if (ret.value instanceof Array && opts.serializeArrayProps) {
+				ret = {
+					value: {
+						type: 'Array',
+						$js: ret.value,
+						uuid: ret.value.uuid
+					},
+					key: val
+				}
 			}
 			return ret
 		},
