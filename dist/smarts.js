@@ -305,14 +305,16 @@ module.exports = ({
           key: val
         };
       } else if (ret.value instanceof Array && opts.serializeArrayProps) {
+        let known = opts.known.get(ret.key);
         ret = {
-          value: {
+          value: known || {
             type: 'Array',
             $js: ret.value,
             uuid: ret.value.uuid
           },
           key: val
         };
+        if (typeof known == "undefined") smarts.setKnown(opts.known, opts.input, ret);
       }
 
       return ret;
