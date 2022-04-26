@@ -173,6 +173,7 @@ module.exports = ({
 
     serialize(value, opts = {}) {
       opts.strictFunctions = false;
+      opts.serializeArrayProps = true;
       return smarts.stringify(value, opts);
     },
 
