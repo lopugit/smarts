@@ -309,7 +309,7 @@ module.exports = ({
       } else if (ret.value instanceof Array && opts.serializeArrayProps) {
         let known = opts.known.get(ret.key);
         ret = {
-          value: known && known.$js || {
+          value: known && ret.value || {
             type: 'Array',
             $js: ret.value,
             uuid: ret.value.uuid
