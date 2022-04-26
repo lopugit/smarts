@@ -250,6 +250,8 @@ module.exports = ({
             return ret;
           }
 
+          break;
+
         case 'string':
           let ret = opts.known.get(after.key) || smarts.setKnown(opts.known, opts.input, after);
           return ret;
@@ -307,7 +309,7 @@ module.exports = ({
       } else if (ret.value instanceof Array && opts.serializeArrayProps) {
         let known = opts.known.get(ret.key);
         ret = {
-          value: known || {
+          value: known && known.$js || {
             type: 'Array',
             $js: ret.value,
             uuid: ret.value.uuid
