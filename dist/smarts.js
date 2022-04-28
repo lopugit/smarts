@@ -372,7 +372,9 @@ module.exports = ({
 
     parser(opts) {
       return function (key, val) {
-        if (val.$js && opts.replaceMode && !opts.noFunctions) {
+        if (val.$js && val.type === 'Array') {
+          return opts.input[opts.output.get(val)].$js;
+        } else if (val.$js && opts.replaceMode && !opts.noFunctions) {
           let ret = opts.input[opts.output.get(val)];
           if (typeof ret == val.type) return ret;
           let uuid = smarts.jsUUID();

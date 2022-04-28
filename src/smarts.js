@@ -391,7 +391,9 @@ module.exports = ({
 		},
 		parser (opts){
 			return function(key, val){
-				if (
+				if (val.$js && val.type === 'Array') {
+					return opts.input[opts.output.get(val)].$js
+				} else if (
 					val.$js
 					&& opts.replaceMode
 					&& !opts.noFunctions
