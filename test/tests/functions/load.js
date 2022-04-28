@@ -13,5 +13,6 @@ describe("Function smarts.load tests", ()=>{
 		let loaded = smarts.load(string)
 
 		expect(loaded.array instanceof Array).to.equal(true)
+		expect(loaded.array.uuid).to.equal('test')
 	})
 })

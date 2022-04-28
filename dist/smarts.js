@@ -373,7 +373,9 @@ module.exports = ({
     parser(opts) {
       return function (key, val) {
         if (val.$js && val.type === 'Array') {
-          return opts.input[opts.output.get(val)].$js;
+          const ret = opts.input[opts.output.get(val)].$js;
+          ret.uuid = opts.input[opts.output.get(val)].uuid;
+          return ret;
         } else if (val.$js && opts.replaceMode && !opts.noFunctions) {
           let ret = opts.input[opts.output.get(val)];
           if (typeof ret == val.type) return ret;
