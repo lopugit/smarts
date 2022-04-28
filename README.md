@@ -63,16 +63,7 @@ smarts.thingIn({ value: 'foo' }, [{ value: 'foo' }]) // true
 ```
 
 # Change Log
-## [1.0.249]
-### Added
-- fixed bug in serialization where arrays were serialized recursively 
-## [1.0.248]
-### Added
-- fixed bug in serialization where arrays were serialized recursively 
-## [1.0.247]
-### Added
-- fixed bug in serialization where arrays were serialized recursively 
-## [1.0.246]
+## [1.0.246-1.0.250]
 ### Added
 - fixed bug in serialization where arrays were serialized recursively 
 ## [1.0.244]
