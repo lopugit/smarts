@@ -18,4 +18,17 @@ describe("Function smarts.serialize tests", ()=>{
 
 		expect(serialized).to.equal(expected)
 	})
+	test("should serialize properties with value of undefined", ()=>{
+
+		let obj = {
+			func: function(){}
+		}
+		obj.func.uuid = 'test'
+
+		let serialized = smarts.serialize(obj)
+		let expected = '[{"func":"1"},{"type":"2","$js":"3","$scopes":"4","$context":"4","uuid":"5"},"function","function(){}",{"type":"6","$js":"6"},"test","undefined"]'
+
+
+		expect(serialized).to.equal(expected)
+	})
 })

@@ -426,6 +426,9 @@ module.exports = ({
 							value: val.$scopes,
 							enumerable: true
 						})
+						if (val.uuid) {
+							ret.uuid = val.uuid
+						}
 					} catch(err){
 						if(opts.verbose) console.error(err)
 					}

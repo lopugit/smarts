@@ -63,6 +63,9 @@ smarts.thingIn({ value: 'foo' }, [{ value: 'foo' }]) // true
 ```
 
 # Change Log
+## [1.0.253]
+### Added
+- fixed bug in loading where funcs did not retain uuid's 
 ## [1.0.252]
 ### Added
 - fixed bug in loading where arrays did not retain uuid's 
