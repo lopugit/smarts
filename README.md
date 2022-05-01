@@ -63,6 +63,9 @@ smarts.thingIn({ value: 'foo' }, [{ value: 'foo' }]) // true
 ```
 
 # Change Log
+## [1.0.254]
+### Changed
+- Removed dollar sign from js meta property 
 ## [1.0.253]
 ### Added
 - fixed bug in loading where funcs did not retain uuid's 
@@ -86,7 +89,7 @@ smarts.thingIn({ value: 'foo' }, [{ value: 'foo' }]) // true
 - smarts.stringify now spreads any function properties when serializing
 ## [1.0.241]
 ### Added
-- smarts.parse now has opts.noFunctions which will retain fn.$js property instead of automatically parsing
+- smarts.parse now has opts.noFunctions which will retain fn.js property instead of automatically parsing
 ## [1.0.240]
 ### Changed
 - smarts.load now defaults to opts.strictFunctions = false

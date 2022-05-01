@@ -59,10 +59,10 @@ describe("Function smarts.parse tests", ()=>{
 
 	// test("Should parse property of value that was undefined", ()=>{
 		
-	// 	let string = '[{"property":"1"},{"type":"2","$js":"2"},"undefined"]'
+	// 	let string = '[{"property":"1"},{"type":"2","js":"2"},"undefined"]'
 	// 	let obj = { property: '' }
 	// 	let err = false
-	// 	'[{"nested":"1"},{"property":"2"},{"type":"3","$js":"3"},"undefined"]'
+	// 	'[{"nested":"1"},{"property":"2"},{"type":"3","js":"3"},"undefined"]'
 	// 	try {
 	// 		obj = smarts.parse(string)
 	// 	} catch(e){
@@ -76,7 +76,7 @@ describe("Function smarts.parse tests", ()=>{
 	// })
 	// test("Should parse property of nested property of value that was undefined", ()=>{
 		
-	// 	let string = '[{"nested":"1"},{"property":"2"},{"type":"3","$js":"3"},"undefined"]'
+	// 	let string = '[{"nested":"1"},{"property":"2"},{"type":"3","js":"3"},"undefined"]'
 	// 	let obj = { property: '' }
 	// 	let err = false
 		
@@ -93,7 +93,7 @@ describe("Function smarts.parse tests", ()=>{
 	// })
 	// test("Should parse property of nested property of value that was undefined", ()=>{
 		
-	// 	let string = '[{"nested":"1"},{"property":"2"},{"type":"3","$js":"3"},"undefined"]'
+	// 	let string = '[{"nested":"1"},{"property":"2"},{"type":"3","js":"3"},"undefined"]'
 	// 	let obj = { property: '' }
 	// 	let err = false
 		
@@ -110,7 +110,7 @@ describe("Function smarts.parse tests", ()=>{
 	// })
 	test("Should parse nested nested property that has value of undefined", ()=>{
 		
-		let string = '[{"nested":"1"},{"nested":"2"},{"property":"3"},{"type":"4","$js":"4"},"undefined"]'
+		let string = '[{"nested":"1"},{"nested":"2"},{"property":"3"},{"type":"4","js":"4"},"undefined"]'
 		let obj = { property: '' }
 		let err = false
 		

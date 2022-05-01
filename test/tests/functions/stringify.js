@@ -14,7 +14,7 @@ describe("Function smarts.stringify tests", ()=>{
 			property: undefined
 		}
 		let stringified = smarts.stringify(obj)
-		let expected = '[{"property":"1"},{"type":"2","$js":"2"},"undefined"]'
+		let expected = '[{"property":"1"},{"type":"2","js":"2"},"undefined"]'
 		expect(stringified).to.equal(expected)
 	})
 	test("should stringify properties with value of undefined", ()=>{
@@ -27,7 +27,7 @@ describe("Function smarts.stringify tests", ()=>{
 			}
 		}
 		let stringified = smarts.stringify(obj)
-		let expected = '[{"nested":"1"},{"property":"2"},{"type":"3","$js":"3"},"undefined"]'
+		let expected = '[{"nested":"1"},{"property":"2"},{"type":"3","js":"3"},"undefined"]'
 		expect(stringified).to.equal(expected)
 	})
 })

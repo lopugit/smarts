@@ -8,7 +8,7 @@ describe("Function smarts.load tests", ()=>{
 
 	test("should load properties with value of undefined", ()=>{
 
-		const string = '[{"array":"1"},{"type":"2","$js":"3","uuid":"4"},"Array",[1,"5",3],"test",{"test":"6"},"hey"]'
+		const string = '[{"array":"1"},{"type":"2","js":"3","uuid":"4"},"Array",[1,"5",3],"test",{"test":"6"},"hey"]'
 
 		let loaded = smarts.load(string)
 
@@ -17,7 +17,7 @@ describe("Function smarts.load tests", ()=>{
 	})
 	test("should load properties with value of undefined", ()=>{
 
-		const string = '[{"func":"1"},{"type":"2","$js":"3","$scopes":"4","$context":"4","uuid":"5"},"function","function(){}",{"type":"6","$js":"6"},"test","undefined"]'
+		const string = '[{"func":"1"},{"type":"2","js":"3","$scopes":"4","$context":"4","uuid":"5"},"function","function(){}",{"type":"6","js":"6"},"test","undefined"]'
 
 		let loaded = smarts.load(string)
 

@@ -14,7 +14,7 @@ describe("Function smarts.serialize tests", ()=>{
 		obj.array.uuid = 'test'
 
 		let serialized = smarts.serialize(obj)
-		let expected = '[{"array":"1"},{"type":"2","$js":"3","uuid":"4"},"Array",[1,"5",3],"test",{"test":"6"},"hey"]'
+		let expected = '[{"array":"1"},{"type":"2","js":"3","uuid":"4"},"Array",[1,"5",3],"test",{"test":"6"},"hey"]'
 
 		expect(serialized).to.equal(expected)
 	})
@@ -26,7 +26,7 @@ describe("Function smarts.serialize tests", ()=>{
 		obj.func.uuid = 'test'
 
 		let serialized = smarts.serialize(obj)
-		let expected = '[{"func":"1"},{"type":"2","$js":"3","$scopes":"4","$context":"4","uuid":"5"},"function","function(){}",{"type":"6","$js":"6"},"test","undefined"]'
+		let expected = '[{"func":"1"},{"type":"2","js":"3","$scopes":"4","$context":"4","uuid":"5"},"function","function(){}",{"type":"6","js":"6"},"test","undefined"]'
 
 
 		expect(serialized).to.equal(expected)

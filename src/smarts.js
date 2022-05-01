@@ -295,14 +295,14 @@ module.exports = ({
 				ret = {
 					value: known || {
 						type: 'function',
-						$js: val.toString(),
+						js: val.toString(),
 						$scopes: val.$scopes,
 						$context: val.$context,
 						...val
 					},
 					key: val
 				}
-				if(ret.value.$js == "function () { [native code] }") return
+				if(ret.value.js == "function () { [native code] }") return
 				if(typeof known == "undefined") smarts.setKnown(opts.known, opts.input, ret)
 			} else if(
 				ret.value === Infinity
@@ -312,7 +312,7 @@ module.exports = ({
 				ret = {
 					value: known || {
 						type: 'number',
-						$js: "Infinity",
+						js: "Infinity",
 						$scopes: [],
 						$context: {}
 					},
@@ -325,7 +325,7 @@ module.exports = ({
 				ret = {
 					value: {
 						type: 'undefined',
-						$js: 'undefined'
+						js: 'undefined'
 					},
 					key: val
 				}
@@ -334,7 +334,7 @@ module.exports = ({
 				ret = {
 					value: known ? ret.value: {
 						type: 'Array',
-						$js: ret.value,
+						js: ret.value,
 						uuid: ret.value.uuid
 					},
 					key: val
@@ -391,12 +391,12 @@ module.exports = ({
 		},
 		parser (opts){
 			return function(key, val){
-				if (val.$js && val.type === 'Array') {
-					const ret = opts.input[opts.output.get(val)].$js
+				if (val.js && val.type === 'Array') {
+					const ret = opts.input[opts.output.get(val)].js
 					ret.uuid = opts.input[opts.output.get(val)].uuid
 					return ret
 				} else if (
-					val.$js
+					val.js
 					&& opts.replaceMode
 					&& !opts.noFunctions
 				) {
@@ -625,26 +625,26 @@ module.exports = ({
 					if(typeof ${uuid} == 'string'){
 						${uuid} = {
 							val: {
-								$js: ${uuid}
+								js: ${uuid}
 							}
 						}
 					} else if(typeof ${uuid} == 'function' && typeof ${uuid}.toString == 'function'){
 						${uuid} = {
 							val: {
-								$js: ${uuid}.toString()
+								js: ${uuid}.toString()
 							}
 						}
 					}
 					try {
-						${uuid}.ret = eval('('+${uuid}.val.$js+')')
+						${uuid}.ret = eval('('+${uuid}.val.js+')')
 					} catch(err1){
 						try {
-							${uuid}.ret = eval('({'+${uuid}.val.$js+'})')
+							${uuid}.ret = eval('({'+${uuid}.val.js+'})')
 							${uuid}.keys = Object.keys(${uuid}.ret)
 							${uuid}.ret = ${uuid}.ret[${uuid}.keys[0]]
 						} catch(err2){
 							try {
-								${uuid}.ret = eval('({b:'+ ${uuid}.val.$js +'})').b
+								${uuid}.ret = eval('({b:'+ ${uuid}.val.js +'})').b
 							} catch(err3){
 								console.error(err1)
 								console.error(err2)
