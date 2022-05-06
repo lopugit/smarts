@@ -63,6 +63,9 @@ smarts.thingIn({ value: 'foo' }, [{ value: 'foo' }]) // true
 ```
 
 # Change Log
+## [1.0.258]
+### Added
+- Fixed submodule publishing bug
 ## [1.0.257]
 ### Added
 - Added a JavaScript compatible import version
