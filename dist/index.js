@@ -1,0 +1,22 @@
+module.exports = function ({
+  node,
+  vue,
+  objList,
+  stringList,
+  that
+} = {}) {
+  const babel = require('@babel/core');
+
+  babel.t = require('@babel/types');
+  babel.generator = require('@babel/generator').default;
+  babel.babylon = require('@babel/parser');
+  babel.prettier = require('prettier');
+  return require('./loader.js')({
+    node,
+    vue,
+    objList,
+    stringList,
+    that,
+    babel
+  });
+};

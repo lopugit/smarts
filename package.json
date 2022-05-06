@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "node test/tests/meta-tester.js",
-    "build": "babel src -d lib",
+    "build": "babel src -d dist ; babel src -d lib",
     "commit": "git add . ; git commit -m 'Automated commit'",
     "push": "git push",
     "pull": "git pull",
