@@ -5,25 +5,12 @@ module.exports = ({
 	stringList,
 	reactiveSetter,
 	vue,
-	clientSide
+	babel
 } = {}) => {
 
-	let babel = {}
-	let t
+	babel = babel || {}
+	const t = babel.t
 
-	if (!clientSide) {
-		babel = require('@babel/core')
-		t = babel.t = require('@babel/types')
-		babel.generator = require('@babel/generator').default
-		babel.babylon = require('@babel/parser')
-		babel.prettier = require('prettier')
-	} else {
-		t = babel.t = undefined
-		babel.generator = undefined
-		babel.babylon = undefined
-		babel.prettier = undefined
-	}
-	
 	var local = {
 		objList,
 		stringList,

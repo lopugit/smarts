@@ -63,6 +63,9 @@ smarts.thingIn({ value: 'foo' }, [{ value: 'foo' }]) // true
 ```
 
 # Change Log
+## [1.0.257]
+### Added
+- Added a JavaScript compatible import version
 ## [1.0.256]
 ### Changed
 - Fixed babel not defined issue
