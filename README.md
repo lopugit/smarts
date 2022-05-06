@@ -63,6 +63,9 @@ smarts.thingIn({ value: 'foo' }, [{ value: 'foo' }]) // true
 ```
 
 # Change Log
+## [1.0.256]
+### Changed
+- Fixed babel not defined issue
 ## [1.0.255]
 ### Changed
 - Added clientSide argument to not load babel for fs requirement issue

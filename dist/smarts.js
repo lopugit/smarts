@@ -7,7 +7,8 @@ module.exports = ({
   vue,
   clientSide
 } = {}) => {
-  let babel, t;
+  let babel = {};
+  let t;
 
   if (!clientSide) {
     babel = require('@babel/core');

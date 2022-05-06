@@ -8,7 +8,8 @@ module.exports = ({
 	clientSide
 } = {}) => {
 
-	let babel, t
+	let babel = {}
+	let t
 
 	if (!clientSide) {
 		babel = require('@babel/core')
