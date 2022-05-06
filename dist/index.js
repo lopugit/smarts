@@ -3,7 +3,8 @@ module.exports = function ({
   vue,
   objList,
   stringList,
-  that
+  that,
+  clientSide
 } = {}) {
   /**
    * @param objList is a @type {String} representing a dot delimited path for the default 
@@ -11,19 +12,23 @@ module.exports = function ({
    * @param stringList is a @type {String} representing a dot delimited path for the default 
    * array of strings based getters and setters and searches
    */
+  var smarts;
+
   if (node) {
-    var smarts = require('./smarts')({
+    smarts = require('./smarts')({
       objList,
-      stringList
+      stringList,
+      clientSide
     });
   } else if (vue) {
     var smartsJuice = require('./smarts')({
       objList,
       stringList,
-      vue
+      vue,
+      clientSide
     });
 
-    var smarts = {
+    smarts = {
       data() {
         return {};
       },
@@ -42,9 +47,10 @@ module.exports = function ({
       }
     });
   } else {
-    var smarts = require('./smarts')({
+    smarts = require('./smarts')({
       objList,
-      stringList
+      stringList,
+      clientSide
     });
   }
 

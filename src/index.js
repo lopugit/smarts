@@ -1,4 +1,4 @@
-module.exports = function({node, vue, objList, stringList, that}={}){
+module.exports = function({node, vue, objList, stringList, that, clientSide}={}){
 	
 	/**
 	 * @param objList is a @type {String} representing a dot delimited path for the default 
@@ -7,29 +7,31 @@ module.exports = function({node, vue, objList, stringList, that}={}){
 	 * array of strings based getters and setters and searches
 	 */
 	
+	var smarts
+
 	if(node){
-			var smarts = require('./smarts')({objList, stringList})
+		smarts = require('./smarts')({objList, stringList, clientSide})
 	} else if (vue){
-			var smartsJuice = require('./smarts')({objList, stringList, vue})
-			var smarts = {
-				data() {
-						return {}
-				},
-				methods: {},
-				computed: {}
+		var smartsJuice = require('./smarts')({objList, stringList, vue, clientSide})
+		smarts = {
+			data() {
+					return {}
+			},
+			methods: {},
+			computed: {}
+		}
+		let keys = Object.keys(smartsJuice)
+		keys.forEach(key=>{
+			if(typeof smartsJuice[key] == 'function'){
+				smarts.methods[key] = smartsJuice[key]
 			}
-			let keys = Object.keys(smartsJuice)
-			keys.forEach(key=>{
-				if(typeof smartsJuice[key] == 'function'){
-					smarts.methods[key] = smartsJuice[key]
-				}
-				if(smartsJuice[key] instanceof Object){
-					if(typeof smartsJuice[key].get == 'function' || typeof smartsJuice[key].set == 'function')
-					smarts.computed[key] = smartsJuice[key]
-				}
-			})
+			if(smartsJuice[key] instanceof Object){
+				if(typeof smartsJuice[key].get == 'function' || typeof smartsJuice[key].set == 'function')
+				smarts.computed[key] = smartsJuice[key]
+			}
+		})
 	} else {
-			var smarts = require('./smarts')({objList, stringList})
+		smarts = require('./smarts')({objList, stringList, clientSide})
 	}
 	if(that) Object.assign(that, smarts)
 	

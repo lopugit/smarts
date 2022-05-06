@@ -1,19 +1,27 @@
-let babel = require('@babel/core');
-
-let t = babel.t = require('@babel/types');
-
-babel.generator = require('@babel/generator').default;
-babel.babylon = require('@babel/parser');
-babel.prettier = require('prettier');
-
 let uuid = require('uuid/v4');
 
 module.exports = ({
   objList,
   stringList,
   reactiveSetter,
-  vue
+  vue,
+  clientSide
 } = {}) => {
+  let babel, t;
+
+  if (!clientSide) {
+    babel = require('@babel/core');
+    t = babel.t = require('@babel/types');
+    babel.generator = require('@babel/generator').default;
+    babel.babylon = require('@babel/parser');
+    babel.prettier = require('prettier');
+  } else {
+    t = babel.t = undefined;
+    babel.generator = undefined;
+    babel.babylon = undefined;
+    babel.prettier = undefined;
+  }
+
   var local = {
     objList,
     stringList,
