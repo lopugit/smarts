@@ -31,4 +31,7 @@ describe("Function smarts.serialize tests", ()=>{
 
 		expect(serialized).to.equal(expected)
 	})
+	test("Should not error", ()=>{
+		
+	})
 })

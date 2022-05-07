@@ -63,6 +63,9 @@ smarts.thingIn({ value: 'foo' }, [{ value: 'foo' }]) // true
 ```
 
 # Change Log
+## [1.0.261]
+### Changed
+- Made function parser take into account type property
 ## [1.0.260]
 ### Changed
 - Switched Babel Core dependancy to Babel Standalone with Babel Template

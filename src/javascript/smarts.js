@@ -399,6 +399,7 @@ module.exports = ({
 					return ret
 				} else if (
 					val.js
+					&& val.type === 'function'
 					&& opts.replaceMode
 					&& !opts.noFunctions
 				) {
@@ -412,12 +413,12 @@ module.exports = ({
 					} else {
 						var fns = smarts.createScopedEval(uuid)
 
-						fn = eval(`(${fns})`)
-						var input = {val, smarts}
 						try{
+							fn = eval(`(${fns})`)
+							var input = {val, smarts}
 							scopedEval = fn(input)
 						} catch(err){
-							console.log(err)
+							console.log('Caught error evaling createScopedEval', err)
 						}
 
 					}
@@ -543,7 +544,7 @@ module.exports = ({
 										${/*javascript*/`\`
 											Object.defineProperty(
 												${uuid}.val.$scopes[\${${uuid}.closureIndex}],
-												\${smarts.stringify(key)},
+												\${${uuid}.smarts.stringify(key)},
 												{
 													get(){
 														return \${key}
