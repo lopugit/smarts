@@ -63,6 +63,9 @@ smarts.thingIn({ value: 'foo' }, [{ value: 'foo' }]) // true
 ```
 
 # Change Log
+## [1.0.260]
+### Changed
+- Switched Babel Core dependancy to Babel Standalone with Babel Template
 ## [1.0.259]
 ### Changed
 - Fixed dist not publishing bug

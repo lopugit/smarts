@@ -1,5 +1,6 @@
 module.exports = function({node, vue, objList, stringList, that}={}){
-	const babel = require('@babel/core')
+	const babel = require('@babel/standalone')
+	babel.template = require('@babel/template').default
 	babel.t = require('@babel/types')
 	babel.generator = require('@babel/generator').default
 	babel.babylon = require('@babel/parser')

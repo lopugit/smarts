@@ -19,7 +19,9 @@ module.exports = ({
 	}
 	
 	var smarts = {
-		getBabel (){ return babel },
+		getBabel (){ 
+			return babel 
+		},
 		uuid,
 		pause (value, opts){
 			return smarts.stringify(value, opts)
