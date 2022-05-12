@@ -63,7 +63,7 @@ smarts.thingIn({ value: 'foo' }, [{ value: 'foo' }]) // true
 ```
 
 # Change Log
-## [1.0.263]
+## [1.0.265]
 ### Changed
 - Took out console logs in scoped Eval
 ## [1.0.262]
