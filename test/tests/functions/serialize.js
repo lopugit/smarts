@@ -31,7 +31,18 @@ describe("Function smarts.serialize tests", ()=>{
 
 		expect(serialized).to.equal(expected)
 	})
-	test("Should not error", ()=>{
+	test("Function should Serialize and Load correctly", ()=>{
+
+		let obj = {
+			test(){ return 'hello' }
+		}
+
+		obj.test.uuid = 'a uuid'
+
+		const serialized = smarts.serialize(obj)
+		const loaded = smarts.load(serialized)
+
+		expect(typeof loaded.test).to.equal('function')
 		
 	})
 })

@@ -39,4 +39,13 @@ describe("Function smarts.load tests", ()=>{
 		expect(caughtError).to.equal(undefined)
 		
 	})
+	test("Function should have .call method", () => {
+
+		const string = `[{"test":"1"},{"type":"2","js":"3","$scopes":"4","$context":"4","uuid":"5"},"function","test(){ return 'hello' }",{"type":"6","js":"6"},"a uuid","undefined"]`
+
+		const loaded = smarts.load(string)
+
+		expect(loaded.test.call).to.equal(Function.prototype.call)
+		
+	})
 })

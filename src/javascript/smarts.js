@@ -597,8 +597,10 @@ module.exports = ({
 						}catch(err){console.log(5,err)}
 						// console.log(${uuid}.val.$scopedEval)
 						// return ${uuid}.scopeCode.toString()
+						console.log('here 1', ${uuid}.val.$scopedEval)
 						return ${uuid}.val.$scopedEval
 					} else {
+						console.log('here 2')
 						return eval(${/*javascript*/`\`(\${${uuid}.smarts.createScopedEval('${uuid}')})\``})(${uuid})
 					}
 				}
@@ -639,13 +641,17 @@ module.exports = ({
 						}
 					}
 					try {
+						console.log('here 3')
 						${uuid}.ret = eval('('+${uuid}.val.js+')')
 					} catch(err1){
+						console.log('here 4')
 						try {
+							console.log('ddd', ${uuid}.val.js)
 							${uuid}.ret = eval('({'+${uuid}.val.js+'})')
 							${uuid}.keys = Object.keys(${uuid}.ret)
 							${uuid}.ret = ${uuid}.ret[${uuid}.keys[0]]
 						} catch(err2){
+							console.log('here 5')
 							try {
 								${uuid}.ret = eval('({b:'+ ${uuid}.val.js +'})').b
 							} catch(err3){
@@ -1149,6 +1155,22 @@ module.exports = ({
 					...opts					
 				}
 			)
+		},
+		/** non-parser stuff */
+		stripUuids(thing, seen=[]) {
+			try {
+				delete thing.uuid
+			} catch {}
+			if (typeof thing === 'object') {
+				const keys = Object.keys(thing)
+				for (const key of keys) {
+					const val = thing[key]
+					if (!seen.includes(val)) {
+						seen.push(val)
+						smarts.stripUuids(val, seen)
+					}
+				}
+			}
 		},
 		dupe (obj, opts={}){
 			return smarts.parse(smarts.stringify(obj))
