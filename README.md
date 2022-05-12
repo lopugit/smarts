@@ -64,6 +64,9 @@ smarts.thingIn({ value: 'foo' }, [{ value: 'foo' }]) // true
 
 # Change Log
 ## [1.0.262]
+### Changed
+- Took out console logs in scoped Eval
+## [1.0.262]
 ### Added
 - Added a strip uuids function
 ## [1.0.261]
