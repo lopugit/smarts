@@ -1228,15 +1228,15 @@ module.exports = ({
 				if(prop in value1){
 					newVal = smarts.merge.bind(this)(propertyValue1, propertyValue2, {...opts, ...{clone: false}}, seen)
 				}
-				if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && value1) {
-					this.$set(value1, prop, newVal)
+				if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', smarts.getsmart.bind(this)(local.vue, 'Vue.set', false)) && value1) {
+					(this.$set || local.vue.Vue.set)(value1, prop, newVal)
 					if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('graph/thing')
+						window.$store.commit(local.vue.basePath || 'graph/thing')
 					}
 				} else {
 					value1[prop] = newVal
 					if(smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
-						window.$store.commit('graph/thing')
+						window.$store.commit(local.vue.basePath || 'graph/thing')
 					}
 				}
 			})
@@ -1363,12 +1363,12 @@ module.exports = ({
 					}
 				} else {
 					list.splice(index, 1, option)
-					if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false)) {
+					if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', smarts.getsmart.bind(this)(local.vue, 'Vue.set', false))) {
 						if(!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
-							window.$store.commit('graph/thing')
+							window.$store.commit(local.vue.basePath || 'graph/thing')
 						}
 					} else if (smarts.getsmart.bind(this)(local.vue, 'store', false) && !localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('graph/thing')
+						window.$store.commit(local.vue.basePath || 'graph/thing')
 					}
 				}
 				// list[index] = option
@@ -1376,7 +1376,7 @@ module.exports = ({
 				if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) || smarts.getsmart.bind(this)(local.vue, 'store', false)) {
 					list.splice(list.length, 0, option)
 					if(!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('graph/thing')
+						window.$store.commit(local.vue.basePath || 'graph/thing')
 					}
 				} else {
 					list.push(option)
@@ -1657,7 +1657,7 @@ module.exports = ({
 				if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) || smarts.getsmart.bind(this)(local.vue, 'store', false)) {
 					list.splice(list.length, 0, option)
 					if(!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('graph/thing')
+						window.$store.commit(local.vue.basePath || 'graph/thing')
 					}
 				} else {
 					list.push(option)
@@ -1670,7 +1670,7 @@ module.exports = ({
 				if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) || smarts.getsmart.bind(this)(local.vue, 'store', false)) {
 					list.splice(list.length, 0, option)
 					if(!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('graph/thing')
+						window.$store.commit(local.vue.basePath || 'graph/thing')
 					}
 				} else {
 					list.push(option)
@@ -1690,7 +1690,7 @@ module.exports = ({
 				if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) || smarts.getsmart.bind(this)(local.vue, 'store', false)) {
 					list.splice(list.length, 0, option)
 					if(!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('graph/thing')
+						window.$store.commit(local.vue.basePath || 'graph/thing')
 					}
 				} else {
 					list.push(option)
@@ -1721,7 +1721,7 @@ module.exports = ({
 				list.splice(smarts.optIndex(option, list, obj, keys, keymatchtype), 1)
 				if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) || smarts.getsmart.bind(this)(local.vue, 'store', false)) {
 					if(!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('graph/thing')
+						window.$store.commit(local.vue.basePath || 'graph/thing')
 					}
 				}      
 			}
@@ -1750,7 +1750,7 @@ module.exports = ({
 				}), 1)
 				if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) || smarts.getsmart.bind(this)(local.vue, 'store', false)) {
 					if(!localStorage.getItem('vuexWriteLock') && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('graph/thing')
+						window.$store.commit(local.vue.basePath || 'graph/thing')
 					}
 				} 
 			}
@@ -2090,15 +2090,15 @@ module.exports = ({
 			if (property) {
 				return deepSetByArray(obj, property, value)
 			} else {
-				if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
-					this.$set(obj, undefined, value)
+				if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', smarts.getsmart.bind(this)(local.vue, 'Vue.set', false)) && obj) {
+					(this.$set || local.vue.Vue.set)(obj, undefined, value)
 					if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
-						window.$store.commit('graph/thing')
+						window.$store.commit(local.vue.basePath || 'graph/thing')
 					}
 				} else {
 					obj = value
 					if(smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
-						window.$store.commit('graph/thing')
+						window.$store.commit(local.vue.basePath || 'graph/thing')
 					}
 				}
 				if (context) {
@@ -2119,15 +2119,15 @@ module.exports = ({
 				// If the path array has only 1 more element, we've reached
 				// the intended property and set its value
 				if (propsArray.length == 1) {
-					if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
-						this.$set(obj, smarts.ee(propsArray[0]), value)
+					if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', smarts.getsmart.bind(this)(local.vue, 'Vue.set', false)) && obj) {
+						(this.$set || local.vue.Vue.set)(obj, smarts.ee(propsArray[0]), value)
 						if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
-							window.$store.commit('graph/thing')
+							window.$store.commit(local.vue.basePath || 'graph/thing')
 						}
 					} else {
 						obj[smarts.ee(propsArray[0])] = value
 						if(smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
-							window.$store.commit('graph/thing')
+							window.$store.commit(local.vue.basePath || 'graph/thing')
 						}
 					}
 					if (context) {
@@ -2144,15 +2144,15 @@ module.exports = ({
 				// check if next prop is object
 				if (typeof obj[smarts.ee(propsArray[0])] !== 'object') {
 					// If we have reached an undefined/null property
-					if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
-						this.$set(obj, smarts.ee(propsArray[0]), {})
+					if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', smarts.getsmart.bind(this)(local.vue, 'Vue.set', false)) && obj) {
+						(this.$set || local.vue.Vue.set)(obj, smarts.ee(propsArray[0]), {})
 						if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
-							window.$store.commit('graph/thing')
+							window.$store.commit(local.vue.basePath || 'graph/thing')
 						}
 					} else {
 						obj[smarts.ee(propsArray[0])] = {}
 						if(smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
-							window.$store.commit('graph/thing')
+							window.$store.commit(local.vue.basePath || 'graph/thing')
 						}
 					}
 				}
@@ -2178,7 +2178,7 @@ module.exports = ({
 			let path = property[property.length-1]
 			let parentObj = smarts.getsmart(obj, parentPathArray, {})
 
-			if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && obj) {
+			if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', smarts.getsmart.bind(this)(local.vue, 'Vue.set', false)) && obj) {
 				this.$delete(parentObj, path)
 			} else {
 				delete parentObj[path]
@@ -2186,18 +2186,18 @@ module.exports = ({
 
 			if(typeof window !== 'undefined'){
 				if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
-					window.$store.commit('graph/thing')
+					window.$store.commit(local.vue.basePath || 'graph/thing')
 				} else if(smarts.getsmart.bind(this)(local.vue, 'store', false) && typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){ 
-					window.$store.commit('graph/thing')
+					window.$store.commit(local.vue.basePath || 'graph/thing')
 				}
 			}
 
 		},
 		pushSmart (array, value){
-			if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && array) {
+			if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', smarts.getsmart.bind(this)(local.vue, 'Vue.set', false)) && array) {
 				array.push(value)
 				if(typeof smarts.getsmart.bind(this)(window, '$store.commit', undefined) == 'function'){
-					window.$store.commit('graph/thing')
+					window.$store.commit(local.vue.basePath || 'graph/thing')
 				}
 			} else {
 				array.push(value)
@@ -2304,16 +2304,16 @@ module.exports = ({
 						}
 					}
 					if (!list.mapped || typeof list.mapped === 'boolean') {
-						if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && list) {
-							this.$set(list, 'mapped', {})
+						if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', smarts.getsmart.bind(this)(local.vue, 'Vue.set', false)) && list) {
+							(this.$set || local.vue.Vue.set)(list, 'mapped', {})
 						} else {
 							list['mapped'] = {}
 						}
 					}
 					for (var i = 0; i < list.length; i++) {
 						if (typeof list[i] !== 'string') {
-							if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', false) && list.mapped) {
-								this.$set(list.mapped, list[i][keyProperty], list[i])
+							if (smarts.getsmart.bind(this)(local.vue, 'reactiveSetter', false) && smarts.getsmart.bind(this)(this, '$set', smarts.getsmart.bind(this)(local.vue, 'Vue.set', false)) && list.mapped) {
+								(this.$set || local.vue.Vue.set)(list.mapped, list[i][keyProperty], list[i])
 							} else {
 								list['mapped'][list[i][keyProperty]] = list[i]
 							}
@@ -2337,8 +2337,8 @@ module.exports = ({
 						//   })
 						//   this.$options.sockets['giveThing'] = data => {
 						//     if(this._uid == data.clientId && data.funCounter == funCounter){
-						//       this.$set(list, i.toString(), data.thing)
-						//       this.$set(list.mapped, list[i][keyProperty], list[i])
+						//       (this.$set || local.vue.Vue.set)(list, i.toString(), data.thing)
+						//       (this.$set || local.vue.Vue.set)(list.mapped, list[i][keyProperty], list[i])
 						//     }
 						//     if(i==list.length-1){
 						//       if((returnExistant && smarts.getsmart.bind(this)(list, 'mapped.'+returnExistant, false)) || !returnExistant){
@@ -2362,7 +2362,7 @@ module.exports = ({
 						}
 					}
 					// if(list.mapped && !list.mapped['agora-client-mapped']){
-					//   this.$set(list.mapped, 'agora-client-mapped', true)
+					//   (this.$set || local.vue.Vue.set)(list.mapped, 'agora-client-mapped', true)
 					// }
 
 				}
