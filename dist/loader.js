@@ -20,9 +20,10 @@ module.exports = function () {
     smarts = require('./javascript/smarts')({
       objList,
       stringList,
-      babel
+      babel,
+      vue
     });
-  } else if (vue) {
+  } else if (vue && !vue.standalone) {
     var smartsJuice = require('./javascript/smarts')({
       objList,
       stringList,
@@ -52,7 +53,8 @@ module.exports = function () {
     smarts = require('./javascript/smarts')({
       objList,
       stringList,
-      babel
+      babel,
+      vue
     });
   }
 

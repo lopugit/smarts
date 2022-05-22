@@ -10,8 +10,8 @@ module.exports = function({node, vue, objList, stringList, that, babel}={}){
 	var smarts
 
 	if(node){
-		smarts = require('./javascript/smarts')({objList, stringList, babel})
-	} else if (vue){
+		smarts = require('./javascript/smarts')({objList, stringList, babel, vue})
+	} else if (vue && !vue.standalone){
 		var smartsJuice = require('./javascript/smarts')({objList, stringList, vue, babel})
 		smarts = {
 			data() {
@@ -31,7 +31,7 @@ module.exports = function({node, vue, objList, stringList, that, babel}={}){
 			}
 		})
 	} else {
-		smarts = require('./javascript/smarts')({objList, stringList, babel})
+		smarts = require('./javascript/smarts')({objList, stringList, babel, vue})
 	}
 	if(that) Object.assign(that, smarts)
 	

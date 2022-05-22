@@ -63,9 +63,12 @@ smarts.thingIn({ value: 'foo' }, [{ value: 'foo' }]) // true
 ```
 
 # Change Log
+## [1.0.267]
+### Added
+- Added vue.standalone option for use with store
 ## [1.0.266]
 ### Changed
-- Added optional Vue instance argument for setting
+- Added optional vue.Vue instance argument for Vue.set function and a vue.basePath argument for $store.commit
 ## [1.0.265]
 ### Changed
 - Took out console logs in scoped Eval
