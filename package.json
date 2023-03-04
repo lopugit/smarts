@@ -49,6 +49,6 @@
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^7.17.0",
     "mocha": "6.2.2",
-    "mocha-logger": "1.0.6"
+    "mocha-logger": "1.0.8"
   }
 }
