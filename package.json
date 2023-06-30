@@ -1,17 +1,12 @@
 {
   "name": "smarts",
-  "version": "1.0.267",
-  "description": "a smart library for doing smart things",
+  "version": "2.0.0",
+  "description": "A smart library for doing smart things",
   "main": "dist/index.js",
   "scripts": {
-    "test": "node test/tests/meta-tester.js",
-    "build": "babel src -d dist ; babel src -d lib",
-    "commit": "git add . ; git commit -m 'Automated commit'",
-    "push": "git push",
-    "pull": "git pull",
-    "commitVersionBump": "git add . ; git commit -m 'version bump to '$(echo $(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g'))'+1 patch version'",
-    "everything": "npm run prepub ; npm run push ; npm run commitVersionBump ; npm version patch ; npm publish ; npm run push",
-    "prepub": "npm run build"
+    "build": "babel src -d dist",
+    "publish": "npm run publish",
+    "test": "node test/tests/meta-tester.js"
   },
   "repository": {
     "type": "git",
@@ -30,6 +25,7 @@
   "dependencies": {
     "@babel/core": "^7.14.8",
     "@babel/generator": "^7.8.4",
+    "@babel/parser": "^7.22.5",
     "@babel/polyfill": "^7.4.4",
     "@babel/standalone": "^7.14.8",
     "@babel/template": "^7.14.8",
